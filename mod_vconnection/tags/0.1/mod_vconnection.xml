@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall type="module" version="4.5.2">
+  <name>Base Vtiger Connection Module</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>December 2005</creationDate>
+  <copyright>(C) 2005 netXccel</copyright>
+  <license>http://www.vtiger.com VPL</license>
+  <authorEmail>mmbrich@fosslabs.com</authorEmail>
+  <authorUrl>www.fosslabs.com</authorUrl>
+  <version>4.5.2</version>
+  <description>A basic set of classes to create connections to vtiger</description>
+  <files>
+    <filename module="mod_vconnection">vt_classes/VTigerConnection.class.php</filename>
+    <filename module="mod_vconnection">vt_classes/nusoap/lib/nusoap.php</filename>
+  </files>
+  <params>
+  </params>
+</mosinstall>
