@@ -1,19 +1,16 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <mosinstall type="module" version="4.5.2">
-  <name>Lead Creation</name>
-  <author>Matthew Brichacek</author>
-  <creationDate>December 2005</creationDate>
-  <copyright>(C) 2005 netXccel</copyright>
-  <license>http://www.vtiger.com VPL</license>
-  <authorEmail>mmbrich@fosslabs.com</authorEmail>
-  <authorUrl>www.fosslabs.com</authorUrl>
-  <version>4.5.2</version>
+  <name>Lead Creation for Vtiger CRM</name>
+  <author>Matthew Brichacek & Pierre-Andre Vullioud</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2005 Foss Labs & (C) 2006 PA Images</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
   <description>A basic form to create a Vtiger lead</description>
   <files>
     <filename module="mod_lead">mod_lead.php</filename>
-    <filename module="mod_lead">vt_classes/VTigerLead.class.php</filename>
+    <filename module="mod_lead">vtiger/languages/lead_english.php</filename>
+    <filename module="mod_lead">vtiger/languages/lead_french.php</filename>
+    <filename module="mod_lead">vtiger/VTigerLead.class.php</filename>
   </files>
-  <params>
-	<param name="vtiger_lead_soapserver" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
-  </params>
 </mosinstall>
