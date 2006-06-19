@@ -1,40 +1,61 @@
 <?php
 /**
-* @version 1.0 $
+* @version 1.1 $
 * @package VtigerLead
-* @copyright (C) 2005 netXccel http://www.netXccel.com/
-* @author Matthew Brichacek <mmbrich@fosslabs.com>
-* @license http://www.vtiger.com VPL
+* @copyright (C) 2005 Foss Labs <mmbrich@fosslabs.com>
+*                2006 Pierre-Andr?ullioud www.paimages.ch
+* @license http://www.gnu.org/copyleft/gpl.html GNU/GPL
 */
  
 /** ensure this file is being included by a parent file */
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
  
-require_once('modules/vt_classes/VTigerLead.class.php');
-
-if($_REQUEST["Lead"]) {
-	$lead = new VtigerLead($params->get( 'vtiger_lead_soapserver', '' ));
-
-	$result = $lead->addLead($_REQUEST["lastname"],$_REQUEST["email"],$_REQUEST["phone"],$_REQUEST["company"],$_REQUEST["country"],$_REQUEST["description"]);
+# Get the right language if it exists
+if (file_exists($mosConfig_absolute_path.'/modules/vtiger/languages/lead_'.$mosConfig_lang.'.php')) {
+    include($mosConfig_absolute_path.'/modules/vtiger/languages/lead_'.$mosConfig_lang.'.php');
+} else {
+    include($mosConfig_absolute_path.'/modules/vtiger/languages/lead_english.php');
 }
-?>
-<form name="vtigerlead" method="POST" action="<?$PHP_SELF;?>">
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tbody>
-<tr>
-Last Name: <br/><input type="text" name="lastname" class="inputbox" size="15">
-<br />
-Email: <br /><input type="text" name="email" class="inputbox" size="15">
-<br />
-Phone: <br /><input type="text" name="phone" class="inputbox" size="15">
-<br />
-Company Name: <br /><input type="text" name="company" class="inputbox" size="15">
-<br />
-Country: <br /> <input type="text" name="country" class="inputbox" size="10">
-<br />
-Description: <br /><textarea rows="2" cols="18" name="description" class="inputbox"></textarea>
-<br />
-<input name="Lead" class="button" value="Submit" type="submit">
-</tbody>
-<table>
-</form>
+
+#check if the bot exist
+if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConnection.class.php'))
+{
+    require_once('modules/vtiger/VTigerLead.class.php');
+    
+    if($_REQUEST["Lead"]) {
+      	$lead = new VtigerLead();
+       	$result = $lead->addLead($_REQUEST["lastname"],$_REQUEST["email"],$_REQUEST["phone"],$_REQUEST["company"],$_REQUEST["country"],$_REQUEST["description"]);
+       	echo _SUCCESS;
+     }
+     else
+     {    
+        ?>
+        <form name="vtigerlead" method="POST" action="<?$PHP_SELF;?>">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tbody>
+        <tr>
+        <?php echo _LAST_NAME; ?>: <br/><input type="text" name="lastname" class="inputbox" size="15">
+        <br />
+        <?php echo _CONTACT_HEADER_EMAIL; ?>: <br /><input type="text" name="email" class="inputbox" size="15">
+        <br />
+        <?php echo _PHONE; ?>: <br /><input type="text" name="phone" class="inputbox" size="15">
+        <br />
+        <?php echo _COMPANY_NAME; ?>: <br /><input type="text" name="company" class="inputbox" size="15">
+        <br />
+        <?php echo _COUNTRY; ?>: <br /> <input type="text" name="country" class="inputbox" size="10">
+        <br />
+        <?php echo _DESCRIPTION; ?>: <br /><textarea rows="5" cols="18" name="description" class="inputbox"></textarea>
+        <br />
+        <input name="Lead" class="button" value="<?php echo _BUTTON_SUBMIT_MAIL;?>" type="submit">
+        </tbody>
+        </table>
+        </form>
+        <?
+    }
+    }
+    else
+    {
+    echo _INSTALL_BOT;
+    }
+    ?>
+    
