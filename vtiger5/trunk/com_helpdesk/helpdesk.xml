@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>helpdesk</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2005 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Comonent to use the vtiger Helpdesk module in Joomla1</description>
+  <files>
+    <filename module="com_helpdesk">helpdesk.php</filename>
+    <filename module="com_helpdesk">helpdesk.detailview.php</filename>
+    <filename module="com_helpdesk">helpdesk.forgotpass.php</filename>
+    <filename module="com_helpdesk">helpdesk.kbase.php</filename>
+    <filename module="com_helpdesk">helpdesk.myprofile.php</filename>
+    <filename module="com_helpdesk">helpdesk.newticket.php</filename>
+    <filename module="com_helpdesk">vtiger/VTigerHDeskUser.class.php</filename>
+  </files>
+</mosinstall>
