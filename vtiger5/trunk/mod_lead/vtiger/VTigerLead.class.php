@@ -19,7 +19,7 @@ class VTigerLead {
 
 	function VtigerLead()
 	{
-		$this->conn = new VtigerConnection("webforms.php");
+		$this->conn = new VtigerConnection("webforms");
 	}
 	function addLead($lastname,$email,$phone,$company,$country,$description='')
 	{

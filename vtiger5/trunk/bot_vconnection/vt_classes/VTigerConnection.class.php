@@ -32,7 +32,7 @@ class VTigerConnection
   		$mambotParams =& new mosParameters( $mambot->params );
   		$vtiger_lead_soapserver = $mambotParams->get( 'vtiger_lead_soapserver', 'basic' );
   
-		$this->client = new soapclient2($vtiger_lead_soapserver."/".$file);
+		$this->client = new soapclient2($vtiger_lead_soapserver."/vtigerservice.php?service=".$file);
 	}
 	function setData($data)
 	{
