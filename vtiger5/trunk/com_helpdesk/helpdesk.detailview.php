@@ -18,7 +18,7 @@ for($i=0;$i<$outercount;$i++) {
 }
 echo "<br /><div style='height:16px;border-bottom:2px solid gray'><div class='moduletable'><h3>Ticket Information:</h3></div>";
 if($ticket['status'] != 'Closed') {
- 	echo '<div class="pageTitle uline" style="float:right"><a href="index.php?option=com_helpdesk&closeticket='.$ticketid.'/">Close This Ticket</a>&nbsp;&nbsp;</div>';
+ 	echo '<div class="pageTitle uline" style="float:right"><a href="index.php?option=com_helpdesk&closeticket='.$ticketid.'">Close This Ticket</a>&nbsp;&nbsp;</div>';
 }
 
 echo "</div><br /><br />";

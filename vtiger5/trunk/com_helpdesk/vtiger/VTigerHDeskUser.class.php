@@ -107,7 +107,7 @@ class VTigerHDeskUser {
 	}
 	function CloseTicket($ticketid)
 	{
-		$this->data = Array('id'=>"$ticketid");
+		$this->data = Array('ticketid'=>"$ticketid");
 		$this->conn->setData($this->data);
         	$this->conn->execCommand('close_current_ticket');
 	}
