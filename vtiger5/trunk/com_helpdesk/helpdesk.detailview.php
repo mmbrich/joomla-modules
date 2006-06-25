@@ -38,11 +38,12 @@ if($commentcount >= 1) {
 if($commentcount >= 1 && is_array($commentresult))
 {
 
-        $list = 'Comments:<br>';
-        //Form the comments in between tr tags
+        $list = '';
         for($j=0;$j<$commentcount;$j++)
         {
-                 $list .= $commentresult[$j]['comments'].'<br><span class="hdr">'.$mod_strings['LBL_COMMENT_BY'].' : '.$commentresult[$j]['owner'].' '.$mod_strings['LBL_ON'].' '.$commentresult[$j]['createdtime'].'</span>';
+		$list .= '<br><br><div style="border:1px solid gray;width:98%">Comment From : '.$commentresult[$j]['owner'];
+		$list .= '<br>On : '.$commentresult[$j]['createdtime'];
+                $list .= "<br>Comment : ".$commentresult[$j]['comments'].'</div>';
         }
 	echo $list;
 

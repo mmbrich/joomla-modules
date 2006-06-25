@@ -98,7 +98,7 @@ class VTigerHDeskUser {
                         'severity'=>"$severity",
                         'category'=>"$category",
                         'user_name' => "$username",
-                        'parent_id'=>"$this->id",
+                        'parent_id'=> $_SESSION["vt_id"],
                         'product_id'=>"");
 
 		$this->conn->setData($this->data);
@@ -113,12 +113,11 @@ class VTigerHDeskUser {
 	}
 	function UpdateComment($ticketid,$comments)
 	{
-        	$ownerid = $this->id;
+        	$ownerid = $_SESSION["vt_id"];
         	$createdtime = date("Y-m-d H:i:s");
 
-        	$this->data = array('id'=>$ticketid,
+        	$this->data = array('ticketidid'=>$ticketid,
 			'ownerid'=>$ownerid,
-			'createdtime'=>$createdtime,
 			'comments'=>$comments);
 		$this->conn->setData($this->data);
         	$this->conn->execCommand('update_ticket_comment');
