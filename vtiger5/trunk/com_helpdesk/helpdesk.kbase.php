@@ -19,7 +19,7 @@ if($_GET["faqid"]) {
         {
                 if($faqid == $faq_array[$i]['id'])
                 {
-                        $list .= '<tr><td class="kbFAQ" style="font-size:18px;padding-bottom:5px;border-bottom:solid 1px black;color:orange">'.$faq_array[$i]['question'].'</td></tr>';
+                        $list .= '<tr><td class="kbFAQ">'.$faq_array[$i]['question'].'</td></tr>';
                         $search = array (
                                         '@&(lt|#60);@i',
                                         '@&(gt|#62);@i',
