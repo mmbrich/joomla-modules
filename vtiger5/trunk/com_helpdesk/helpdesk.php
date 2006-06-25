@@ -93,11 +93,11 @@ echo "<div style='width:100%;text-align:center'>";
 if($tickets == '')
         echo "No Tickets";
 else {
-	echo "<div style='align:left;text-align:left;color:orange;font-size:1.3em;border-bottom:2px solid gray'>Open Tickets</div><br />";
+	echo "<div class='moduletable'><h3>Open Tickets</h3></div>";
 	/* OPEN TICKETS */
 	echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-	echo "<thead style='background-color:#618dba;height:30px'><tr>";
-	echo "<td>Ticket ID</td><td>Title</td><td>Priority</td><td>Status</td><td>Category</td><td>Modified Time</td><td>Created Time</td></thead></tr><tbody>";
+	echo "<tr><thead>";
+	echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
         for($i=0;$i<count($tickets);$i++) {
 		if($tickets[$i]["status"] == "Open")
 			echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."index.php?option=com_helpdesk&ticketid=".$tickets[$i]["ticketid"]."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
@@ -105,10 +105,10 @@ else {
 	echo "</tbody></table>";
 
 	/* CLOSED TICKETS */
-	echo "<br /><br /><div style='align:left;text-align:left;color:orange;font-size:1.3em;border-bottom:2px solid gray'>Closed Tickets</div><br />";
+	echo "<br /><br /><div class='moduletable'><h3>Closed Tickets</h3></div>";
 	echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-	echo "<thead style='background-color:#618dba;height:30px'><tr>";
-	echo "<td>Ticket ID</td><td>Title</td><td>Priority</td><td>Status</td><td>Category</td><td>Modified Time</td><td>Created Time</td></thead></tr><tbody>";
+	echo "<thead><tr>";
+	echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
         for($i=0;$i<count($tickets);$i++) {
 		if($tickets[$i]["status"] == "Closed")
 			echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."/component/option,com_helpdesk/ticketid,".$tickets[$i]["ticketid"]."/'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
