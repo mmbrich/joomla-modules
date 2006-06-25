@@ -31,7 +31,7 @@ echo "<tr><td>Description:</td><td colspan='5'>".$ticket["description"]."</td></
 echo "<tr><td>Solution:</td><td colspan='5' style='border:1px solid gray'>".$ticket["solution"]."</td></tr>";
 if($commentcount >= 1) {
 	echo "<td align='right' valign='top' nowrap>Comments: </td>";
-        echo "<td colspan='5'> <div class='commentArea' style='border:solid 1px gray;overflow:auto;height:70px'>";
+        echo "<td colspan='5'> <div class='commentArea' style='border:solid 1px gray;overflow:auto'>";
 }
 
 //This is to display the existing comments if any
@@ -41,9 +41,9 @@ if($commentcount >= 1 && is_array($commentresult))
         $list = '';
         for($j=0;$j<$commentcount;$j++)
         {
-		$list .= '<br><br><div style="border:1px solid gray;width:98%">Comment From : '.$commentresult[$j]['owner'];
+		$list .= '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">Comment From : '.$commentresult[$j]['owner'];
 		$list .= '<br>On : '.$commentresult[$j]['createdtime'];
-                $list .= "<br>Comment : ".$commentresult[$j]['comments'].'</div>';
+                $list .= "<br>Comment : ".$commentresult[$j]['comments'].'</div><br>';
         }
 	echo $list;
 
