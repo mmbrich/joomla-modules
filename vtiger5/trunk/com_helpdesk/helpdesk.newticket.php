@@ -40,8 +40,10 @@ defined('_VALID_MOS') or die('Restricted access');
 <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
 
 <tr>
-<td style='align:left;text-align:left;color:orange;font-size:1.3em;border-bottom:2px solid gray'>
+<td>
+<div class='moduletable'><h3>
 Create Ticket
+</h3></div>
 </td>
 </tr>
 

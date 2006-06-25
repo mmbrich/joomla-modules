@@ -14,7 +14,7 @@ if($_POST["change_pass"] == "true") {
 }
 
         $list .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
-        $list .= '<tr><td style="align:left;text-align:left;color:orange;font-size:1.3em;border-bottom:2px solid gray">My Details</td></tr></table>';
+        $list .= '<tr><td><div class="moduletable"><h3>My Details</h3></div></td></tr></table>';
         $list .= '<table border="0" cellspacing="4" cellpadding="2" style="margin-top:10px">';
 
         $list .= '<tr><td align="right" nowrap>Last Login : </td>';
@@ -28,7 +28,7 @@ if($_POST["change_pass"] == "true") {
         $list .= '<br><br>';
 
         $list .= '<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">';
-        $list .= '<tr><td style="align:left;text-align:left;color:orange;font-size:1.3em;border-bottom:2px solid gray">Change Password</td></tr>';
+        $list .= '<tr><td><div class="moduletable"><h3>Change Password</h3></div></td></tr>';
         $list .= '<tr><td style="padding-top: 10px">';
 
         if($err != '')
