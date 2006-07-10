@@ -23,11 +23,21 @@ if( isset($username) && isset($password) && $username != "" && $password != "") 
 		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets');
 }
 
+if($_SESSION["vt_authenticated"] != 'true')
+	$task="";
+else if (!isset($task) || $task == "") 
+	$task="ListTickets";
+
 switch($task) {
 	case 'NewTicket':
-		if(isset($_POST["title"]))
-			$user->CreateTicket($_POST["title"],$_POST["description"],$_POST["priority"],$_POST["severity"],$_POST["category"]);
-		else
+		$title = mosGetParam( $_POST, 'title', '' );
+		if(isset($title) && $title != "") {
+			$desc = mosGetParam( $_POST, 'description', '' );
+			$prio= mosGetParam( $_POST, 'priority', '' );
+			$severity = mosGetParam( $_POST, 'severity', '' );
+			$cat= mosGetParam( $_POST, 'category', '' );
+			$user->CreateTicket($title,$desc,$prio,$severity,$cat);
+		} else
 			HTML_helpdesk::newTicket($user);
 	break;
 	case 'MyProfile':
@@ -36,9 +46,14 @@ switch($task) {
 	case 'Kbase':
 		HTML_helpdesk::knowledgeBase($user);
 	break;
+        case 'KbaseArticle':
+		$articleid = mosGetParam( $_GET, 'articleid', '' );
+                HTML_helpdesk::knowledgeBase($user,$articleid);
+        break;
 	case 'ShowTicket':
 		$tickets = $user->ListTickets();
-		HTML_helpdesk::showTicket($user,$_GET["ticketid"],$tickets);
+		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
+		HTML_helpdesk::showTicket($user,$ticketid,$tickets);
 	break;
 	case 'LogOut':
 		$user->LogOut();
@@ -53,7 +68,8 @@ switch($task) {
 		HTML_helpdesk::listTickets($tickets);
 	break;
 	case 'CloseTicket':
-		$user->CloseTicket($_GET["ticketid"]);
+		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
+		$user->CloseTicket($ticketid);
 		$msg = "Successfully Closed Ticket";
 		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets',$msg);
 	break;

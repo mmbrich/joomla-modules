@@ -21,7 +21,7 @@ class HTML_helpdesk {
 		include_once("helpdesk.newticket.php");
 	}
 
-	function knowledgeBase($user) {
+	function knowledgeBase($user,$articleid='') {
 		echo showHeader()."<br><br>";
 		include_once("helpdesk.kbase.php");
 	}
