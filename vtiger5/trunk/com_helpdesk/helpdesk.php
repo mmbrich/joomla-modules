@@ -17,9 +17,10 @@ $username = mosGetParam( $_POST, 'username', '' );
 $password = mosGetParam( $_POST, 'password', '' );
 
 if( isset($username) && isset($password) && $username != "" && $password != "") {
-	if($user->Authenticate($username,$password) == "FALSE")
+	if($user->Authenticate($username,$password) == "FALSE") {
 		$task = "";
-	else
+		$msg = "fail";
+	} else
 		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets');
 }
 
@@ -81,7 +82,7 @@ switch($task) {
 		mosRedirect( 'index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg);
 	break;
 	default:
-		HTML_helpdesk::loginUser($user);
+		HTML_helpdesk::loginUser($user,$msg);
 	break;
 }
 

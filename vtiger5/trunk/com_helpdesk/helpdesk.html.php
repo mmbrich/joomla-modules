@@ -63,8 +63,12 @@ class HTML_helpdesk {
 		echo "</div>";
 	}
 
-	function loginUser($user) {
-                $auth = "<br /><br /><div style='text-align:center'>Please log-in to access the Customer Support Portal</div>";
+	function loginUser($user,$msg='') {
+		if($msg == "fail") {
+                	$auth = "<br /><br /><div style='text-align:center'><font color='red'>Login Failed... Please try again:</font></div>";
+		} else {
+                	$auth = "<br /><br /><div style='text-align:center'>Please log-in to access the Customer Support Portal</div>";
+		}
                 $auth .= "<center><form name='login' method='POST'>";
                 $auth .= "<table border=0 align='center'>";
                 $auth .= "<tr><td>Username:</td><td><input type='text' name='username' style='border:1px solid gray'></td></tr>";
