@@ -11,111 +11,63 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	flush();exit();
 }
 
-if($_REQUEST["logout"] == "true") {
-	$user->LogOut();
-}
+require_once( $mainframe->getPath( 'front_html' ) );
 
-$head = "<div style='width:100%;height:17px'>";
-$head .= "<span style='float:left'><a href='index.php?option=com_helpdesk'>Ticket Home</a></span>";
-$head .= "<span style='float:left'> &nbsp;|&nbsp; <a href='index.php?option=com_helpdesk&newticket=true'>New Ticket</a></span>";
-$head .= "<span style='float:left'> &nbsp;|&nbsp; <a href='index.php?option=com_helpdesk&myprofile=true'>My Profile</a></span>";
-$head .= "<span style='float:left'> &nbsp;|&nbsp; <a href='index.php?option=com_helpdesk&kbase=true'>Knowledge Base</a></span>";
+$username = mosGetParam( $_POST, 'username', '' );
+$password = mosGetParam( $_POST, 'password', '' );
 
-if($_GET["forgotpass"] == "true") {
-	include_once("helpdesk.forgotpass.php");
-	return;
-}
-
-if($_SESSION["vt_authenticated"] != "true" || !isset($_SESSION["vt_authenticated"])) {
-	if(isset($_POST["username"]))
-		$auth = $user->Authenticate($_POST['username'],$_POST['password']);
+if( isset($username) && isset($password) && $username != "" && $password != "") {
+	if($user->Authenticate($username,$password) == "FALSE")
+		$task = "";
 	else
-		$auth = $user->Authenticate($_SESSION['vt_user_name'],$_SESSION['vt_user_pass']);
-
-	if($_SESSION["vt_authenticated"] != "true" || !isset($_SESSION["vt_authenticated"])) {
-		echo "<br /><br /><div style='text-align:center'>Please log-in to access the Customer Support Portal</div>";
-		echo "<center><form name='login' method='POST'>";
-		echo "<table border=0 align='center'>";
-		echo "<tr><td>Username:</td><td><input type='text' name='username' style='border:1px solid gray'></td></tr>";
-		echo "<tr><td>Password:</td><td><input type='password' name='password' style='border:1px solid gray'></td></tr>";
-		echo "<tr><td colspan='2'><input type='submit' class='button' name='signin' value='Log In'></td><tr>";
-		echo "<tr><td colspan='2'>&nbsp;</td><tr>";
-		echo "<tr><td>&nbsp;</td><td align='center' style='text-align:center'><a href='index.php?option=com_helpdesk&forgotpass=true'>Forgot Password?</a></td><tr>";
-		echo "</table>";
-		echo "</form></center>";
-		return;
-	}
+		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets');
 }
 
-if($_SESSION["vt_authenticated"]) {
-	$head .= "<span style='float:right'>".$_SESSION["vt_user_name"]."&nbsp;<a href='index.php?option=com_helpdesk&logout=true'>[Logout]</a></span>";
+switch($task) {
+	case 'NewTicket':
+		if(isset($_POST["title"]))
+			$user->CreateTicket($_POST["title"],$_POST["description"],$_POST["priority"],$_POST["severity"],$_POST["category"]);
+		else
+			HTML_helpdesk::newTicket($user);
+	break;
+	case 'MyProfile':
+		HTML_helpdesk::myProfile($user);
+	break;
+	case 'Kbase':
+		HTML_helpdesk::knowledgeBase($user);
+	break;
+	case 'ShowTicket':
+		$tickets = $user->ListTickets();
+		HTML_helpdesk::showTicket($user,$_GET["ticketid"],$tickets);
+	break;
+	case 'LogOut':
+		$user->LogOut();
+		$msg = "Successful Logout";
+		mosRedirect( 'index.php?option=com_helpdesk',$msg);
+	break;
+	case 'ForgotPass':
+		HTML_helpdesk::forgotPass($user);
+	break;
+	case 'ListTickets':
+		$tickets = $user->ListTickets();
+		HTML_helpdesk::listTickets($tickets);
+	break;
+	case 'CloseTicket':
+		$user->CloseTicket($_GET["ticketid"]);
+		$msg = "Successfully Closed Ticket";
+		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets',$msg);
+	break;
+	case 'UpdateComment':
+		$ticketid = mosGetParam( $_POST, 'ticketid', '' );
+		$comments = mosGetParam( $_POST, 'comments', '' );
+		$user->UpdateComment($ticketid,$comments);
+		$msg = "Successfully Updated Ticket Comment";
+		mosRedirect( 'index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg);
+	break;
+	default:
+		HTML_helpdesk::loginUser($user);
+	break;
 }
-$head .= "</div>";
-echo $head."<br /><br />";
 
-if($_POST['updatecomment'] == 'true')
-{
-	$user->UpdateComment($_POST["ticketid"],$_POST["comments"]);
-}
 
-if($_GET["newticket"] == "true") {
-	if($_POST["title"]) {
-		$user->CreateTicket($_POST["title"],$_POST["description"],$_POST["priority"],$_POST["severity"],$_POST["category"]);
-		return;
-	} else {
-		include_once("helpdesk.newticket.php");
-		return;
-	}
-}
-
-if($_GET["myprofile"] == "true") {
-	include_once("helpdesk.myprofile.php");
-	return;
-}
-
-if($_GET["kbase"] == "true") {
-	include_once("helpdesk.kbase.php");
-	return;
-}
-
-if($_GET["closeticket"]) {
-	$user->CloseTicket($_GET["closeticket"]);
-}
-
-$tickets = $user->ListTickets();
-if($_GET["ticketid"]) {
-	include_once("helpdesk.detailview.php");
-	return;
-} 
-
-/* -- MAIN LIST PAGE --*/
-echo "<div style='width:100%;text-align:center'>";
-if($tickets == '')
-        echo "No Tickets";
-else {
-	echo "<div class='moduletable'><h3>Open Tickets</h3></div>";
-	/* OPEN TICKETS */
-	echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-	echo "<tr><thead>";
-	echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
-        for($i=0;$i<count($tickets);$i++) {
-		if($tickets[$i]["status"] == "Open")
-			echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."index.php?option=com_helpdesk&ticketid=".$tickets[$i]["ticketid"]."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
-        }
-	echo "</tbody></table>";
-
-	/* CLOSED TICKETS */
-	echo "<br /><br /><div class='moduletable'><h3>Closed Tickets</h3></div>";
-	echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-	echo "<thead><tr>";
-	echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
-        for($i=0;$i<count($tickets);$i++) {
-		if($tickets[$i]["status"] == "Closed")
-			echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."index.php?option=com_helpdesk&ticketid=".$tickets[$i]["ticketid"]."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
-         }
-	echo "</tbody></table>";
-
-}
-echo "</div>";
-/* -- END OF MAIN LIST -- */
 ?>
