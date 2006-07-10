@@ -17,10 +17,29 @@ defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.'
 
 class HTML_helpdesk {
 	function about() {
-		echo "About";
+	?>
+                <div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
+                <table class="adminheading">
+                <tr>
+                        <th>
+                        About VTiger Help Desk for Joomla!
+                        </th>
+                </tr>
+		<tr>
+			<td>
+				The Vtiger Help Desk module for Joomla! was originally created by <a href="http://www.fosslabs.com">FOSS Labs</a><br>
+				<br>Contributors:<br>
+				Matthew Brichacek &lt;mmbrich@fosslabs.com&gt; (orignal code)<br>
+				Pierre-Andre  Vullioud &lt;vtiger@paimages.ch&gt; (bot_vconnection)<br>
+			</td>
+		</tr>
+		</table>
+		</div>
+		<script language="Javascript" src="<?php echo $mosConfig_live_site;?>/includes/js/overlib_mini.js"></script>
+	<?
 	}
 
-	function settings($option,$invoices,$livechat) {
+	function settings($option,$invoices='',$livechat='') {
 	?>
                 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
                 <form action="<?PHP_SELF?>" method="post" name="adminForm">
@@ -34,7 +53,7 @@ class HTML_helpdesk {
 
                 <table class="adminform">
                 <tr>
-                        <th colspan='2'>
+                        <th colspan='3'>
                         Options
                         </th>
                 </tr>
@@ -45,6 +64,9 @@ class HTML_helpdesk {
                         <td align='left'>
 				<input type='checkbox' name='livechat' <?php echo $livechat;?> />
                         </td>
+                        <td align='left'>
+				Allows Help Desk customers to chat live with CRM agents
+                        </td>
                 </tr>
 
                 <tr>
@@ -53,6 +75,9 @@ class HTML_helpdesk {
                         </td>
                         <td align='left'>
 				<input type='checkbox' name='invoices' <?php echo $invoices;?> />
+                        </td>
+                        <td align='left'>
+				Allows Help Desk customers to view invoice details
                         </td>
                 </tr>
 
