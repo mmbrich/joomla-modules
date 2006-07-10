@@ -15,20 +15,11 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
-/**
-* @package Joomla
-* @subpackage Helpdesk
-*/
-class TOOLBAR_helpdesk {
+require_once( $mainframe->getPath( 'toolbar_html' ) );
 
-	function _DEFAULT() {
-		mosMenuBar::startTable();
-		mosMenuBar::save();
-		mosMenuBar::spacer();
-		mosMenuBar::cancel();
-		mosMenuBar::spacer();
-		mosMenuBar::help( 'screen.helpdesk' );
-		mosMenuBar::endTable();
-	}
+switch ( $task ) {
+        default:
+                TOOLBAR_helpdesk::_DEFAULT();
+                break;
 }
 ?>
