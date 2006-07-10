@@ -17,9 +17,9 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 
-switch ( $task ) {
-        default:
+switch ( $act ) {
+        case 'settings':
                 TOOLBAR_helpdesk::_DEFAULT();
-                break;
+        break;
 }
 ?>
