@@ -102,7 +102,7 @@ function save($option) {
 	$ret = $database->loadResult();
 
 	$msg = 'Settings successfully Saved';
-        mosRedirect( 'index2.php?option='. $option, $msg );
+        mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
 }
 function cancel($option) {
         mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
