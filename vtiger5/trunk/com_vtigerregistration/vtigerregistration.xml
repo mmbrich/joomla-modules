@@ -11,8 +11,9 @@
   <files>
     <filename>vtigerregistration.php</filename>
     <filename>vtigerregistration.html.php</filename>
-    <filename>vtiger/VTigerContact.class.php</filename>
     <filename>vtiger/VTigerField.class.php</filename>
+    <filename>vtiger/VTigerContact.class.php</filename>
+    <filename>vtiger/VTigerHDeskUser.class.php</filename>
     <filename>vtiger/prototype.js</filename>
   </files>
   <administration>
@@ -43,7 +44,7 @@
 		CREATE TABLE IF NOT EXISTS `#__vtiger_portal_contacts` (
                                 `id` int(11) NOT NULL auto_increment,
                                 `contactid` int(11) default NULL,
-                                `entityid` varchar(36) default NULL,
+                                `entityid` int(11) default NULL,
                                 PRIMARY KEY  (`id`)
                                 ) TYPE=MyISAM AUTO_INCREMENT=3 ;
 	</query>
