@@ -10,24 +10,13 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	echo "You should install bot_vconnection if you want something to happen here ;)";
 	flush();exit();
 }
-
 require_once( $mainframe->getPath( 'front_html' ) );
 
-$username = mosGetParam( $_POST, 'username', '' );
-$password = mosGetParam( $_POST, 'password', '' );
-
-if( isset($username) && isset($password) && $username != "" && $password != "") {
-	if($user->Authenticate($username,$password) == "FALSE") {
-		$task = "";
-		$msg = "fail";
-	} else
-		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets');
-}
-
-if($_SESSION["vt_authenticated"] != 'true')
-	$task="";
-else if (!isset($task) || $task == "") 
-	$task="ListTickets";
+if($my->id) {
+	if(!isset($task) || $task == '')
+		$task = 'ListTickets';
+} else
+	$task = '';
 
 switch($task) {
 	case 'NewTicket':
@@ -41,9 +30,6 @@ switch($task) {
 		} else
 			HTML_helpdesk::newTicket($user);
 	break;
-	case 'MyProfile':
-		HTML_helpdesk::myProfile($user);
-	break;
 	case 'Kbase':
 		HTML_helpdesk::knowledgeBase($user);
 	break;
@@ -55,14 +41,6 @@ switch($task) {
 		$tickets = $user->ListTickets();
 		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
 		HTML_helpdesk::showTicket($user,$ticketid,$tickets);
-	break;
-	case 'LogOut':
-		$user->LogOut();
-		$msg = "Successful Logout";
-		mosRedirect( 'index.php?option=com_helpdesk',$msg);
-	break;
-	case 'ForgotPass':
-		HTML_helpdesk::forgotPass($user);
 	break;
 	case 'ListTickets':
 		$tickets = $user->ListTickets();
@@ -82,9 +60,7 @@ switch($task) {
 		mosRedirect( 'index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg);
 	break;
 	default:
-		HTML_helpdesk::loginUser($user,$msg);
+		echo "Not Authorized";
 	break;
 }
-
-
 ?>
