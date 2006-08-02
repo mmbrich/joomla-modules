@@ -13,35 +13,55 @@
  */
 global $mainframe;
 require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTigerConnection.class.php');
-class VTigerContact {
-	var $conn;
+class VTigerContact extends VtigerConnection {
 	var $data;
-	var $username;
-	var $password;
 	var $id;
+	var $jid;
 	var $customer_name;
 	var $first_name;
 	var $last_name;
 	var $bday;
 	
 
-	function VtigerContact()
+	function VtigerContact($jid='')
 	{
-		$this->conn = new VtigerConnection("contact");
+		$this->conn = $this->VtigerConnection("contact");
+		if($jid != '') {
+			$this->jid=$jid;
+			$this->LoadUser();
+		}
 	}
-	function RegisterUser($firstname,$lastname,$email)
+	private function LoadUser()
+	{
+                global $database;
+                $q = "SELECT entityid FROM #__vtiger_portal_contacts "
+                        ." WHERE #__vtiger_portal_contacts.contactid='".$this->jid."'";
+                $database->setQuery( $q );
+                $this->id = $database->loadResult();
+
+	}
+	function RegisterUser($firstname,$lastname,$email,$password,$jid)
 	{
 		$this->firstname = $firstname;
 		$this->lastname = $lastname;
 
 		$this->data = array(	'firstname'=>$firstname,
 					'lastname'=>$lastname,
-					'email'=>$email
+					'email'=>$email,
+					'password'=>$password
 		);
 
-		$this->conn->setData($this->data);
-                $res = $this->conn->execCommand('create_basic_contact');
+		$this->setData($this->data);
+                $res = $this->execCommand('create_basic_contact');
 		$this->id=$res;
+
+		if($this->id > 0) {
+			global $database;
+			$q = "INSERT INTO #__vtiger_portal_contacts (contactid,entityid) VALUES ('".$jid."','".$this->id."')";
+        		$database->setQuery( $q );
+        		$database->query() or die( $database->stderr() );
+		}
+
 		return $res;
 	}
 	function SetField($fieldid,$value) 
@@ -52,46 +72,8 @@ class VTigerContact {
 			'value'=>$value
 		);
 		
-                $this->conn->setData($this->data);
-                $res = $this->conn->execCommand('set_field');
-	}
-	function Authenticate($username,$password) 
-	{
-		$this->data = array('username' => $username,
-				    'password' => $password);
-		$this->conn->setData($this->data);
-		$this->username = $username;
-		$this->password = $password;
-		$result = $this->conn->execCommand('authenticate_user');
-
-		if($result[0] != "" && isset($result[0]))
-		{
-			$this->id = $result[0];
-			$this->customer_name = $result[1];
-
-        		$this->data = Array('id' => "$result[0]",'flag'=>"login");
-			$this->conn->setData($this->data);
-			$this->conn->execCommand('update_login_details');
-
-			$_SESSION["vt_authenticated"]="true";
-			$_SESSION["vt_id"] = $result[0];
-			$_SESSION["vt_user_name"] = $result[1];
-			$_SESSION["vt_user_pass"] = $result[2];
-			$_SESSION["vt_last_login_time"] = $result[3];
-			$_SESSION["vt_support_start_date"] = $result[4];
-			$_SESSION["vt_support_end_date"] = $result[5];
-
-			return $result[0];
-		} else
-			return "FALSE";
-	}
-	function LogOut()
-	{
-		$_SESSION["vt_authenticated"]="false";
-		unset($_SESSION["vt_authenticated"]);
-		unset($_SESSION["vt_user_name"]);
-		unset($_SESSION["vt_id"]);
-		session_destroy();
+                $this->setData($this->data);
+                $res = $this->execCommand('set_field');
 	}
 	function ChangePassword($password,$newpasswd)
 	{
@@ -100,15 +82,17 @@ class VTigerContact {
         		$this->data = array('id'=>"$this->id",
 				'username'=>$_SESSION["vt_user_name"],
 				'password'=>$newpasswd);
-			$this->conn->setData($this->data);
-                	$res = $this->conn->execCommand('change_password');
+			$this->setData($this->data);
+                	$res = $this->execCommand('change_password');
 		} else
 			return 'error';
 	}
 	function ForgotPassword($email)
 	{
-		$this->conn->setData(array('email'=>"$email"));
-        	$this->conn->execCommand('send_mail_for_password');
+		$this->conn = $this->VtigerConnection("customerportal");
+		$this->setData(array('email'=>"$email"));
+        	$this->execCommand('send_mail_for_password');
+		$this->conn = $this->VtigerConnection("contact");
 		return;
 	}
 }

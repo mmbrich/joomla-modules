@@ -16,6 +16,20 @@
 defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.' );
 
 class HTML_vtigerregistration {
+	function lostPassword() {
+		?>
+		<br /><br />
+		<center>
+		<form method="POST">
+		<table border=0 width="65%" align="center">
+		<tr><td> Email Address:</td><td><input type='text' name='email' style='border:solid 1px gray' size='40'></td></tr>
+		<tr><td></td><td><input type='submit' class='button' name='send_pass' value=' Send Password '></td></tr>
+		<input type="hidden" name="task" value="sendPassword" />
+		</table>
+		</form>
+		</center>
+	<?
+	}
         function register($fields=array(),$mainframe) {
         ?>
 	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site');?>/components/<?php echo _MYNAMEIS;?>/vtiger/prototype.js" type="text/javascript"></script>
