@@ -4,15 +4,15 @@ defined('_VALID_MOS') or die('Restricted access');
 
 #check if the bot exist
 if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConnection.class.php')) {
-	require_once('components/com_helpdesk/vtiger/VTigerHDeskUser.class.php');
-	$user = new VtigerHDeskUser();
+	require_once('components/com_vtigerregistration/vtiger/VTigerHDeskUser.class.php');
+	$user = new VtigerHDeskUser($my->id);
 } else {
 	echo "You should install bot_vconnection if you want something to happen here ;)";
 	flush();exit();
 }
 require_once( $mainframe->getPath( 'front_html' ) );
 
-if($my->id) {
+if($my->id && $user->IsAllowed($my->id)) {
 	if(!isset($task) || $task == '')
 		$task = 'ListTickets';
 } else
@@ -27,6 +27,8 @@ switch($task) {
 			$severity = mosGetParam( $_POST, 'severity', '' );
 			$cat= mosGetParam( $_POST, 'category', '' );
 			$user->CreateTicket($title,$desc,$prio,$severity,$cat);
+			$msg = "Successfully Created Ticket";
+			mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets',$msg);
 		} else
 			HTML_helpdesk::newTicket($user);
 	break;
