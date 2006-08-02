@@ -19,12 +19,22 @@ require_once( $mainframe->getPath( 'front_html' ) );
 define('_MYNAMEIS', 'com_vtigerregistration');
 $basePath = $mainframe->getCfg('absolute_path') . "/components/" . _MYNAMEIS . "/";
 
+
 switch($task) {
 	case 'saveVtigerRegistration';
 		saveRegistration();
 	break;
 	case 'activate':
 		activate(mosGetParam( $_REQUEST, 'activation', '' ));
+	break;
+	case 'lostPassword':
+                HTML_vtigerregistration::lostPassword();
+	break;
+	case 'sendPassword':
+		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
+		$vtuser = new VtigerContact();
+		$vtuser->ForgotPassword(mosGetParam( $_POST, 'email', '' ));
+		echo "Your password has been sent to ".mosGetParam( $_POST, 'email', '' );
 	break;
         case 'register':
                 $fields = get_fields();
@@ -77,7 +87,7 @@ function activate( $option ) {
         }
 }
 function get_fields() {
-	global $database,$basePath;
+	global $database,$basePath,$mainframe;
         $query = "SELECT * FROM "
                         ." #__vtiger_registration_fields "
 			." ORDER BY #__vtiger_registration_fields.order"
@@ -85,7 +95,7 @@ function get_fields() {
         $database->setQuery( $query );
         $current_rows = $database->loadObjectList();
 
-	require_once($basePath."/vtiger/VTigerField.class.php");
+	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
 	$vtigerField = new VtigerField();
 	for($i=0;$i<count($current_rows);$i++) {
 		if($current_rows[$i]->type == "33" || $current_rows[$i]->type == "15") {
@@ -141,22 +151,21 @@ function saveRegistration() {
         }
 
         $row->checkin();
-	require_once($basePath."/vtiger/VTigerContact.class.php");
+	global $mainframe;
+	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
 	$vtigerContact = new VtigerContact();
 	$userid = $vtigerContact->RegisterUser(
 		$row->email,
 		mosGetParam( $_POST, 'firstname', '' ),
-		mosGetParam( $_POST, 'lastname', '' )
+		mosGetParam( $_POST, 'lastname', '' ),
+		$pwd,
+		$row->id
 	);
 
 	if($userid <= 0) {
                 echo "<script> alert('CRM REGISTRATION ERROR'); window.history.go(-1); </script>\n";
                 exit();
 	}
-
-	$q = "INSERT INTO #__vtiger_portal_contacts (contactid,entityid) VALUES ('".$row->id."','".$userid."')";
-        $database->setQuery( $q );
-	$database->query() or die( $database->stderr() );
 
 	$q = "SELECT id,field FROM #__vtiger_registration_fields "
 		." WHERE #__vtiger_registration_fields.show='1'

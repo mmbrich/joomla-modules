@@ -13,8 +13,7 @@
  */
 global $mainframe;
 require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTigerConnection.class.php');
-class VTigerField {
-	var $conn;
+class VTigerField extends VtigerConnection {
 	var $data;
 	var $username;
 	var $password;
@@ -27,21 +26,21 @@ class VTigerField {
 
 	function VtigerField()
 	{
-		$this->conn = new VtigerConnection("fields");
+                $this->conn = $this->VtigerConnection("fields");
 	}
 	function listAllowedFields($module_name) {
                 $this->data = array('module_name' => $module_name);
-                $this->conn->setData($this->data);
+                $this->setData($this->data);
 
-		$result = $this->conn->execCommand('get_portal_register_fields');
+		$result = $this->execCommand('get_portal_register_fields');
 		return $result;
 	}
         function GetPicklistValues($fieldid)
         {
                 $this->data = array('fieldid' => $fieldid);
-                $this->conn->setData($this->data);
+                $this->setData($this->data);
 
-		$result = $this->conn->execCommand('get_picklist_values');
+		$result = $this->execCommand('get_picklist_values');
 		return $result;
         }
 }

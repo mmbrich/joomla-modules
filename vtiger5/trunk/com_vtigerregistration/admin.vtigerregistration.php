@@ -27,9 +27,8 @@ if($mosConfig_allowUserRegistration != "1") {
 
 require_once( $mainframe->getPath( 'admin_html' ) );
 define('_MYNAMEIS', 'com_vtigerregistration');
-
-
 $basePath = $mainframe->getCfg('absolute_path') . "/components/" . _MYNAMEIS . "/";
+
 
 switch ($act) {
         case "about":
