@@ -40,6 +40,12 @@ class VTigerContact extends VtigerConnection {
                 $this->id = $database->loadResult();
 
 	}
+        function IsAllowedHelpdesk()
+        {
+                $this->data = array('contactid'=> $this->id);
+                $this->setData($this->data);
+                return $this->execCommand('is_allowed_helpdesk');
+        }
 	function RegisterUser($firstname,$lastname,$email,$password,$jid)
 	{
 		$this->firstname = $firstname;
@@ -63,6 +69,15 @@ class VTigerContact extends VtigerConnection {
 		}
 
 		return $res;
+	}
+	function CheckAndCreate($email) 
+	{
+		$this->data = array(
+			'email'=>$email
+		);
+                $this->setData($this->data);
+                $this->id = $this->execCommand('check_and_create');
+		return $this->id;
 	}
 	function SetField($fieldid,$value) 
 	{

@@ -37,7 +37,7 @@ defined('_VALID_MOS') or die('Restricted access');
         }
 ?>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+<table border="0" cellspacing="0" cellpadding="0">
 
 <tr>
 <td>

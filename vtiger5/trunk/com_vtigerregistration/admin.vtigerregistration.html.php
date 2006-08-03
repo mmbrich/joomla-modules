@@ -90,7 +90,7 @@ class HTML_vtigerregistration {
                 <table class="adminform">
 		<tr>
 			<td><input type="button" name="syncContacts" value="Syncronize" onclick="window.location.href = window.location.href+'&task=syncContacts';"></td>
-			<td>Syncronize Vtiger Contacts and Joomla Users (run after deleting users from Joomla.)</td>
+			<td>Syncronize Vtiger Contacts and Joomla Users.  This will first remove any stale relationships (from deleted joomla users) and then it will create CRM contacts for any users that are missing in the CRM.</td>
 		</tr>
 		</table>
 		<br>

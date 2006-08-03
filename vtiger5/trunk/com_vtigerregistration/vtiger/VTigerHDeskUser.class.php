@@ -30,12 +30,10 @@ class VTigerHDeskUser extends VtigerContact {
 		$database->setQuery( $q );
         	$this->id = $database->loadResult();
 	}
-	function IsAllowed()
-	{
-		$this->data = array('contactid'=> $this->id);
-		$this->setData($this->data);
-		return $this->execCommand('is_allowed_helpdesk');
-	}
+        function IsAllowed()
+        {
+		return $this->IsAllowedHelpdesk();
+        }
 	function GetTicketComments($ticketid)
 	{
 		$this->data = array('ticketid'=> $ticketid);
