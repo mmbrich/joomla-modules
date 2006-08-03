@@ -64,6 +64,24 @@ $server->register(
         array('return'=>'xsd:string'),
         $NAMESPACE);
 
+$server->register(
+        'check_and_create',
+        array('email'=>'xsd:string'),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function check_and_create($email,$lastname,$password) {
+	global $adb;
+
+	$q = "SELECT contactid FROM vtiger_contactdetails WHERE email = '".$email."'";
+	$rs = $adb->query($q);
+
+	if($adb->num_rows($rs) <= 0) {
+		return 0;
+	} else
+		return $adb->query_result($rs,'0','contactid');
+}
+
 function create_basic_contact($email,$firstname,$lastname,$password)
 {
         global $adb;
