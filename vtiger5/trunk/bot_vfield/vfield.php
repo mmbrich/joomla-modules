@@ -38,7 +38,7 @@ global $mosConfig_absolute_path;
 }
 
 function botvfield_replacer ( &$matches ) {
-	global $mosConfig_absolute_path,$my;
+	global $mosConfig_absolute_path,$my, $_MAMBOTS;
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerField.class.php");
 	$vField = new VtigerField();
 
