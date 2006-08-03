@@ -38,6 +38,22 @@ $server->wsdl->addComplexType(
              )
 );
 
+$server->wsdl->addComplexType(
+        'field_type_array',
+        'complexType',
+        'array',
+        '',
+        array(
+                'fieldid' => array('name'=>'fieldid','type'=>'xsd:string'),
+                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
+                'uitype' => array('name'=>'uitype','type'=>'xsd:string'),
+                'fieldname' => array('name'=>'fieldname','type'=>'xsd:string'),
+                'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string'),
+                'maximumlength' => array('name'=>'fieldlabel','type'=>'xsd:string'),
+                'value' => array('name'=>'fieldlabel','type'=>'xsd:string')
+        )
+);
+
 $server->register(
 	'get_portal_register_fields',
 	array('module_name'=>'xsd:string'),
@@ -52,6 +68,54 @@ $server->register(
 	$NAMESPACE
 );
 
+$server->register(
+	'get_field_details',
+	array(
+		'module'=>'xsd:string',
+		'columnname'=>'xsd:string',
+		'entityid'=>'xsd:string'
+	),
+	array(
+		'return'=>'tns:field_type_array'
+	),
+	$NAMESPACE
+);
+
+function get_field_details($module,$columnname,$entityid) {
+	global $adb;
+	$adb->println("Enter into the function get_field_details($module,$columnname)");
+
+	$tabid=getTabid($module);
+
+	$q = "SELECT * FROM vtiger_field "
+		." WHERE columnname='".$columnname."' "
+		." AND tabid='".$tabid."'";
+	$rs = $adb->query($q);
+
+        $field[0]["fieldid"] = $adb->query_result($rs,'0','fieldid');
+        $field[0]["columnname"] = $adb->query_result($rs,'0','columnname');
+        $field[0]["uitype"] = $adb->query_result($rs,'0','uitype');
+        $field[0]["fieldname"] = $adb->query_result($rs,'0','fieldname');
+        $field[0]["fieldlabel"] = $adb->query_result($rs,'0','fieldlabel');
+        $field[0]["maximumlength"] = $adb->query_result($rs,'0','maximumlength');
+	if($entityid != "")
+        	$field[0]["value"] = get_field_values($columnname,$adb->query_result($rs,'0','tablename'),$entityid);
+	else
+        	$field[0]["value"] = "";
+
+	return $field;
+}
+
+function get_field_values($columnname,$tablename,$entityid) {
+	global $adb;
+
+	$q = "SELECT ".$columnname." FROM ".$tablename." "
+		." INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid=".$entityid;
+	$rs = $adb->query($q);
+
+	return $adb->query_result($rs,'0',$columnname);
+}
+
 /**	function to list available fields
  *	@param string $emailid - email address to unsubscribe
  *	return message about the success or failure status about the unsubscribe
@@ -59,7 +123,7 @@ $server->register(
 function get_portal_register_fields($module_name)
 {
 	global $adb;
-	$adb->println("Enter into the function unsubscribe_email($emailid)");
+	$adb->println("Enter into the function get_portal_register_fields($module_name)");
 	
 	$rs = $adb->query("SELECT fieldid as id,columnname as field,fieldlabel as name,uitype as type FROM vtiger_field WHERE tabid='".getTabid($module_name)."' "
 			." AND presence='0' "
@@ -75,7 +139,7 @@ function get_portal_register_fields($module_name)
 		$row[] = $tmp;
 	}
 
-	$adb->println("Exit from the function ");
+	$adb->println("Exit from the function get_portal_register_fields");
 	return $row;
 }
 
