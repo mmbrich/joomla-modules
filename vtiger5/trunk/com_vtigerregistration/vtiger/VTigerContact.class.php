@@ -18,9 +18,7 @@ class VTigerContact extends VtigerConnection {
 	var $id;
 	var $jid;
 	var $customer_name;
-	var $first_name;
-	var $last_name;
-	var $bday;
+	var $username;
 	
 
 	function VtigerContact($jid='')
@@ -34,11 +32,16 @@ class VTigerContact extends VtigerConnection {
 	private function LoadUser()
 	{
                 global $database;
-                $q = "SELECT entityid FROM #__vtiger_portal_contacts "
+                $q = "SELECT * FROM #__vtiger_portal_contacts "
+			." INNER JOIN #__users ON #__users.id = #__vtiger_portal_contacts.contactid "
                         ." WHERE #__vtiger_portal_contacts.contactid='".$this->jid."'";
                 $database->setQuery( $q );
-                $this->id = $database->loadResult();
+		$res = $database->loadObjectList();
 
+                $this->id = $res[0]->entityid;
+                $this->jid = $res[0]->id;
+                $this->customer_name = $res[0]->name;
+                $this->username = $res[0]->username;
 	}
         function IsAllowedHelpdesk()
         {
