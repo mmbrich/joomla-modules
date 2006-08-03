@@ -49,8 +49,8 @@ switch($task) {
         break;
         case 'syncContacts':
                 syncContacts( $option );
-                $msg = "Syncronization Successful";
-                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+                //$msg = "Syncronization Successful";
+                //mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
         break;
         case 'cancel':
                 cancel( $option );
@@ -61,13 +61,44 @@ function about() {
         HTML_vtigerregistration::about();
 }
 function syncContacts($option) {
+	cleanRelationships($option);
+	syncVtiger($option);
+}
+function syncVtiger($option) {
+	global $database,$basePath;
+
+	// get the current list of users that aren't mapped to the relationships table
+	$q = "SELECT #__users.id,#__users.email, #__users.name, #__users.username "
+		." FROM #__users "
+		." LEFT JOIN #__vtiger_portal_contacts "
+		." ON #__vtiger_portal_contacts.contactid=#__users.id "
+		." WHERE #__vtiger_portal_contacts.contactid IS NULL";
+        $database->setQuery($q);
+	$syncable_users = $database->loadObjectList();
+
+	require_once( $basePath . "vtiger/VTigerContact.class.php" );
+	$vtContact = new VtigerContact();
+
+	foreach($syncable_users as $user) {
+		$entityid = $vtContact->CheckAndCreate($user->email);
+		// if there is no entity in the CRM, lets create one.
+		if($entityid == 0) {
+			$entityid = $vtContact->RegisterUser($user->email,$user->username,$user->name,'NA',$user->id);
+		}
+		echo $entityid." == ".$user->email."<br>";
+	}
+
+}
+function cleanRelationships($option) {
 	global $database;
 
+	// get the relationship list
 	$q = "SELECT #__vtiger_portal_contacts.contactid FROM "
 		." #__vtiger_portal_contacts";
         $database->setQuery($q);
 	$current_mapping = $database->loadObjectList();
 
+	// loop and clean any that have been deleted from joomla
 	foreach($current_mapping as $map) {
 		$q = "SELECT count(*) FROM #__users where #__users.id='".$map->contactid."'";
 		$database->setQuery($q);
@@ -79,6 +110,7 @@ function syncContacts($option) {
         		$database->query() or die( $database->stderr() );
 		}
 	}
+
 }
 function settings($option) {
         global $database,$basePath;
