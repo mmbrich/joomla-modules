@@ -56,6 +56,43 @@ $server->wsdl->addComplexType(
 );
 
 $server->wsdl->addComplexType(
+        'multi_field_return_array',
+        'complexType',
+        'array',
+        '',
+        array(
+                'fieldid' => array('name'=>'fieldid','type'=>'xsd:string'),
+                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
+                'uitype' => array('name'=>'uitype','type'=>'xsd:string'),
+                'fieldname' => array('name'=>'fieldname','type'=>'xsd:string'),
+                'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string'),
+                'maximumlength' => array('name'=>'maximumlength','type'=>'xsd:string'),
+                'value' => array('name'=>'value','type'=>'xsd:string'),
+                'values' => array('name'=>'values','type'=>'xsd:string'),
+                'module' => array('name'=>'module','type'=>'xsd:string'),
+                'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
+                'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
+                'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
+                'picnum' => array('name'=>'picnum','type'=>'xsd:string')
+        )
+);
+
+$server->wsdl->addComplexType(
+        'multi_field_type_array',
+        'complexType',
+        'array',
+        '',
+        array(
+                'module' => array('name'=>'module','type'=>'xsd:string'),
+                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
+                'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
+                'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
+                'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
+                'picnum' => array('name'=>'picnum','type'=>'xsd:string')
+        )
+);
+
+$server->wsdl->addComplexType(
         'save_field_type',
         'complexType',
         'array',
@@ -89,6 +126,17 @@ $server->register(
 	),
 	array(
 		'return'=>'tns:field_type_array'
+	),
+	$NAMESPACE
+);
+
+$server->register(
+	'get_multiple_field_details',
+	array(
+		'fields'=>'tns:multi_field_type_array'
+	),
+	array(
+		'return'=>'tns:multi_field_return_array'
 	),
 	$NAMESPACE
 );
@@ -170,45 +218,94 @@ function save_form_fields($entityid,$module,$fields) {
 	return $focus->id;
 }
 
-function get_field_details($module,$columnname,$entityid) {
+function get_multiple_field_details($fields) {
 	global $adb;
-	$adb->println("Enter into the function get_field_details($module,$columnname)");
+	$adb->println("Enter into the function get_multi_field_details($fields)");
 
-	$tabid=getTabid($module);
-	$q = "SELECT fieldid,columnname,uitype,fieldname,fieldlabel,maximumlength FROM vtiger_field ";
-	if($columnname != "") {
-		$q .= " WHERE columnname='".$columnname."' ";
-		$q .= " AND tabid='".$tabid."'";
-	} else {
-		$q .= " WHERE tabid='".$tabid."'";
-	}
-	$rs = $adb->query($q);
 
-	for($i=0,$num=$adb->num_rows($rs);$i<$num;$i++) {
-        	$field[$i]["fieldid"] = $adb->query_result($rs,$i,'fieldid');
-        	$field[$i]["columnname"] = $adb->query_result($rs,$i,'columnname');
-        	$field[$i]["uitype"] = $adb->query_result($rs,$i,'uitype');
-        	$field[$i]["fieldname"] = $adb->query_result($rs,$i,'fieldname');
-        	$field[$i]["fieldlabel"] = $adb->query_result($rs,$i,'fieldlabel');
-        	$field[$i]["maximumlength"] = $adb->query_result($rs,$i,'maximumlength');
+	foreach($fields as $num=>$field) {
+		$tabid=getTabid($field["module"]);
+		$q = "SELECT fieldid,columnname,uitype,fieldname,fieldlabel,maximumlength FROM vtiger_field ";
+		if($field["columnname"] != "") {
+			$q .= " WHERE columnname='".$field["columnname"]."' ";
+			$q .= " AND tabid='".$tabid."'";
+		} else {
+			$q .= " WHERE tabid='".$tabid."'";
+		}
+		$rs = $adb->query($q);
+
+        	$tfield[$num]["fieldid"] = $adb->query_result($rs,0,'fieldid');
+        	$tfield[$num]["columnname"] = $field["columnname"];
+        	$tfield[$num]["uitype"] = $adb->query_result($rs,0,'uitype');
+        	$tfield[$num]["fieldname"] = $adb->query_result($rs,0,'fieldname');
+        	$tfield[$num]["fieldlabel"] = $adb->query_result($rs,0,'fieldlabel');
+        	$tfield[$num]["maximumlength"] = $adb->query_result($rs,0,'maximumlength');
+
+		// Extra variables passed in
+        	$tfield[$num]["module"] = $field["module"];
+        	$tfield[$num]["viewtype"] = $field["viewtype"];
+        	$tfield[$num]["showlabel"] = $field["showlabel"];
+        	$tfield[$num]["entityid"] = $field["entityid"];
+        	$tfield[$num]["picnum"] = $field["picnum"];
 
 		// Populate the picklist values and field values where needed
-		if($entityid != "") {
-			if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33") {
-        			$field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
-        			$field[$i]["value"] = get_field_values($columnname,$entityid,$module);
+		if($field["entityid"] != "") {
+			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33") {
+        			$tfield[$num]["values"] = get_picklist_values($tfield[$num]["fieldid"]);
+        			$tfield[$num]["value"] = get_field_values($field["columnname"],$field["entityid"],$field["module"]);
 			} else {
-        			$field[$i]["value"] = get_field_values($columnname,$entityid,$module);
-        			$field[$i]["values"] = "";
+        			$tfield[$num]["value"] = get_field_values($field["columnname"],$field["entityid"],$field["module"]);
+        			$tfield[$num]["values"] = "";
 			}
 		} else {
-        		$field[$i]["value"] = "";
-        		$field[$i]["values"] = "";
-			if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33")
-        			$field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
+        		$tfield[$num]["value"] = "";
+        		$tfield[$num]["values"] = "";
+			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33")
+        			$tfield[$num]["values"] = get_picklist_values($tfield[$num]["fieldid"]);
 		}
 	}
-	return $field;
+	return $tfield;
+}
+
+function get_field_details($module,$columnname,$entityid) {
+        global $adb;
+        $adb->println("Enter into the function get_field_details($module,$columnname)");
+
+        $tabid=getTabid($module);
+        $q = "SELECT fieldid,columnname,uitype,fieldname,fieldlabel,maximumlength FROM vtiger_field ";
+        if($columnname != "") {
+                $q .= " WHERE columnname='".$columnname."' ";
+                $q .= " AND tabid='".$tabid."'";
+        } else {
+                $q .= " WHERE tabid='".$tabid."'";
+        }
+        $rs = $adb->query($q);
+
+        for($i=0,$num=$adb->num_rows($rs);$i<$num;$i++) {
+                $field[$i]["fieldid"] = $adb->query_result($rs,$i,'fieldid');
+                $field[$i]["columnname"] = $adb->query_result($rs,$i,'columnname');
+                $field[$i]["uitype"] = $adb->query_result($rs,$i,'uitype');
+                $field[$i]["fieldname"] = $adb->query_result($rs,$i,'fieldname');
+                $field[$i]["fieldlabel"] = $adb->query_result($rs,$i,'fieldlabel');
+                $field[$i]["maximumlength"] = $adb->query_result($rs,$i,'maximumlength');
+
+                // Populate the picklist values and field values where needed
+                if($entityid != "") {
+                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33") {
+                                $field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
+                                $field[$i]["value"] = get_field_values($columnname,$entityid,$module);
+                        } else {
+                                $field[$i]["value"] = get_field_values($columnname,$entityid,$module);
+                                $field[$i]["values"] = "";
+                        }
+                } else {
+                        $field[$i]["value"] = "";
+                        $field[$i]["values"] = "";
+                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33")
+                                $field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
+                }
+        }
+        return $field;
 }
 
 function get_field_values($columnname,$entityid,$module) {
@@ -286,7 +383,7 @@ function get_picklist_values($fieldid) {
 	$fieldname = $adb->query_result($rs,'0','fieldname');
 	$rs2 = $adb->query("SELECT * FROM vtiger_".$fieldname." WHERE presence='1' ORDER BY sortorderid");
 
-	$values='';
+	$values="";
 	while($row = $adb->fetch_array($rs2)) {
 		$values .= $row[$fieldname].",";
 	}
