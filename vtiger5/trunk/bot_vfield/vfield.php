@@ -116,10 +116,9 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 // Handle special commands and actions
 function botvfield_replacer ( &$matches ) {
 	global $mosConfig_absolute_path, $my, $mosConfig_live_site,$vForm;
+	$thisParams = explode("|",$matches[2]);
 
-	$thisParams = explode("|",$matches[1]);
-
-	switch($thisParams[0]) {
+	switch($matches[1]) {
 		// Start of a form
 		case 'VFormStart':
 			if(sizeof($thisParams) < 1) {
