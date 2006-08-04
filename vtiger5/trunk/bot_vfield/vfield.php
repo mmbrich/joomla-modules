@@ -22,22 +22,16 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botvfield' );
 */
 function botvfield( $published, &$row, &$params, $page=0 ) {
 
-	global $mosConfig_absolute_path;
-	// define the regular expression for the bot
-	$regex = "#{vfield}(.*?){/vfield}#s";
-
-	if (!$published) {
-		$row->text = preg_replace( $regex, '', $row->text );
-		return;
-	}
+	global $mosConfig_absolute_path,$fields,$tfields,$vForm;
 	$msg = '';
+
+	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
+	$vForm = new VtigerForm();
 
 	if(mosGetParam( $_POST, 'vt_module', '') != "") {
 		$module = mosGetParam( $_POST, 'vt_module', '');
 		$action = mosGetParam( $_POST, 'vt_action', '');
 		$entityid = mosGetParam( $_POST, 'vt_entityid', '');
-		require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
-		$vForm = new VtigerForm();
 
 		switch($action) {
 			case 'BuyProduct':
@@ -81,8 +75,16 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 			mosRedirect('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&msg='.$msg);
 	}
 
-	// perform the replacement
-	$row->text = $msg.preg_replace_callback( $regex, 'botvfield_replacer', $row->text );
+	// Special Commands
+	$regex = "#{vfield}(Action|VFormStart|VFormEnd)(.*?){/vfield}#s";
+
+	if (!$published) {
+		$row->text = preg_replace( $regex, '', $row->text );
+		return;
+	}
+
+	// perform the replacement of special commands
+	$row->text = preg_replace_callback( $regex, 'botvfield_replacer', $row->text );
 
 	// Put in javascript
 	?>
@@ -95,23 +97,34 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
                 }
         	</script>
 	<?
+
+	// define the regular expression for the rest of the fields
+	$regex = "#{vfield}(.*?){/vfield}#s";
+
+	// Create fields array
+	preg_replace_callback( $regex, 'field_counter', $row->text );
+
+	// Populate the needed info from the fields array
+	$tfields = $vForm->GetMultipleFieldDetails($fields);
+
+	// Do final replacement of module fields
+	$row->text = preg_replace_callback( $regex, 'vfield_replacer', $row->text );
+
 	return true;
 }
 
+// Handle special commands and actions
 function botvfield_replacer ( &$matches ) {
-	global $mosConfig_absolute_path, $my;
-	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
-	$vForm = new VtigerForm();
+	global $mosConfig_absolute_path, $my, $mosConfig_live_site,$vForm;
 
-	global $mosConfig_live_site;
 	$thisParams = explode("|",$matches[1]);
 
 	switch($thisParams[0]) {
 		// Start of a form
 		case 'VFormStart':
-			if(sizeof($thisParams) != 2) {
+			if(sizeof($thisParams) < 1) {
 				$ret =  "Not enough parameters for VFormStart! You must have at least 3 parameters separated by "
-						." \"|\" : e.g. {vfield}VFormStart|Module{/vfield}";
+						." \"|\" : e.g. {vfield}VFormStart|Module{/vfield} ".sizeof($thisParams);
 				return $ret;
 			}
 
@@ -153,7 +166,7 @@ function botvfield_replacer ( &$matches ) {
 			}
 			// If the amount is blank then we need to get it from the qtyindemand
 			if($thisParams[2] == "" || !isset($thisParams[2])) {
-				$tval = $vForm->GetFieldDetails(
+				$tval = $vForm->GetSingleFieldDetails(
 					"Products",
 					"qtyindemand",
 					mosGetParam( $_REQUEST, 'productid', '' )
@@ -183,42 +196,72 @@ function botvfield_replacer ( &$matches ) {
 				break;
 			}
 		break;
+	}
+}
 
-		// regular vtiger fields
-		default:
-			if (sizeof($thisParams) < 3) {
-				$ret =  "Not enough parameters for vfield! You must have at least 3 parameters separated by "
-						." \"|\" : e.g. {vfield}Module|columnname|(edit|detail)|showlabel{/vfield}";
-				return $ret;
-			}
-			$module = $thisParams[0];
-			$columnname = $thisParams[1];
-			$viewtype = $thisParams[2];
+// Create needed array to populate all records at once
+function field_counter( &$matches ) {
+	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site;
+	$thisParams = explode("|",$matches[1]);
 
-			// Lets see if we can get the info we need from the joomla user
-			if($my->id != "" && $my->id != 0 && $my->id && ($module == "Contacts" || $module == "Accounts")) {
-				require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerContact.class.php");
-				$vtContact = new VtigerContact($my->id);
-				$entityid = $vtContact->id;
-			} else if($module == "Products") {
-				$entityid = mosGetParam( $_REQUEST, 'productid', '' );
-			} else {
-				$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
-			}
+	if (sizeof($thisParams) < 3) {
+		$ret =  "Not enough parameters for vfield! You must have at least 3 parameters separated by "
+				." \"|\" : e.g. {vfield}Module|columnname|(edit|detail)|showlabel{/vfield}";
+		return $ret;
+	}
+	$module = $thisParams[0];
+	$columnname = $thisParams[1];
+	$viewtype = $thisParams[2];
 
-			if($thisParams[3] == "showlabel")
-				$showlabel=true;
+	// Lets see if we can get the info we need from the joomla user
+	if($my->id != "" && $my->id != 0 && $my->id && ($module == "Contacts" || $module == "Accounts")) {
+		require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerContact.class.php");
+		$vtContact = new VtigerContact($my->id);
+		$entityid = $vtContact->id;
+	} else if($module == "Products") {
+		$entityid = mosGetParam( $_REQUEST, 'productid', '' );
+	} else {
+		$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
+	}
+
+	if($thisParams[3] == "showlabel")
+		$showlabel=true;
+	else
+		$showlabel=false;
+
+	if($thisParams[4] != "" && isset($thisParams[4]))
+		$picnum=$thisParams[4];
+	else
+		$picnum='all';
+
+	$num = count($fields);
+	$fields[$num] = array();
+	$fields[$num]["module"] = $module;
+	$fields[$num]["columnname"] = $columnname;
+	$fields[$num]["viewtype"] = $viewtype;
+	$fields[$num]["showlabel"] = $showlabel;
+	$fields[$num]["entityid"] = $entityid;
+	$fields[$num]["picnum"] = $picnum;
+}
+
+// Replace fields with populated field array
+function vfield_replacer( &$matches ) {
+	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site,$tfields,$vForm;
+
+	$thisParams = explode("|",$matches[1]);
+
+	foreach($tfields as $num=>$field) {
+                if($field["module"] == $thisParams[0] 
+			&& $field["columnname"] == $thisParams[1] 
+			&& $field["viewtype"] == $thisParams[2]
+			&& $field["showlabel"] == $thisParams[3]) {
+			//print_r($field);
+			//echo "<br><br>";
+			if($field["viewtype"] == "edit")
+                        	return $vForm->_buildEditField($field,$field["showlabel"]);
 			else
-				$showlabel=false;
-
-			if($thisParams[4] != "" && isset($thisParams[4]))
-				$picnum=$thisParams[4];
-			else
-				$picnum='all';
-
-			$tmp =  $vForm->CreateFieldHTML($module,$columnname,$viewtype,$showlabel,$entityid,$picnum);
-			return $tmp;
-		break;
+                       		return $vForm->_buildDetailField($field,$field["showlabel"],$field["picnum"]);
+		}
 	}
 }
 ?>
