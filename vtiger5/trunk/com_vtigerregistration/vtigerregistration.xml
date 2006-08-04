@@ -12,6 +12,7 @@
     <filename>vtigerregistration.php</filename>
     <filename>vtigerregistration.html.php</filename>
     <filename>vtiger/VTigerField.class.php</filename>
+    <filename>vtiger/VTigerForm.class.php</filename>
     <filename>vtiger/VTigerContact.class.php</filename>
     <filename>vtiger/VTigerHDeskUser.class.php</filename>
     <filename>vtiger/prototype.js</filename>
