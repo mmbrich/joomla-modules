@@ -15,15 +15,9 @@ global $mainframe;
 require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTigerConnection.class.php');
 class VTigerField extends VtigerConnection {
 	var $data;
-	var $username;
-	var $password;
 	var $id;
-	var $customer_name;
-	var $first_name;
-	var $last_name;
-	var $bday;
+	var $field_cache = array();
 	
-
 	function VtigerField()
 	{
                 $this->conn = $this->VtigerConnection("fields");
@@ -35,18 +29,29 @@ class VTigerField extends VtigerConnection {
 		$result = $this->execCommand('get_portal_register_fields');
 		return $result;
 	}
-	function GetFieldDetails($module,$columnname,$entityid)
+	function GetSingleFieldDetails($module,$columnname,$entityid)
 	{
                 $this->data = array(	'module'=>$module,
 					'columnname'=>$columnname,
 					'entityid'=>$entityid
 		);
                 $this->setData($this->data);
-		return $this->execCommand('get_field_details');
+		$field = $this->execCommand('get_field_details');
+
+		$this->field_cache[$module][$columnname] = $field[0];
+		return $field;
+	}
+	function GetMultipleFieldDetails($fields) 
+	{
+                $this->data = array( 'fields'=>$fields );
+                $this->setData($this->data);
+		$fielddetails = $this->execCommand('get_multiple_field_details');
+
+		return $fielddetails;
 	}
 	function CreateFieldHTML($module,$columnname,$viewtype,$showlabel=true,$entityid='',$picnum='all')
 	{
-		$tmp = $this->GetFieldDetails($module,$columnname,$entityid);
+		$tmp = $this->GetSingleFieldDetails($module,$columnname,$entityid);
 		$field = $tmp[0];
 
 		if($viewtype == "edit")
