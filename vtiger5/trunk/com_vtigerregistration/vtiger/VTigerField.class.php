@@ -96,9 +96,7 @@ class VTigerField extends VtigerConnection {
                                 $out = '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
 				$j=0;
                                 foreach($values as $key=>$value) {
-					if($value != "" && ($field["value"] == $value))
-                                		$out .= '<option value="'.$value.'" SELECTED >'.$value.'</option>';
-					else if($j==0 && $field["value"] == "")
+					if($value != "" && $field["value"] == $value)
                                 		$out .= '<option value="'.$value.'" SELECTED >'.$value.'</option>';
 					else if($value != "")
                                 		$out .= '<option value="'.$value.'">'.$value.'</option>';
@@ -108,6 +106,9 @@ class VTigerField extends VtigerConnection {
                         break;
                         case '33': // Multi Picklist
 				$values = explode(",",$field["values"]);
+				$vals = explode(",",$field["value"]);
+
+				$out ='';
                                 $out .= '<select MULTIPLE name="vtiger_'.$field["columnname"].'[]" class="'.$classname.'" >';
                                 foreach($values as $key=>$value) {
 					if(preg_match("/".$value."/",$field["value"]) && $value != "")
