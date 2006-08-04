@@ -44,7 +44,7 @@ class VTigerField extends VtigerConnection {
                 $this->setData($this->data);
 		return $this->execCommand('get_field_details');
 	}
-	function CreateFieldHTML($module,$columnname,$viewtype,$showlabel=true,$entityid='')
+	function CreateFieldHTML($module,$columnname,$viewtype,$showlabel=true,$entityid='',$picnum='all')
 	{
 		$tmp = $this->GetFieldDetails($module,$columnname,$entityid);
 		$field = $tmp[0];
@@ -52,13 +52,15 @@ class VTigerField extends VtigerConnection {
 		if($viewtype == "edit")
 			return $this->_buildEditField($field,$showlabel);
 		else
-			return $this->_buildDetailField($field,$showlabel);
+			return $this->_buildDetailField($field,$showlabel,$picnum);
 	}
 	function _buildEditField($field,$showlabel)
 	{
+        	$classname  = 'inputbox';
+
 		switch($field["uitype"]) {
  			case '55':
-                        case '51':
+                        case '51': // Acount ID
                         case '2':
                         case '5': // Date
                         case '13': // Email
@@ -68,42 +70,50 @@ class VTigerField extends VtigerConnection {
                         case '71': // currency
                         case '17': // URL
                         case '11':
-                        	$out = '<input class="inputbox" name="'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
+                        	$out = '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
                         break;
                         case '21':
                         case '19':
-                        	$out = '<textarea name="'.$field["columnname"].'" value="" class="inputbox" ></textarea>';
+                        	$out = '<textarea name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >'.$field["value"].'</textarea>';
                         break;
                         case '69': // picture
-                                $out = '<input name="'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="inputbox" >';
+
+                                $out = '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
                         break;
                         case '56': // checkbox
-                                $out = '<input name="'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="checkbox" class="inputbox" >';
+				if($field["value"] == "on" || $field["value"] == 1)
+                                	$out = '<input name="vtiger_'.$field["columnname"].'" CHECKED type="checkbox" class="'.$classname.'"  onclick="toggle_cb(this);">';
+				else
+                                	$out = '<input name="vtiger_'.$field["columnname"].'" type="checkbox" class="'.$classname.'">';
                         break;
                         case '15': // Picklist
-				$values = explode(",",$this->GetPicklistValues($field["fieldid"]));
-                                $out = '<select name="'.$field["columnname"].'" class="inputbox" >';
+				$values = explode(",",$field["values"]);
+                                $out = '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
+				$j=0;
                                 foreach($values as $key=>$value) {
-					if($field["value"] == $value)
+					if($value != "" && ($field["value"] == $value))
                                 		$out .= '<option value="'.$value.'" SELECTED >'.$value.'</option>';
-					else
+					else if($j==0 && $field["value"] == "")
+                                		$out .= '<option value="'.$value.'" SELECTED >'.$value.'</option>';
+					else if($value != "")
                                 		$out .= '<option value="'.$value.'">'.$value.'</option>';
-                                }
-                                $out .= '</select>';
+					$j++;
+                               }
+                               $out .= '</select>';
                         break;
                         case '33': // Multi Picklist
-				$values = explode(",",$this->GetPicklistValues($field["fieldid"]));
-                                $out .= '<select MULTIPLE name="'.$field["columnname"].'[]" class="inputbox" >';
+				$values = explode(",",$field["values"]);
+                                $out .= '<select MULTIPLE name="vtiger_'.$field["columnname"].'[]" class="'.$classname.'" >';
                                 foreach($values as $key=>$value) {
 					if(preg_match("/".$value."/",$field["value"]) && $value != "")
                                 		$out .= '<option value="'.$value.'" SELECTED >'.$value.'</option>';
-					else
+					else if($value != "")
                                 		$out .= '<option value="'.$value.'">'.$value.'</option>';
                                 }
                                 $out .= '</select>';
                         break;
                         default:
-                                $out = $field->uitype;
+                                $out = "";
                         break;
 
 		}
@@ -112,11 +122,11 @@ class VTigerField extends VtigerConnection {
 		else
 			return $out;
 	}
-	function _buildDetailField($field,$showlabel)
+	function _buildDetailField($field,$showlabel,$picnum)
 	{
 		switch($field["uitype"]) {
  			case '55':
-                        case '51':
+                        case '51': // ID
                         case '2':
                         case '5': // Date
                         case '13': // Email
@@ -132,16 +142,27 @@ class VTigerField extends VtigerConnection {
                         break;
                         case '21':
                         case '19':
-                        	$out = '<textarea name="'.$field["columnname"].'" class="inputbox" DISABLED>'.$field["value"].'</textarea>';
+                        	$out = '<p name="'.$field["columnname"].'" class="vtiger_prod_desc">'.nl2br($field["value"]).'</p>';
                         break;
                         case '69': // picture
-                                $out = '<img name="'.$field["columnname"].'" alt="'.$field["name"].'" src="'.$field["value"].'" />';
+				// Get the path
+				$pics = $this->GetPicturePaths($field["fieldid"]);
+				if($picnum == 'all') {
+					for($i=0;$i<count($pics);$i++) {
+						if($i != 0)
+                                			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'" />';
+						else
+                                			$out = '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'" />';
+					}
+				} else {
+                                	$out = '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'" />';
+				}
                         break;
                         case '56': // checkbox
                                 $out = '<input name="'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="checkbox" class="inputbox" DISABLED>';
                         break;
                         default:
-                                $out = "Unknown UI Type --> ".$field->uitype;
+                                $out = "";
                         break;
 
 		}
@@ -150,6 +171,12 @@ class VTigerField extends VtigerConnection {
 		else
 			return $out;
 
+	}
+	function GetPicturePaths($fieldid)
+	{
+		$pic[] = "http://vtiger-demo.fosslabs.com/sandbox/mmbrich/vtigercrm/storage/2006/August/week1/9_193769.jpg";
+		$pic[] = "http://vtiger-demo.fosslabs.com/sandbox/mmbrich/vtigercrm/storage/2006/August/week1/9_193769.jpg";
+		return $pic;
 	}
         function GetPicklistValues($fieldid)
         {
