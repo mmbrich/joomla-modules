@@ -15,10 +15,11 @@ global $mainframe;
 require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
 class VTigerForm extends VtigerField {
         var $data;
+	var $file = "fields";
 
         function VtigerForm()
         {
-                $this->conn = $this->VtigerConnection("fields");
+                $this->conn = $this->VtigerConnection($this->file);
         }
         function SaveFormFields($entityid,$module,$fields)
         {
@@ -40,37 +41,34 @@ class VTigerForm extends VtigerField {
                         	$columnname = substr( $key, (strpos($key,"_")+1), strlen($key) );
                         	$fields[$j]["columnname"] = $columnname;
                         	$fields[$j]["value"] = $value;
-                        	//echo $columnname. " ".$value."<br>";
+                        	//echo $columnname. " ".$value." ".$entityid."<br>";
                         	$j++;
                		}
         	}
+		//exit();
         	return $this->SaveFormFields($entityid,$module,$fields);
+	}
+	function GetModuleFields($module) 
+	{
+                $this->data = array( 'module'=>$module );
+                $this->setData($this->data);
+                return $this->execCommand('get_module_fields');
+	}
+	function GetModules() 
+	{
+                $this->data = array( 'module'=>'' );
+                $this->setData($this->data);
+                return $this->execCommand('get_modules');
 	}
 	function BuySubscription($module,$entityid)
 	{
-
+		return 10;
 	}
 	function BuyProduct($module,$entityid)
 	{
 
 	}
 	function BuyDownload($module,$entityid)
-	{
-
-	}
-	private function _create_salesorder()
-	{
-
-	}
-	private function _create_potential()
-	{
-
-	}
-	private function _convert_so_to_invoice()
-	{
-
-	}
-	private function _current_salesorder()
 	{
 
 	}
