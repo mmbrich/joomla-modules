@@ -90,10 +90,12 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 	?>
                 <script type='text/javascript'>
                 function toggle_cb(field) {
-                	if(field.checked)
-				field.value = 'on';
+			var Tel = document.getElementsByName(field);
+			var el = Tel[0];
+                	if(el.value === 'off')
+				el.value = 'on';
 			else
-				field.value = '0';
+				el.value = 'off';
                 }
         	</script>
 	<?
@@ -174,17 +176,17 @@ function botvfield_replacer ( &$matches ) {
 			switch($thisParams[1]) {
 				case 'BuyProduct':
 					if($thisParams[2] == "" || !isset($thisParams[2])) {
-						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='form_action' value='BuyProduct' />";
+						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					} else {
-						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='form_action' value='BuyProduct' />";
+						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					}
 				break;
 				case 'BuySubscription':
 					// If the amount is blank then we need to get it from the qtyindemand
 					if($thisParams[2] == "" || !isset($thisParams[2])) {
-						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='form_action' value='BuySubscription' />";
+						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuySubscription' />";
 					} else {
-						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='form_action' value='BuySubscription' />";
+						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuySubscription' />";
 					}
 				break;
 				case 'RedirectSite':
