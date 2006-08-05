@@ -16,6 +16,7 @@
     <filename>vtiger/VTigerSalesOrder.class.php</filename>
     <filename>vtiger/VTigerInvoice.class.php</filename>
     <filename>vtiger/VTigerPotential.class.php</filename>
+    <filename>vtiger/VTigerProduct.class.php</filename>
     <filename>vtiger/VTigerHDeskUser.class.php</filename>
     <filename>vtiger/prototype.js</filename>
   </files>
