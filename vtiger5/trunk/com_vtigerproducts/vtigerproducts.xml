@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>Vtiger Products</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2005 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Component to display Vtiger products in Joomla!</description>
+  <menu>Products</menu>
+  <files>
+    <filename>vtigerproducts.php</filename>
+    <filename>vtigerproducts.html.php</filename>
+  </files>
+ <administration>
+    <menu>Vtiger Products</menu>
+    <submenu>
+        <menu act="settings">Settings</menu>
+        <menu act="about">About</menu>
+    </submenu>
+    <files>
+        <filename>admin.vtigerproducts.php</filename>
+        <filename>admin.vtigerproducts.html.php</filename>
+        <filename>toolbar.vtigerproducts.php</filename>
+        <filename>toolbar.vtigerproducts.html.php</filename>
+    </files>
+  </administration>
+
+</mosinstall>
