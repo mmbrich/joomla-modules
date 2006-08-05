@@ -86,10 +86,12 @@ class VTigerField extends VtigerConnection {
                                 $out = '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
                         break;
                         case '56': // checkbox
-				if($field["value"] == "on" || $field["value"] == 1)
-                                	$out = '<input name="vtiger_'.$field["columnname"].'" CHECKED type="checkbox" class="'.$classname.'"  onclick="toggle_cb(this);">';
-				else
-                                	$out = '<input name="vtiger_'.$field["columnname"].'" type="checkbox" class="'.$classname.'">';
+				if($field["value"] == "on" || $field["value"] == 1) {
+                                	$out = '<input name="vtiger_'.$field["columnname"].'_el" CHECKED type="checkbox" class="'.$classname.'"  onclick="toggle_cb(\'vtiger_'.$field["columnname"].'\');" />';
+                                	$out .= '<input name="vtiger_'.$field["columnname"].'" type="hidden" value="on" />';
+				} else {
+                                	$out = '<input name="vtiger_'.$field["columnname"].'" type="checkbox" class="'.$classname.'" />';
+				}
                         break;
                         case '15': // Picklist
 				$values = explode(",",$field["values"]);
