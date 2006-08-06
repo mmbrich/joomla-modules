@@ -21,9 +21,9 @@ class VTigerProduct extends VtigerForm {
         {
                 $this->conn = $this->VtigerConnection($this->file);
         }
-	function ListProducts()
+	function ListProducts($category='')
 	{
-                $this->data = array( 'prod'=>'' );
+                $this->data = array( 'category'=>$category );
                 $this->setData($this->data);
                 return $this->execCommand('get_product_list');
 	}

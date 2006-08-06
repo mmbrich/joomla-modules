@@ -58,19 +58,22 @@ $server->wsdl->addComplexType(
 $server->register(
 	'get_product_list',
 	array(
-		'prod'=>'xsd:string'
+		'category'=>'xsd:string'
 	),
 	array(
 		'return'=>'tns:product_array'
 	),
 	$NAMESPACE
 );
-function get_product_list($prod='') {
+function get_product_list($category='') {
         global $adb;
         $adb->println("Enter into the function get_field_details($module,$columnname)");
 
         $tabid=GetTabid("Products");
-        $q = "SELECT * FROM vtiger_products INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid=vtiger_products.productid WHERE vtiger_crmentity.deleted='0' ORDER BY vtiger_products.productcategory";
+        $q = "SELECT * FROM vtiger_products INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid=vtiger_products.productid WHERE vtiger_crmentity.deleted='0'";
+	if($category != '')
+		$q .= " AND vtiger_products.productcategory='".$category."'";
+	$q .= " ORDER BY vtiger_products.productcategory";
 
         $rs = $adb->query($q);
         for($i=0,$num=$adb->num_rows($rs);$i<$num;$i++) {

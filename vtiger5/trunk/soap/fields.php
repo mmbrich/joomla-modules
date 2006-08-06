@@ -181,7 +181,7 @@ $server->register(
 
 function get_multiple_field_details($fields) {
 	global $adb;
-	$adb->println("Enter into the function get_multi_field_details($fields)");
+	$adb->println("Enter into the function get_multi_field_details(".$fields.")");
 
 	$lastid = '';
 	usort($fields,"entityid_sort");
@@ -199,6 +199,7 @@ function get_multiple_field_details($fields) {
 			$q .= " WHERE tabid='".$tabid."'";
 		}
 		$rs = $adb->query($q);
+		$adb->println("$q");
 
         	$tfield[$num]["fieldid"] = $adb->query_result($rs,0,'fieldid');
         	$tfield[$num]["columnname"] = $field["columnname"];
@@ -216,20 +217,20 @@ function get_multiple_field_details($fields) {
 
 		// Populate the picklist values and field values where needed
 		if($field["entityid"] != "") {
-			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33") {
+			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33" || $tfield[$num]["uitype"] == "111") {
         			$tfield[$num]["values"] = get_picklist_values($tfield[$num]["fieldid"]);
-        			$tfield[$num]["value"] = get_field_values($focus,$field["columnname"]);
+        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"]);
 			} elseif ($tfield[$num]["columnname"] == "accountid" && $tfield[$num]["module"] == "Contacts") {
         			$tfield[$num]["value"] = $adb->query_result($adb->query("SELECT accountname FROM vtiger_account WHERE accountid='".$focus->column_fields["account_id"]."'"),'0','accountname');
         			$tfield[$num]["values"] = "";
 			} else {
-        			$tfield[$num]["value"] = get_field_values($focus,$field["columnname"]);
+        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"]);
         			$tfield[$num]["values"] = "";
 			}
 		} else {
         		$tfield[$num]["value"] = "";
         		$tfield[$num]["values"] = "";
-			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33")
+			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33" || $tfield[$num]["uitype"] == "111")
         			$tfield[$num]["values"] = get_picklist_values($tfield[$num]["fieldid"]);
 		}
 	}
@@ -276,17 +277,17 @@ function get_field_details($module,$columnname,$entityid) {
 
                 // Populate the picklist values and field values where needed
                 if($entityid != "") {
-                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33") {
+                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33" || $tfield[$num]["uitype"] == "111") {
                                 $field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
-                                $field[$i]["value"] = get_field_values($focus,$columnname);
+                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"]);
                         } else {
-                                $field[$i]["value"] = get_field_values($focus,$columnname);
+                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"]);
                                 $field[$i]["values"] = "";
                         }
                 } else {
                         $field[$i]["value"] = "";
                         $field[$i]["values"] = "";
-                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33")
+                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33" || $tfield[$num]["uitype"] == "111")
                                 $field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
                 }
         }
@@ -339,8 +340,11 @@ function get_picklist_values($fieldid) {
 	global $adb;
 	$adb->println("Enter into the function get_picklist_values($fieldid)");
 	
-	$rs = $adb->query("SELECT fieldname FROM vtiger_field WHERE fieldid='".$fieldid."'");
+	$rs = $adb->query("SELECT fieldname,tablename FROM vtiger_field WHERE fieldid='".$fieldid."'");
 	$fieldname = $adb->query_result($rs,'0','fieldname');
+	$tablename = $adb->query_result($rs,'0','tablename');
+
+	//$rs2 = $adb->query("SELECT * FROM ".$tablename." WHERE presence='1' ORDER BY sortorderid");
 	$rs2 = $adb->query("SELECT * FROM vtiger_".$fieldname." WHERE presence='1' ORDER BY sortorderid");
 
 	$values="";
@@ -440,7 +444,7 @@ function create_entity($module,$entityid='') {
 		require_once('modules/Invoice/Invoice.php');
 		$focus = new Invoice();
 	} else if($module == "Potentials") {
-		require_once('modules/Potentials/Potential.php');
+		require_once('modules/Potentials/Opportunity.php');
 		$focus = new Potential();
 	} else if($module == "Quotes") {
 		require_once('modules/Quotes/Quote.php');
@@ -464,7 +468,18 @@ function get_field_values($focus,$columnname) {
 
 	global $adb;
 	$adb->println("Enter into the function get_field_values($focus,$columnname)");
-	return $focus->column_fields[$columnname];
+
+	if($columnname == "comments" && $focus->column_fields["record_module"] == "HelpDesk") {
+		$q = "SELECT comments FROM vtiger_ticketcomments WHERE ticketid='".$focus->id."'";
+		$rs = $adb->query($q);
+		$adb->println($q);
+		$ret = '';
+		while($row = $adb->fetch_array($rs)) {
+			$ret .= $row["comments"]."<br>";
+		}
+		return $ret;
+	} else
+		return $focus->column_fields[$columnname];
 }
 
 function entityid_sort($a,$b) {
