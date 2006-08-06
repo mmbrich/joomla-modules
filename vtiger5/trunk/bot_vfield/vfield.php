@@ -68,6 +68,13 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 			break;
 		}
 
+		// Send an email with all the field details
+		$mailto = mosGetParam( $_POST, 'vt_mailto', '');
+		$mail_subject = mosGetParam( $_POST, 'vt_mail_subject', '');
+		if($mailto != "") {
+
+		}
+
 		$redirect_site = mosGetParam( $_POST, 'vt_redirect_site', '');
 		if($redirect_site != "")
 			mosRedirect( $redirect_site );
@@ -195,6 +202,10 @@ function botvfield_replacer ( &$matches ) {
 				case 'SetColumn':
 					return "<input type='hidden' name='vtiger_".$thisParams[2]."' value='".$thisParams[3]."' />";
 				break;
+				case 'SendEmail':
+					return "<input type='hidden' name='vt_mailto' value='".$thisParams[2]."' />";
+					return "<input type='hidden' name='vt_mail_subject' value='".$thisParams[3]."' />";
+				break;
 			}
 		break;
 	}
@@ -251,7 +262,8 @@ function vfield_replacer( &$matches ) {
 
 	$thisParams = explode("|",$matches[1]);
 
-	foreach($tfields as $num=>$field) {
+	if(is_array($tfields)) {
+	    foreach($tfields as $num=>$field) {
                 if($field["module"] == $thisParams[0] 
 			&& $field["columnname"] == $thisParams[1] 
 			&& $field["viewtype"] == $thisParams[2]
@@ -263,6 +275,7 @@ function vfield_replacer( &$matches ) {
 			else
                        		return $vForm->_buildDetailField($field,$field["showlabel"],$field["picnum"]);
 		}
+	    }
 	}
 }
 ?>

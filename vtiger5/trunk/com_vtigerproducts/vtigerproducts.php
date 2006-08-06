@@ -13,8 +13,10 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 require_once( $mainframe->getPath( 'front_html' ) );
 
 switch($task) {
+	case 'List':
 	default:
-		$list = $vProduct->ListProducts();
+		$category = mosGetParam( $_GET, 'category' , '');;
+		$list = $vProduct->ListProducts($category);
 		HTML_product::listProducts($option,$list);
 	break;
 }

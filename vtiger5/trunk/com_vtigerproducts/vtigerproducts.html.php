@@ -4,9 +4,10 @@ defined('_VALID_MOS') or die('Restricted access');
 
 class HTML_product {
 	function listProducts($option,$details) {
-		foreach($details as $key=>$product) {
-		?>
-		<table border='0' width='95%' cellpadding='0' cellspacing='0' valign="top">
+		if(is_array($details)) {
+		    foreach($details as $key=>$product) {
+		    ?>
+		    <table border='0' width='95%' cellpadding='0' cellspacing='0' valign="top">
 			<tr>
 				<td width="133px" height="78px" valign="top" align="center">
 					<a href="<?php echo $product["website"]."&productid=".$product["productid"];?>">
@@ -47,10 +48,13 @@ class HTML_product {
 					</div>
 				</td>
 			</tr>
-		</table>
-		<?
-		echo "<br><br>";
-		//print_r($product);
+		    </table>
+		    <?
+		    echo "<br><br>";
+		    //print_r($product);
+		    }
+		} else {
+			echo "<b>No Products Defined</b>";
 		}
 	}
 }

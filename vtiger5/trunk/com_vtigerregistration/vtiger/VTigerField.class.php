@@ -75,6 +75,7 @@ class VTigerField extends VtigerConnection {
                         case '71': // currency
                         case '17': // URL
                         case '11':
+                        case '22': 
                         	$out = '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
                         break;
                         case '21':
@@ -94,6 +95,7 @@ class VTigerField extends VtigerConnection {
 				}
                         break;
                         case '15': // Picklist
+                        case '111': // Picklist
 				$values = explode(",",$field["values"]);
                                 $out = '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
 				$j=0;
@@ -146,6 +148,8 @@ class VTigerField extends VtigerConnection {
                         case '11':
                         case '15': // Picklist
                         case '33': // Multi Picklist
+                        case '111': // Picklist
+                        case '22': // Picklist
                         	$out = '<span name="'.$field["columnname"].'">'.$field["value"].'</span>';
                         break;
                         case '21':
