@@ -49,14 +49,15 @@ class VTigerContact extends VtigerConnection {
                 $this->setData($this->data);
                 return $this->execCommand('is_allowed_helpdesk');
         }
-	function RegisterUser($firstname,$lastname,$email,$password,$jid)
+	function RegisterUser($email,$firstname,$lastname,$password,$jid)
 	{
 		$this->firstname = $firstname;
 		$this->lastname = $lastname;
 
-		$this->data = array(	'firstname'=>$firstname,
-					'lastname'=>$lastname,
+		$this->data = array(	
 					'email'=>$email,
+					'firstname'=>$firstname,
+					'lastname'=>$lastname,
 					'password'=>$password
 		);
 
