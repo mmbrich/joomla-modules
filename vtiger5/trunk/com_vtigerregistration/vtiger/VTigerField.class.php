@@ -22,11 +22,20 @@ class VTigerField extends VtigerConnection {
 	{
                 $this->conn = $this->VtigerConnection("fields");
 	}
-	function listAllowedFields($module_name) {
+	function listAllowedFields($module_name) 
+	{
                 $this->data = array('module_name' => $module_name);
                 $this->setData($this->data);
 
 		$result = $this->execCommand('get_portal_register_fields');
+		return $result;
+	}
+	function getNewRegisterFields($current) 
+	{
+                $this->data = array('fields' => $current);
+                $this->setData($this->data);
+
+		$result = $this->execCommand('get_new_register_fields');
 		return $result;
 	}
 	function GetSingleFieldDetails($module,$columnname,$entityid)
@@ -75,6 +84,7 @@ class VTigerField extends VtigerConnection {
                         case '71': // currency
                         case '17': // URL
                         case '11':
+                        case '75':
                         case '22': 
                         	$out = '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
                         break;
@@ -150,6 +160,7 @@ class VTigerField extends VtigerConnection {
                         case '33': // Multi Picklist
                         case '111': // Picklist
                         case '22': // Picklist
+                        case '75': // Picklist
                         	$out = '<span name="'.$field["columnname"].'">'.$field["value"].'</span>';
                         break;
                         case '21':
@@ -158,16 +169,21 @@ class VTigerField extends VtigerConnection {
                         break;
                         case '69': // picture
 				// Get the path
-				$pics = $this->GetPicturePaths($field["fieldid"]);
-				if($picnum == 'all') {
+				$pics = $this->GetPicturePaths($field);
+				if(!is_array($pics))
+					$out = "";
+				else {
+				    if($picnum == 'all') {
 					for($i=0;$i<count($pics);$i++) {
+				    	$out = '<div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center">';
 						if($i != 0)
-                                			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'" />';
+                                			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px/>';
 						else
-                                			$out = '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'" />';
+                                			$out .= '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px" />';
 					}
-				} else {
-                                	$out = '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'" />';
+				    } else
+                                	$out = '<div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center"><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'"  border="0" height="67" hspace="6" width="100px" />';
+            			    $out .= '</div>';
 				}
                         break;
                         case '56': // checkbox
@@ -184,10 +200,13 @@ class VTigerField extends VtigerConnection {
 			return $out;
 
 	}
-	function GetPicturePaths($fieldid)
+	function GetPicturePaths($field)
 	{
-		$pic[] = "http://vtiger-demo.fosslabs.com/sandbox/mmbrich/vtigercrm/storage/2006/August/week1/9_193769.jpg";
-		$pic[] = "http://vtiger-demo.fosslabs.com/sandbox/mmbrich/vtigercrm/storage/2006/August/week1/9_193769.jpg";
+		$pics = explode("|",$field["value"]);
+		foreach($pics as $path) {
+			if($path != "")
+				$pic[] = $this->GetCRMServer()."/".$path;
+		}
 		return $pic;
 	}
         function GetPicklistValues($fieldid)

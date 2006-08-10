@@ -117,42 +117,46 @@ function settings($option) {
 
         $query = "SELECT #__vtiger_registration_fields.* FROM "
 			." #__vtiger_registration_fields "
-			." ORDER BY `order`"
+			." ORDER BY #__vtiger_registration_fields.`order`"
 	;
         $database->setQuery( $query );
-	$current_orders = $database->loadObjectList();
+	$current_fields = $database->loadObjectList();
+
+	$current = array();
+	$rows = array();
+	$i=0;
+	foreach($current_fields as $field) {
+		$current[$i] = array(
+			"fieldid"=>$field->id,
+			"columnname"=>$field->field
+		);
+
+		$rows[$field->id]["id"] = $field->id;
+		$rows[$field->id]["field"] = $field->field;
+		$rows[$field->id]["name"] = $field->name;
+		$rows[$field->id]["order"] = $field->order;
+		$rows[$field->id]["show"] = $field->show;
+		$rows[$field->id]["size"] = $field->size;
+		$rows[$field->id]["required"] = $field->required;
+	    	$rows[$field->id]["type"] = $field->type;
+		$i++;
+	}
 
 	require_once( $basePath . "vtiger/VTigerField.class.php" );
 	$vtField = new VtigerField();
-	$current_rows = $vtField->listAllowedFields("Contacts");
+	$new_fields = $vtField->getNewRegisterFields($current);
 
-	$rows = array();
-	for($i=0;$i<count($current_rows);$i++) {
-	    // Populate variables from vtiger
-	    if(isset($current_rows[$i]["id"])) {
-	    	$rows[$current_rows[$i]["id"]] = array();
-	    	$rows[$current_rows[$i]["id"]]["id"] = $current_rows[$i]["id"];
-	    	$rows[$current_rows[$i]["id"]]["name"] = $current_rows[$i]["name"];
-	    	$rows[$current_rows[$i]["id"]]["type"] = $current_rows[$i]["type"];
-	    	$rows[$current_rows[$i]["id"]]["size"] = $current_rows[$i]["size"];
-	    	$rows[$current_rows[$i]["id"]]["field"] = $current_rows[$i]["field"];
-	    }
-	    foreach($current_orders as $key=>$ord) {
-		if($ord->id != "" && isset($ord->id)) {
-	    	  if(isset($current_rows[$i]["id"])) {
-		    if($ord->id == $current_rows[$i]["id"]) {
-			// if there is a valid DB record, overwrite and populate variables from that
-			$rows[$current_rows[$i]["id"]]["field"] = $ord->field;
-			$rows[$current_rows[$i]["id"]]["name"] = $ord->name;
-			$rows[$current_rows[$i]["id"]]["order"] = $ord->order;
-			$rows[$current_rows[$i]["id"]]["show"] = $ord->show;
-			$rows[$current_rows[$i]["id"]]["size"] = $ord->size;
-			$rows[$current_rows[$i]["id"]]["required"] = $ord->required;
-	    		$rows[$current_rows[$i]["id"]]["type"] = $ord->type;
-		    }
-		  }
+	if(is_array($new_fields)) {
+		foreach($new_fields as $field) {
+			$rows[$field["id"]]["id"] = $field["id"];
+			$rows[$field["id"]]["field"] = $field["field"];
+			$rows[$field["id"]]["name"] = $field["name"];
+			$rows[$field["id"]]["order"] = $field["ord"];
+			$rows[$field["id"]]["show"] = 0;
+			$rows[$field["id"]]["size"] = 20;
+			$rows[$field["id"]]["required"] = 0;
+	    		$rows[$field["id"]]["type"] = $field["type"];
 		}
-	    }
 	}
 
 	$row = arrayColumnSort("order", SORT_ASC, SORT_NUMERIC, $rows);
@@ -185,6 +189,7 @@ function save_fields($fields) {
         $q = "DELETE FROM #__vtiger_registration_fields";
         $database->setQuery($q);
         $database->query() or die( $database->stderr() );
+
         for($i=0,$num=count($fields);$i<$num;$i++) {
                 $id = $fields[$i];
 		if($id == "") {break;}
