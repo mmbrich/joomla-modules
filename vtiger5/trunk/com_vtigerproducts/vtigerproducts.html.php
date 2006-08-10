@@ -51,7 +51,6 @@ class HTML_product {
 		    </table>
 		    <?
 		    echo "<br><br>";
-		    //print_r($product);
 		    }
 		} else {
 			echo "<b>No Products Defined</b>";
