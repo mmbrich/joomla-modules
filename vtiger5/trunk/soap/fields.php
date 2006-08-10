@@ -9,121 +9,9 @@
 *
  ********************************************************************************/
 
-require_once("config.php");
-require_once('include/logging.php');
-require_once('include/nusoap/nusoap.php');
-require_once('include/database/PearDatabase.php');
-require_once('include/utils/utils.php');
+require_once("soap/jinc.php");
 
-$log = &LoggerManager::getLogger('webforms');
-$NAMESPACE = 'http://www.vtiger.com/vtigercrm/';
-$server = new soap_server;
-$server->configureWSDL('vtigersoap');
-
-
-/* START ARRAY DECLARATIONS */
-$server->wsdl->addComplexType(
-        'field_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'id' => array('name'=>'id','type'=>'xsd:string'),
-                'field' => array('name'=>'field','type'=>'xsd:string'),
-                'name' => array('name'=>'name','type'=>'xsd:string'),
-                'type' => array('name'=>'type','type'=>'xsd:string'),
-                'order' => array('name'=>'order','type'=>'xsd:string')
-             )
-);
-
-$server->wsdl->addComplexType(
-        'field_type_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'fieldid' => array('name'=>'fieldid','type'=>'xsd:string'),
-                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
-                'uitype' => array('name'=>'uitype','type'=>'xsd:string'),
-                'fieldname' => array('name'=>'fieldname','type'=>'xsd:string'),
-                'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string'),
-                'maximumlength' => array('name'=>'maximumlength','type'=>'xsd:string'),
-                'value' => array('name'=>'value','type'=>'xsd:string'),
-                'values' => array('name'=>'values','type'=>'xsd:string')
-        )
-);
-
-$server->wsdl->addComplexType(
-        'multi_field_return_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'fieldid' => array('name'=>'fieldid','type'=>'xsd:string'),
-                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
-                'uitype' => array('name'=>'uitype','type'=>'xsd:string'),
-                'fieldname' => array('name'=>'fieldname','type'=>'xsd:string'),
-                'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string'),
-                'maximumlength' => array('name'=>'maximumlength','type'=>'xsd:string'),
-                'value' => array('name'=>'value','type'=>'xsd:string'),
-                'values' => array('name'=>'values','type'=>'xsd:string'),
-                'module' => array('name'=>'module','type'=>'xsd:string'),
-                'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
-                'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
-                'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
-                'picnum' => array('name'=>'picnum','type'=>'xsd:string')
-        )
-);
-
-$server->wsdl->addComplexType(
-        'multi_field_type_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'module' => array('name'=>'module','type'=>'xsd:string'),
-                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
-                'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
-                'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
-                'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
-                'picnum' => array('name'=>'picnum','type'=>'xsd:string')
-        )
-);
-
-$server->wsdl->addComplexType(
-        'save_field_type',
-        'complexType',
-        'array',
-        '',
-        array(
-                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
-                'value' => array('name'=>'value','type'=>'xsd:string')
-        )
-);
-
-$server->wsdl->addComplexType(
-        'mod_fields',
-        'complexType',
-        'array',
-        '',
-        array(
-                'columnname' => array('name'=>'columnname','type'=>'xsd:string'),
-                'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string')
-        )
-);
-
-$server->wsdl->addComplexType(
-        'mods',
-        'complexType',
-        'array',
-        '',
-        array(
-                'module' => array('name'=>'module','type'=>'xsd:string')
-        )
-);
-/* END ARRAY DECLARATIONS */
-
-/* SAVE_FORM_FIELDS  START */
+/************************ SAVE_FORM_FIELDS  START ****************************/
 $server->register(
 	'save_form_fields',
 	array(
@@ -136,7 +24,6 @@ $server->register(
 	),
 	$NAMESPACE
 );
-
 function save_form_fields($entityid,$module,$fields) {
 	global $adb,$current_user;
 	$adb->println("Enter into the function save_form_fields($entityid,$module,$fields)");
@@ -154,6 +41,7 @@ function save_form_fields($entityid,$module,$fields) {
 
 	$focus = create_entity($module,$entityid);
 
+	// HACK (populating related fields -- clean this up)
 	for($j=0;$j<count($fields);$j++) {
 		if(($fields[$j]["columnname"] == "accountid" || $fields[$j]["columnname"] == "account_id") && $module == "Contacts") {
 			$adb->query("UPDATE vtiger_account set accountname='".$fields[$j]["value"]."' WHERE accountid='".$focus->column_fields["account_id"]."'");
@@ -165,9 +53,9 @@ function save_form_fields($entityid,$module,$fields) {
 
 	return $focus->id;
 }
-/* SAVE_FORM_FIELDS  START */
+/************************ SAVE_FORM_FIELDS  END ****************************/
 
-/* GET_MULTIPLE_FIELD_DETAILS  START */
+/************************ GET_MULTIPLE_FIELD_DETAILS  START ****************************/
 $server->register(
 	'get_multiple_field_details',
 	array(
@@ -178,7 +66,6 @@ $server->register(
 	),
 	$NAMESPACE
 );
-
 function get_multiple_field_details($fields) {
 	global $adb;
 	$adb->println("Enter into the function get_multi_field_details(".$fields.")");
@@ -219,14 +106,13 @@ function get_multiple_field_details($fields) {
 		if($field["entityid"] != "") {
 			if($tfield[$num]["uitype"] == "15" || $tfield[$num]["uitype"] == "33" || $tfield[$num]["uitype"] == "111") {
         			$tfield[$num]["values"] = get_picklist_values($tfield[$num]["fieldid"]);
-        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"]);
-			} elseif ($tfield[$num]["columnname"] == "accountid" && $tfield[$num]["module"] == "Contacts") {
-        			$tfield[$num]["value"] = $adb->query_result($adb->query("SELECT accountname FROM vtiger_account WHERE accountid='".$focus->column_fields["account_id"]."'"),'0','accountname');
-        			$tfield[$num]["values"] = "";
+        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"],$tfield[$num]);
+
 			} else {
-        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"]);
+        			$tfield[$num]["value"] = get_field_values($focus,$tfield[$num]["fieldname"],$tfield[$num]);
         			$tfield[$num]["values"] = "";
 			}
+
 		} else {
         		$tfield[$num]["value"] = "";
         		$tfield[$num]["values"] = "";
@@ -236,9 +122,9 @@ function get_multiple_field_details($fields) {
 	}
 	return $tfield;
 }
-/* GET_MULTIPLE_FIELD_DETAILS  END */
+/************************ GET_MULTIPLE_FIELD_DETAILS  END ****************************/
 
-/* GET_FIELD_DETAILS  START */
+/************************ GET_FIELD_DETAILS  START ****************************/
 $server->register(
 	'get_field_details',
 	array(
@@ -277,11 +163,11 @@ function get_field_details($module,$columnname,$entityid) {
 
                 // Populate the picklist values and field values where needed
                 if($entityid != "") {
-                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33" || $tfield[$num]["uitype"] == "111") {
+                        if($field[$i]["uitype"] == "15" || $field[$i]["uitype"] == "33" || $field[$num]["uitype"] == "111") {
                                 $field[$i]["values"] = get_picklist_values($field[$i]["fieldid"]);
-                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"]);
+                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"],$field[$i]);
                         } else {
-                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"]);
+                                $field[$i]["value"] = get_field_values($focus,$field[$i]["fieldname"],$field[$i]);
                                 $field[$i]["values"] = "";
                         }
                 } else {
@@ -293,42 +179,48 @@ function get_field_details($module,$columnname,$entityid) {
         }
         return $field;
 }
-/* GET_FIELD_DETAILS  END */
+/************************ GET_FIELD_DETAILS  END ****************************/
 
-/* GET_PORTAL_REGISTER_FIELDS  START */
+/************************ GET_NEW_REGISTER_FIELDS  START ****************************/
 $server->register(
-	'get_portal_register_fields',
-	array('module_name'=>'xsd:string'),
+	'get_new_register_fields',
+	array('fields'=>'tns:current_register_fields'),
 	array('return'=>'tns:field_array'),
 	$NAMESPACE
 );
 
-function get_portal_register_fields($module_name)
-{
+function get_new_register_fields($fields) {
 	global $adb;
-	$adb->println("Enter into the function get_portal_register_fields($module_name)");
-	
-	$rs = $adb->query("SELECT fieldid as id,columnname as field,fieldlabel as name,uitype as type FROM vtiger_field WHERE tabid='".getTabid($module_name)."' "
-			." AND presence='0' "
-			." AND columnname <> 'leadsource' AND columnname <> 'reportsto' "
-			." AND columnname <> 'assistant' AND columnname <> 'assistantphone' AND columnname <> 'donotcall' "
-			." AND columnname <> 'emailoptout' AND columnname <> 'smownerid' AND columnname <> 'reference' "
-			." AND columnname <> 'notify_owner' AND columnname <> 'createdtime' AND columnname <> 'modifiedtime' "
-			." AND columnname <> 'portal' AND columnname <> 'support_start_date' AND columnname <> 'support_end_date' "
-			." ORDER BY sequence ");
+	$adb->println("Enter into the function get_new_register_fields($fields)");
 
-	//$tmp = array("fieldid"=>"10","columnname"=>"first_name","fieldlabel"=>"First Name");
+	$q = "SELECT fieldid as id,columnname as field,fieldlabel as name,uitype as type, sequence as ord "
+		." FROM vtiger_field "
+		." WHERE tabid='".getTabid("Contacts")."' "
+		." AND presence='0' "
+		." AND columnname <> 'leadsource' AND columnname <> 'reportsto' "
+		." AND columnname <> 'assistant' AND columnname <> 'assistantphone' AND columnname <> 'donotcall' "
+		." AND columnname <> 'emailoptout' AND columnname <> 'smownerid' AND columnname <> 'reference' "
+		." AND columnname <> 'notify_owner' AND columnname <> 'createdtime' AND columnname <> 'modifiedtime' "
+		." AND columnname <> 'portal' AND columnname <> 'support_start_date' AND columnname <> 'support_end_date'";
+		if(is_array($fields)) {
+		    foreach($fields as $field) {
+			$q .= " AND columnname <> '".$field["columnname"]."' ";
+		    }
+		}
+		$q .= " ORDER BY sequence ";
+	$rs = $adb->query($q);
+
+	$i=0;
+	$row = array();
 	while($tmp = $adb->fetch_array($rs)) {
 		$row[] = $tmp;
 	}
-
-	$adb->println("Exit from the function get_portal_register_fields");
 	return $row;
 }
-/* GET_PORTAL_REGISTER_FIELDS  END */
+/************************ GET_NEW_REGISTER_FIELDS  END ****************************/
 
 
-/* GET_PICKLIST_VALUES START */
+/************************ GET_PICKLIST_VALUES START ****************************/
 $server->register(
 	'get_picklist_values',
 	array('fieldid'=>'xsd:string'),
@@ -353,10 +245,10 @@ function get_picklist_values($fieldid) {
 	}
 	return $values;
 }
-/* GET_PICKLIST_VALUES END */
+/************************ GET_PICKLIST_VALUES END ****************************/
 
 
-/* GET_MODULE_FIELDS START */
+/************************ GET_MODULE_FIELDS START ****************************/
 $server->register(
 	'get_module_fields',
 	array('module'=>'xsd:string'),
@@ -381,9 +273,9 @@ function get_module_fields($module='') {
 	}
 	return $fields;
 }
-/* GET_MODULE_FIELDS END */
+/************************ GET_MODULE_FIELDS END ****************************/
 
-/* GET_MODULES START */
+/************************ GET_MODULES START ****************************/
 $server->register(
 	'get_modules',
 	array('module'=>'xsd:string'),
@@ -399,7 +291,7 @@ function get_modules($module='') {
 		." WHERE name <> 'Users' AND name <> 'Reports' AND name <> 'Rss' "
 		." AND name <> 'Dashboard' AND name <> 'Emails' AND name <> 'Home' "
 		." AND name <> 'Notes' AND name <> 'Portal' AND name <> 'PriceBooks' "
-		." AND name <> 'PurchaseOrder' AND name <> 'Vendors' AND name <> 'Webmails'"
+		." AND name <> 'PurchaseOrder' AND name <> 'Webmails'"
 		." AND name <> 'Calendar'";
 	$rs = $adb->query($q);
 
@@ -408,84 +300,8 @@ function get_modules($module='') {
 	}
 	return $modules;
 }
-/* GET_MODULES END */
+/************************ GET_MODULES END ****************************/
 
-/****** END OF PUBLIC FUNCTIONS *********/
-
-
-
-/* START INTERNAL FUNCTIONS */
-function create_entity($module,$entityid='') {
-	global $adb;
-	$adb->println("Enter into the function create_entity($module,$entityid)");
-
-	if($module == "Products") {
-		require_once('modules/Products/Product.php');
-		$focus = new Product();
-	} else if($module == "Contacts") {
-		require_once('modules/Contacts/Contact.php');
-		$focus = new Contact();
-	} else if($module == "Accounts") {
-		require_once('modules/Accounts/Account.php');
-		$focus = new Account();
-	} else if($module == "Leads") {
-		require_once('modules/Leads/Lead.php');
-		$focus = new Lead();
-	} else if($module == "Activities") {
-		require_once('modules/Activities/Activity.php');
-		$focus = new Activity();
-	} else if($module == "Campaigns") {
-		require_once('modules/Campaigns/Campaign.php');
-		$focus = new Campaign();
-	} else if($module == "HelpDesk") {
-		require_once('modules/HelpDesk/HelpDesk.php');
-		$focus = new HelpDesk();
-	} else if($module == "Invoice") {
-		require_once('modules/Invoice/Invoice.php');
-		$focus = new Invoice();
-	} else if($module == "Potentials") {
-		require_once('modules/Potentials/Opportunity.php');
-		$focus = new Potential();
-	} else if($module == "Quotes") {
-		require_once('modules/Quotes/Quote.php');
-		$focus = new Quote();
-	} else if($module == "SalesOrder") {
-		require_once('modules/SalesOrder/SalesOrder.php');
-		$focus = new SalesOrder();
-	}
-
-	if($entityid != "" && $entityid != 0) {
-		$focus->id = $entityid;
-		$focus->mode = "edit";
-		$focus->retrieve_entity_info($entityid,$module);
-	}
-	return $focus;
-}
-
-function get_field_values($focus,$columnname) {
-	if($focus->id == "" || !isset($focus->id))
-		return '';
-
-	global $adb;
-	$adb->println("Enter into the function get_field_values($focus,$columnname)");
-
-	if($columnname == "comments" && $focus->column_fields["record_module"] == "HelpDesk") {
-		$q = "SELECT comments FROM vtiger_ticketcomments WHERE ticketid='".$focus->id."'";
-		$rs = $adb->query($q);
-		$adb->println($q);
-		$ret = '';
-		while($row = $adb->fetch_array($rs)) {
-			$ret .= $row["comments"]."<br>";
-		}
-		return $ret;
-	} else
-		return $focus->column_fields[$columnname];
-}
-
-function entityid_sort($a,$b) {
-	return strcmp($a["entityid"], $b["entityid"]);
-}
-/* END INTERNAL FUNCTIONS */
 
 /* Begin the HTTP listener service and exit. */ 
 $server->service($HTTP_RAW_POST_DATA); 

@@ -9,67 +9,14 @@
 *
  ********************************************************************************/
 
-require_once("config.php");
-require_once('include/logging.php');
-require_once('include/nusoap/nusoap.php');
-require_once('include/database/PearDatabase.php');
-require_once('modules/Contacts/Contact.php');
-require_once('include/utils/utils.php');
+require_once("soap/jinc.php");
 
-$log = &LoggerManager::getLogger('webforms');
-
-//$serializer = new XML_Serializer();
-$NAMESPACE = 'http://www.vtiger.com/vtigercrm/';
-$server = new soap_server;
-
-$server->configureWSDL('vtigersoap');
-
-$server->wsdl->addComplexType(
-        'field_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'id' => array('name'=>'id','type'=>'xsd:string'),
-                'field' => array('name'=>'field','type'=>'xsd:string'),
-                'name' => array('name'=>'name','type'=>'xsd:string'),
-                'type' => array('name'=>'type','type'=>'xsd:string'),
-                'order' => array('name'=>'order','type'=>'xsd:string')
-             )
-);
-$server->register(
-        'create_basic_contact',
-        array(  'email'=>'xsd:string',
-                'firstname'=>'xsd:string',
-                'lastname'=>'xsd:string',
-                'password'=>'xsd:string'
-        ),
-        array('return'=>'xsd:string'),
-        $NAMESPACE
-);
-
-$server->register(
-        'set_field',
-        array(  'entityid'=>'xsd:string',
-                'fieldid'=>'xsd:string',
-                'value'=>'xsd:string'
-        ),
-        array('return'=>'xsd:string'),
-        $NAMESPACE
-);
-
-$server->register(
-        'is_allowed_helpdesk',
-        array('contactid'=>'xsd:string'),
-        array('return'=>'xsd:string'),
-        $NAMESPACE);
-
+/************************ CHECK_AND_CREATE  START ****************************/
 $server->register(
         'check_and_create',
         array('email'=>'xsd:string'),
         array('return'=>'xsd:string'),
         $NAMESPACE);
-
 function check_and_create($email,$lastname,$password) {
 	global $adb;
 
@@ -81,11 +28,24 @@ function check_and_create($email,$lastname,$password) {
 	} else
 		return $adb->query_result($rs,'0','contactid');
 }
+/************************ CHECK_AND_CREATE  END ****************************/
 
+/************************ CREATE_BASIC_CONTACT START ****************************/
+$server->register(
+        'create_basic_contact',
+        array(  'email'=>'xsd:string',
+                'firstname'=>'xsd:string',
+                'lastname'=>'xsd:string',
+                'password'=>'xsd:string'
+        ),
+        array('return'=>'xsd:string'),
+        $NAMESPACE
+);
 function create_basic_contact($email,$firstname,$lastname,$password)
 {
+	require_once("modules/Contacts/Contact.php");
         global $adb;
-        $adb->println("Enter into the function unsubscribe_email($emailid)");
+        $adb->println("Enter into the function create_basic_contact($email,$firstname,$lastname,$password)");
 
         $focus = new Contact();
         $focus->column_fields["firstname"] = $firstname;
@@ -99,7 +59,18 @@ function create_basic_contact($email,$firstname,$lastname,$password)
         $adb->println("Exit from the function ");
         return $focus->id;
 }
+/************************ CREATE_BASIC_CONTACT END ****************************/
 
+/************************ SET_FIELD START ****************************/
+$server->register(
+        'set_field',
+        array(  'entityid'=>'xsd:string',
+                'fieldid'=>'xsd:string',
+                'value'=>'xsd:string'
+        ),
+        array('return'=>'xsd:string'),
+        $NAMESPACE
+);
 function set_field($entityid,$fieldid,$value) {
         global $adb;
         $adb->println("\n\r\n\r\n\rEnter into the function set_field($entityid,$fieldid,$value)");
@@ -124,11 +95,14 @@ function set_field($entityid,$fieldid,$value) {
         $adb->println("Exit set_field $q \n\r\n\r\n\r");
 	return $entityid;
 }
+/************************ SET_FIELD END ****************************/
 
-function get_field($entityid,$fieldid) {
-
-}
-
+/************************ IS_ALLOWED_HELPDESK START ****************************/
+$server->register(
+        'is_allowed_helpdesk',
+        array('contactid'=>'xsd:string'),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
 function is_allowed_helpdesk($contactid) {
         global $adb;
         $current_date = date("Y-m-d");
@@ -140,6 +114,7 @@ function is_allowed_helpdesk($contactid) {
         else
                 return false;
 }
+/************************ IS_ALLOWED_HELPDESK END ****************************/
 
 
 /* Begin the HTTP listener service and exit. */
