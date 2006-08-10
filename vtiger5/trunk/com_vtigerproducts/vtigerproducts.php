@@ -17,7 +17,7 @@ switch($task) {
 	default:
 		$category = mosGetParam( $_GET, 'category' , '');;
 		$list = $vProduct->ListProducts($category);
-		HTML_product::listProducts($option,$list);
+		HTML_product::listProducts($option,$list,$category);
 	break;
 }
 ?>
