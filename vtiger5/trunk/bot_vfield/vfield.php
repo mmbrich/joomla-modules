@@ -272,7 +272,9 @@ function vfield_replacer( &$matches ) {
 			//echo "<br><br>";
 			if($field["viewtype"] == "edit")
                         	return $vForm->_buildEditField($field,$field["showlabel"]);
-			else
+			else if($field["viewtype"] == "data")
+                       		return $field["value"];
+			else 
                        		return $vForm->_buildDetailField($field,$field["showlabel"],$field["picnum"]);
 		}
 	    }
