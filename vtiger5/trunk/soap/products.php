@@ -8,53 +8,10 @@
  * All Rights Reserved.
 *
  ********************************************************************************/
-
-require_once("config.php");
-require_once('include/logging.php');
-require_once('include/nusoap/nusoap.php');
-require_once('include/database/PearDatabase.php');
-require_once('include/utils/utils.php');
-
-$log = &LoggerManager::getLogger('webforms');
-$NAMESPACE = 'http://www.vtiger.com/vtigercrm/';
-$server = new soap_server;
-$server->configureWSDL('vtigersoap');
+require_once("soap/jinc.php");
 
 
-/* START ARRAY DECLARATIONS */
-$server->wsdl->addComplexType(
-        'product_array',
-        'complexType',
-        'array',
-        '',
-        array(
-                'productid' => array('name'=>'productid','type'=>'xsd:string'),
-                'productname' => array('name'=>'productname','type'=>'xsd:string'),
-                'productcode' => array('name'=>'productcode','type'=>'xsd:string'),
-                'productcategory' => array('name'=>'productcategory','type'=>'xsd:string'),
-                'manufacturer' => array('name'=>'manufacturer','type'=>'xsd:string'),
-                'product_description' => array('name'=>'product_description','type'=>'xsd:string'),
-                'qty_per_unit' => array('name'=>'qty_per_unit','type'=>'xsd:string'),
-                'unit_price' => array('name'=>'unit_price','type'=>'xsd:string'),
-                'weight' => array('name'=>'weight','type'=>'xsd:string'),
-                'pack_size' => array('name'=>'pack_size','type'=>'xsd:string'),
-                'sales_start_date' => array('name'=>'sales_start_date','type'=>'xsd:string'),
-                'sales_end_date' => array('name'=>'sales_end_date','type'=>'xsd:string'),
-                'start_date' => array('name'=>'start_date','type'=>'xsd:string'),
-                'expiry_date' => array('name'=>'expiry_date','type'=>'xsd:string'),
-                'cost_factor' => array('name'=>'cost_factor','type'=>'xsd:string'),
-                'usageunit' => array('name'=>'usageunit','type'=>'xsd:string'),
-                'handler' => array('name'=>'handler','type'=>'xsd:string'),
-                'currency' => array('name'=>'currency','type'=>'xsd:string'),
-                'website' => array('name'=>'website','type'=>'xsd:string'),
-                'taxclass' => array('name'=>'taxclass','type'=>'xsd:string'),
-                'serialno' => array('name'=>'serialno','type'=>'xsd:string'),
-                'qtyinstock' => array('name'=>'qtyinstock','type'=>'xsd:string')
-             )
-);
-/* END ARRAY DECLARATIONS */
-
-/* GET_FIELD_DETAILS  START */
+/************************ GET_PRODUCT_LIST START ****************************/
 $server->register(
 	'get_product_list',
 	array(
@@ -99,68 +56,20 @@ function get_product_list($category='') {
                 $product[$i]["taxclass"] = $adb->query_result($rs,$i,'taxclass');
                 $product[$i]["serialno"] = $adb->query_result($rs,$i,'serialno');
                 $product[$i]["qtyinstock"] = $adb->query_result($rs,$i,'qtyinstock');
+                $product[$i]["qtyindemand"] = $adb->query_result($rs,$i,'qtyindemand');
+		$rs2 = $adb->query("SELECT path,name,vtiger_attachments.attachmentsid FROM vtiger_attachments INNER JOIN vtiger_seattachmentsrel ON vtiger_seattachmentsrel.attachmentsid=vtiger_attachments.attachmentsid WHERE vtiger_seattachmentsrel.crmid='".$product[$i]["productid"]."' LIMIT 1");
+		if($adb->num_rows($rs2) == 1) {
+			global $site_URL;
+			$path = $adb->query_result($rs2,'0','path');
+			$name = $adb->query_result($rs2,'0','name');
+			$id = $adb->query_result($rs2,'0','attachmentsid');
+			$product[$i]["image"] = $site_URL."/".$path.$id."_".$name;
+		} else 
+			$product[$i]["image"] = "";
         }
         return $product;
 }
-/* GET_FIELD_DETAILS  END */
-
-/****** END OF PUBLIC FUNCTIONS *********/
-
-
-/* START INTERNAL FUNCTIONS */
-function create_entity($module,$entityid='') {
-	global $adb;
-	$adb->println("Enter into the function create_entity($module,$entityid)");
-
-	if($module == "Products") {
-		require_once('modules/Products/Product.php');
-		$focus = new Product();
-	} else if($module == "Contacts") {
-		require_once('modules/Contacts/Contact.php');
-		$focus = new Contact();
-	} else if($module == "Accounts") {
-		require_once('modules/Accounts/Account.php');
-		$focus = new Account();
-	} else if($module == "Leads") {
-		require_once('modules/Leads/Lead.php');
-		$focus = new Lead();
-	} else if($module == "Activities") {
-		require_once('modules/Activities/Activity.php');
-		$focus = new Activity();
-	} else if($module == "Campaigns") {
-		require_once('modules/Campaigns/Campaign.php');
-		$focus = new Campaign();
-	} else if($module == "HelpDesk") {
-		require_once('modules/HelpDesk/HelpDesk.php');
-		$focus = new HelpDesk();
-	} else if($module == "Invoice") {
-		require_once('modules/Invoice/Invoice.php');
-		$focus = new Invoice();
-	} else if($module == "Potentials") {
-		require_once('modules/Potentials/Potential.php');
-		$focus = new Potential();
-	} else if($module == "Quotes") {
-		require_once('modules/Quotes/Quote.php');
-		$focus = new Quote();
-	} else if($module == "SalesOrder") {
-		require_once('modules/SalesOrder/SalesOrder.php');
-		$focus = new SalesOrder();
-	}
-
-	if($entityid != "" && $entityid != 0) {
-		$focus->id = $entityid;
-		$focus->mode = "edit";
-		$focus->retrieve_entity_info($entityid,$module);
-	}
-	return $focus;
-}
-
-function entityid_sort($a,$b) {
-	return strcmp($a["entityid"], $b["entityid"]);
-}
-/* END INTERNAL FUNCTIONS */
-
-
+/************************ GET_PRODUCT_LIST END ****************************/
 
 /* Begin the HTTP listener service and exit. */ 
 $server->service($HTTP_RAW_POST_DATA); 
