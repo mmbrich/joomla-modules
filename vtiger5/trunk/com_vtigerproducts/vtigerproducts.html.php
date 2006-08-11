@@ -11,7 +11,7 @@ class HTML_product {
 			<tr>
 				<td width="133px" height="78px" valign="top" align="center">
 					<a href="<?php echo $product["website"]."&productid=".$product["productid"];?>">
-						<img src="http://vtiger-demo.fosslabs.com/sandbox/mmbrich/vtigercrm/storage/2006/August/week1/9_193769.jpg" alt="<?php echo $product["productname"];?>" width="129px" height="78px" border='0' />
+						<img src="<?php echo $product["image"];?>" alt="<?php echo $product["productname"];?>" width="129px" height="78px" border='0' />
 					</a>
 				</td>
 				<td valign="top">

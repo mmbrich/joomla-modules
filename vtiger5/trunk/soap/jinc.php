@@ -125,17 +125,20 @@ function get_field_values($focus,$columnname,$field='') {
 			return $focus->column_fields["account_id"];
 	// Get all the images and paths for each image.
         } elseif ($field["uitype"] == "69") {
-                $q = "SELECT name,path,vtiger_attachments.attachmentsid "
+		$q = "SELECT path,name,vtiger_attachments.attachmentsid "
 			." FROM vtiger_attachments "
 			." INNER JOIN vtiger_seattachmentsrel "
-			." ON vtiger_seattachmentsrel.crmid='".$focus->id."'"
-			." LIMIT 1";
+			." ON vtiger_seattachmentsrel.attachmentsid=vtiger_attachments.attachmentsid "
+			." WHERE vtiger_seattachmentsrel.crmid='".$focus->id."' LIMIT 1";
+
+
                 $rs = $adb->query($q);
                 $adb->println($q);
                 $ret = '';
                 while($row = $adb->fetch_array($rs)) {
                         $ret .= $row["path"].$row["attachmentsid"]."_".$row["name"]."|";
                 }
+                $adb->println("GOT IMAGE ".$ret);
                 return $ret;
 
 	// All the normal data fields

@@ -24,7 +24,7 @@ $server->register(
 );
 function get_product_list($category='') {
         global $adb;
-        $adb->println("Enter into the function get_field_details($module,$columnname)");
+        $adb->println("Enter into the function get_product_list($category)");
 
         $tabid=GetTabid("Products");
         $q = "SELECT * FROM vtiger_products INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid=vtiger_products.productid WHERE vtiger_crmentity.deleted='0'";
@@ -64,6 +64,7 @@ function get_product_list($category='') {
 			$name = $adb->query_result($rs2,'0','name');
 			$id = $adb->query_result($rs2,'0','attachmentsid');
 			$product[$i]["image"] = $site_URL."/".$path.$id."_".$name;
+        		$adb->println("GOT IMAGE: ".$product[$i]["image"]);
 		} else 
 			$product[$i]["image"] = "";
         }
