@@ -181,16 +181,16 @@ class VTigerField extends VtigerConnection {
 				else {
 				    if($picnum == 'all') {
 					for($i=0;$i<count($pics);$i++) {
-				    	$out = '<div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center">';
+				    	$out = '<a href="javascript:;" onclick="window.open(\''.$pics[$i].'\',\'Image\',\'resizable=yes,width=400px,height=400px\')"><div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center">';
 						if($i != 0)
                                 			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px/>';
 						else
                                 			$out .= '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px" />';
 					}
 				    } else {
-                                	$out = '<div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center"><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'"  border="0" height="67" hspace="6" width="100px" />';
+                                	$out = '<a href="javascript:;" onclick="window.open(\''.$pics[($picnum-1)].'\',\'Image\',\'resizable=yes,width=400px,height=400px\')"><div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center"><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'"  border="0" height="67" hspace="6" width="100px" />';
 				    }
-            			    $out .= '</div>';
+            			    $out .= '</div></a>';
 				}
                         break;
                         case '56': // checkbox

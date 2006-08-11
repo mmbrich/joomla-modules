@@ -241,10 +241,9 @@ function field_counter( &$matches ) {
 	else
 		$showlabel=false;
 
+	$picnum='all';
 	if($thisParams[4] != "" && isset($thisParams[4]))
 		$picnum=$thisParams[4];
-	else
-		$picnum='all';
 
 	$num = count($fields);
 	$fields[$num] = array();
@@ -268,13 +267,20 @@ function vfield_replacer( &$matches ) {
 			&& $field["columnname"] == $thisParams[1] 
 			&& $field["viewtype"] == $thisParams[2]
 			&& $field["showlabel"] == $thisParams[3]) {
-			//print_r($field);
-			//echo "<br><br>";
-			if($field["viewtype"] == "edit")
+
+			if (($field["columnname"] == "imagename" )
+				&& $field["picnum"] != $thisParams[4])
+					continue;
+		
+			  if($field["viewtype"] == "edit")
                         	return $vForm->_buildEditField($field,$field["showlabel"]);
-			else if($field["viewtype"] == "data")
+			  else if($field["viewtype"] == "data") {
+				if($field["columnname"] == "imagename" && $field["picnum"] != "all") {
+					$values = explode("|",$field["value"]);
+					return $vForm->GetCRMServer()."/".$values[($field["picnum"]-1)];
+				}
                        		return $field["value"];
-			else 
+			  } else 
                        		return $vForm->_buildDetailField($field,$field["showlabel"],$field["picnum"]);
 		}
 	    }
