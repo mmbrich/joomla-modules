@@ -106,7 +106,10 @@ class VTigerField extends VtigerConnection {
                         break;
                         case '15': // Picklist
                         case '111': // Picklist
-				$values = explode(",",$field["values"]);
+				if(is_array($field["values"]))
+					$values = $field["values"];
+				else 
+					$values = explode(",",$field["values"]);
                                 $out = '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
 				$j=0;
                                 foreach($values as $key=>$value) {
@@ -119,8 +122,11 @@ class VTigerField extends VtigerConnection {
                                $out .= '</select>';
                         break;
                         case '33': // Multi Picklist
-				$values = explode(",",$field["values"]);
 				$vals = explode(",",$field["value"]);
+				if(is_array($field["values"]))
+					$values = $field["values"];
+				else 
+					$values = explode(",",$field["values"]);
 
 				$out ='';
                                 $out .= '<select MULTIPLE name="vtiger_'.$field["columnname"].'[]" class="'.$classname.'" >';

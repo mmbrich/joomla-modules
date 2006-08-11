@@ -49,8 +49,8 @@ switch($task) {
         break;
         case 'syncContacts':
                 syncContacts( $option );
-                //$msg = "Syncronization Successful";
-                //mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+                $msg = "Syncronization Successful";
+                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
         break;
         case 'cancel':
                 cancel( $option );
