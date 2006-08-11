@@ -85,14 +85,15 @@ class VTigerContact extends VtigerConnection {
 	}
 	function SetField($fieldid,$value) 
 	{
+		$this->conn = $this->VtigerConnection("contact");
 		$this->data = array(
 			'entityid'=>$this->id,
 			'fieldid'=>$fieldid,
 			'value'=>$value
 		);
-		
                 $this->setData($this->data);
                 $res = $this->execCommand('set_field');
+		echo $res;
 	}
 	function ChangePassword($password,$newpasswd)
 	{

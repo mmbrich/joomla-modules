@@ -30,7 +30,7 @@ class HTML_vtigerregistration {
 		</center>
 	<?
 	}
-        function register($fields=array(),$mainframe) {
+        function register($fields=array(),$mainframe,$vtField) {
         ?>
 	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site');?>/components/<?php echo _MYNAMEIS;?>/vtiger/prototype.js" type="text/javascript"></script>
 		<script type="text/javascript">
@@ -91,7 +91,8 @@ class HTML_vtigerregistration {
                         </td>
                 </tr>
 
-		<? foreach($fields as $field) { 
+		<? 
+		    foreach($fields as $field) { 
 			if($field->show == '0' && $field->type != "2")
 				continue;
 		?>
@@ -107,52 +108,18 @@ class HTML_vtigerregistration {
 			</td>
 		  	<td>
 			    <?
-                                switch($field->type) {
-                                        case '55':
-                                        case '51':
-                                        case '2':
-                                        case '5': // Date
-                                        case '13': // Email
-                                        case '1': // Text
-                                        case '7': // number
-                                        case '9': // percent
-                                        case '71': // currency
-                                        case '17': // URL
-                                        case '11':
-		  				echo '<input name="'.$field->field.'" size="'.$field->size.'" value="" '.$ext.' maxlength="50" type="text">';
-                                       break;
-                                       case '21':
-                                       case '19':
-		  				echo '<textarea name="'.$field->field.'" value="" '.$ext.' ></textarea>';
-                                       break;
-                                       case '69': // picture
-		  				echo '<input name="'.$field->field.'" size="'.$field->size.'" value="" '.$ext.' maxlength="50" type="file">';
-                                       break;
-                                       case '56': // checkbox
-		  				echo '<input name="'.$field->field.'" size="'.$field->size.'" value="" '.$ext.' maxlength="50" type="checkbox">';
-                                       break;
-                                       case '15': // Picklist
-		  				echo '<select name="'.$field->field.'" >';
-						foreach($field->values as $key=>$value) {
-							echo '<option value="'.$value.'">'.$value.'</option>';
-						}
-		  				echo '</select>';
-                                       break;
-                                       case '33': // Multi Picklist
-		  				echo '<select MULTIPLE name="'.$field->field.'[]" >';
-						foreach($field->values as $key=>$value) {
-							echo '<option value="'.$value.'">'.$value.'</option>';
-						}
-		  				echo '</select>';
-                                       break;
-                                       default:
-                                                echo $field->uitype;
-                                       break;
-                                }
+				$f = array();
+				$f["uitype"] = $field->type;
+				$f["columnname"] = $field->field;
+				$f["fieldlabel"] = $field->name;
+				$f["value"] = '';
+				$f["maximumlength"] = $field->size;
+				$f["values"] = $field->values;
+				echo $vtField->_buildEditField($f,'');
 			    ?>
 		  	</td>
 		    </tr>
-		<? } ?>
+		<? } // END FOREACH ?>
 		<tr>
 			  <td colspan="2">
 			  </td>

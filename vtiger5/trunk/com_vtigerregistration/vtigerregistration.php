@@ -37,8 +37,10 @@ switch($task) {
 		echo "Your password has been sent to ".mosGetParam( $_POST, 'email', '' );
 	break;
         case 'register':
+		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
+		$vtigerField = new VtigerField();
                 $fields = get_fields();
-                HTML_vtigerregistration::register($fields,$mainframe);
+                HTML_vtigerregistration::register($fields,$mainframe,$vtigerField);
         break;
 }
 function activate( $option ) {
@@ -87,7 +89,7 @@ function activate( $option ) {
         }
 }
 function get_fields() {
-	global $database,$basePath,$mainframe;
+	global $database,$basePath,$mainframe,$vtigerField;
         $query = "SELECT * FROM "
                         ." #__vtiger_registration_fields "
 			." ORDER BY #__vtiger_registration_fields.order"
@@ -95,8 +97,6 @@ function get_fields() {
         $database->setQuery( $query );
         $current_rows = $database->loadObjectList();
 
-	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
-	$vtigerField = new VtigerField();
 	for($i=0;$i<count($current_rows);$i++) {
 		if($current_rows[$i]->type == "33" || $current_rows[$i]->type == "15") {
 			$vals = split(',',$vtigerField->GetPicklistValues($current_rows[$i]->id));
@@ -105,7 +105,6 @@ function get_fields() {
 			}
 		}
 	}
-
 	return $current_rows;
 }
 function saveRegistration() {
@@ -133,9 +132,15 @@ function saveRegistration() {
                 $row->block = '1';
         }
 
+	/*
+	foreach($_POST as $key=>$value) {
+		echo $key."==>".$value."<br>";
+	}
+	*/
+
 	$row->username = mosGetParam( $_POST, 'username', '' );
-	$row->email = mosGetParam( $_POST, 'email', '' );
-	$row->name = mosGetParam( $_POST, 'firstname', '' )." ".mosGetParam( $_POST, 'lastname', '' );
+	$row->email = mosGetParam( $_POST, 'vtiger_email', '' );
+	$row->name = mosGetParam( $_POST, 'vtiger_firstname', '' )." ".mosGetParam( $_POST, 'vtiger_lastname', '' );
 
         if (!$row->check()) {
                 echo "<script> alert('".html_entity_decode($row->getError())."'); window.history.go(-1); </script>\n";
@@ -152,47 +157,13 @@ function saveRegistration() {
 
         $row->checkin();
 	global $mainframe;
-	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
-	$vtigerContact = new VtigerContact();
-	$userid = $vtigerContact->RegisterUser(
-		$row->email,
-		mosGetParam( $_POST, 'firstname', '' ),
-		mosGetParam( $_POST, 'lastname', '' ),
-		$pwd,
-		$row->id
-	);
+	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
+	$vtigerForm = new VtigerForm();
+	$userid = $vtigerForm->SaveVtigerForm("Contacts","");
 
 	if($userid <= 0) {
                 echo "<script> alert('CRM REGISTRATION ERROR'); window.history.go(-1); </script>\n";
                 exit();
-	}
-
-	$q = "SELECT id,field FROM #__vtiger_registration_fields "
-		." WHERE #__vtiger_registration_fields.show='1'
-	";
-        $database->setQuery( $q );
-        $fields = $database->loadObjectList();
-
-	for($i=0,$cnt=count($fields);$i<$cnt;$i++) {
-		if( $fields[$i]->field  != "firstname" 
-		&& $fields[$i]->field  != "lastname" 
-		&& $fields[$i]->field  != "email" 
-		&& $fields[$i]->field  != ""
-		&& mosGetParam( $_POST, $fields[$i]->field, '' ) != "") {
-			if(is_array(mosGetParam( $_POST, $fields[$i]->field, '' ))) {
-				$tval = mosGetParam( $_POST, $fields[$i]->field, '' );
-				$value ='';
-				for($j=0;$j<count($tval);$j++) {
-					$value .= $tval[$j].",";
-				}
-			} else 
-				$value = mosGetParam( $_POST, $fields[$i]->field, '' );
-
-			$vtigerContact->SetField(
-				$fields[$i]->id,
-				$value
-			);
-		}
 	}
 
         $name           = $row->name;
