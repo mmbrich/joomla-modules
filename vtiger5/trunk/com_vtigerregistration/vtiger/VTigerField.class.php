@@ -187,8 +187,9 @@ class VTigerField extends VtigerConnection {
 						else
                                 			$out .= '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px" />';
 					}
-				    } else
+				    } else {
                                 	$out = '<div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center"><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[($picnum-1)].'"  border="0" height="67" hspace="6" width="100px" />';
+				    }
             			    $out .= '</div>';
 				}
                         break;
@@ -210,6 +211,7 @@ class VTigerField extends VtigerConnection {
 	{
 		$pics = explode("|",$field["value"]);
 		foreach($pics as $path) {
+			//echo $path."<br>";
 			if($path != "")
 				$pic[] = $this->GetCRMServer()."/".$path;
 		}
