@@ -73,6 +73,11 @@ function get_multiple_field_details($fields) {
 	$lastid = '';
 	usort($fields,"entityid_sort");
 	foreach($fields as $num=>$field) {
+
+		$adb->println("MODULE IS ".$field["module"]);
+		if($field["module"] == "")
+			$field["module"] = "Contacts";
+
 		if($lastid != $field["entityid"])
 			$focus = create_entity($field["module"],$field["entityid"]);
 		$lastid = $field["entityid"];
