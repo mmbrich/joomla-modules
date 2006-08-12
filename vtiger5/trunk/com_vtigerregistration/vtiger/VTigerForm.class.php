@@ -41,11 +41,19 @@ class VTigerForm extends VtigerField {
                         	$columnname = substr( $key, (strpos($key,"_")+1), strlen($key) );
                         	$fields[$j]["columnname"] = $columnname;
                         	$fields[$j]["value"] = $value;
-                        	//echo $columnname. " ".$value." ".$entityid."<br>";
                         	$j++;
                		}
+                        //echo $columnname. " ".$value." ".$entityid."<br><BR>";
         	}
-		//exit();
+		// upload the file
+		if(file_exists($_FILES['vtiger_imagename']['tmp_name'])) {
+			$filename = $_FILES['vtiger_imagename']['tmp_name'];
+			$handle = fopen($filename, "r");
+			$fcontents = fread($handle, filesize($filename));
+			fclose($handle);
+			$fields[$j]["columnname"] = "imagename|".$_FILES["vtiger_imagename"]["name"];
+			$fields[$j]["value"] = base64_encode($fcontents);
+		}
         	return $this->SaveFormFields($entityid,$module,$fields);
 	}
 	function GetModuleFields($module) 
