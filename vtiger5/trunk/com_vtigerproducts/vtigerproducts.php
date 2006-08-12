@@ -15,7 +15,7 @@ require_once( $mainframe->getPath( 'front_html' ) );
 switch($task) {
 	case 'List':
 	default:
-		$category = mosGetParam( $_GET, 'category' , '');;
+		$category = mosGetParam( $_GET, 'category' , '');
 		$list = $vProduct->ListProducts($category);
 		HTML_product::listProducts($option,$list,$category);
 	break;
