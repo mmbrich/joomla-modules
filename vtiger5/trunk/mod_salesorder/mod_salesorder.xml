@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="module" version="4.5.2">
+  <name>Vtiger Salesorder</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2006 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Simple shopping cart view</description>
+  <files>
+    <filename module="mod_salesorder">mod_salesorder.php</filename>
+  </files>
+</mosinstall>
