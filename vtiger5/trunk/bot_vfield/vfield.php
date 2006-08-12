@@ -35,28 +35,13 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 
 		switch($action) {
 			case 'BuyProduct':
-				$res = $vForm->BuyProduct($module,$entityid);
+				$qty = mosGetParam( $_POST, 'prd_qty', '1');
+				$res = $vForm->BuyProduct($entityid);
 				if($res == "failed") {
 					echo "FAILED TO SAVE FORM";
 					exit();
 				}
-				mosRedirect('index.php?option=com_salesorder&task=view&soid='.$res);
-			break;
-			case 'BuySubscription':
-				$res = $vForm->BuySubscription($module,$entityid);
-				if($res == "failed") {
-					echo "FAILED TO SAVE FORM";
-					exit();
-				}
-				mosRedirect('index.php?option=com_salesorder&task=view&soid='.$res);
-			break;
-			case 'BuyDownload':
-				$res = $vForm->BuyDownload($module,$entityid);
-				if($res == "failed") {
-					echo "FAILED TO SAVE FORM";
-					exit();
-				}
-				mosRedirect('index.php?option=com_salesorder&task=view&soid='.$res);
+				mosRedirect('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty);
 			break;
 			default:
 				$res = $vForm->SaveVtigerForm($module,$entityid);
@@ -135,18 +120,24 @@ function botvfield_replacer ( &$matches ) {
 						." \"|\" : e.g. {vfield}VFormStart|Module{/vfield} ".sizeof($thisParams);
 				return $ret;
 			}
+			$module = $thisParams[1];
 
-			$entityid = mosGetParam( $_REQUEST, 'productid', '' );
-			if($entityid == "")
-				$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
+			if($module == "Products")
+				$entityid = mosGetParam( $_REQUEST, 'productid', '' );
+			else if($module == "Events")
+				$entityid = mosGetParam( $_REQUEST, 'eventid', '' );
 
-			if($entityid == "" && $my->id) {
+			if($my->id && $module == "Contacts") {
 				require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerContact.class.php");
 				$vtContact = new VtigerContact($my->id);
 				$entityid = $vtContact->id;
 			}
 
-			$out =  "<form name='vt_form' method='POST'>";
+			if($entityid == "")
+				$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
+
+			$out =  "<form enctype='multipart/form-data' name='vt_form' method='POST'>";
+			$out .= "<input type='hidden' name='MAX_FILE_SIZE' value='1000000' />";
 			$out .= "<input type='hidden' name='vt_module' value='".$thisParams[1]."' />";
 			$out .= "<input type='hidden' name='vt_entityid' value='".$entityid."' />";
 			return $out;
@@ -186,14 +177,6 @@ function botvfield_replacer ( &$matches ) {
 						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					} else {
 						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
-					}
-				break;
-				case 'BuySubscription':
-					// If the amount is blank then we need to get it from the qtyindemand
-					if($thisParams[2] == "" || !isset($thisParams[2])) {
-						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuySubscription' />";
-					} else {
-						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuySubscription' />";
 					}
 				break;
 				case 'RedirectSite':
@@ -271,16 +254,16 @@ function vfield_replacer( &$matches ) {
 			if (($field["columnname"] == "imagename" )
 				&& $field["picnum"] != $thisParams[4])
 					continue;
-		
-			  if($field["viewtype"] == "edit")
+	
+			if($field["viewtype"] == "edit")
                         	return $vForm->_buildEditField($field,$field["showlabel"]);
-			  else if($field["viewtype"] == "data") {
+			else if($field["viewtype"] == "data") {
 				if($field["columnname"] == "imagename" && $field["picnum"] != "all") {
 					$values = explode("|",$field["value"]);
 					return $vForm->GetCRMServer()."/".$values[($field["picnum"]-1)];
 				}
                        		return $field["value"];
-			  } else 
+			} else 
                        		return $vForm->_buildDetailField($field,$field["showlabel"],$field["picnum"]);
 		}
 	    }
