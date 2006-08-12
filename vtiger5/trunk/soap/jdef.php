@@ -157,4 +157,73 @@ $server->wsdl->addComplexType(
         )
 );
 /************************ END CONTACTS **********************/
+
+/************************ START SALESORDERS **********************/
+$server->wsdl->addComplexType(
+        'salesorder_products',
+        'complexType',
+        'array',
+        '',
+        array(
+                'productid' => array('name'=>'productid','type'=>'xsd:string'),
+                'name' => array('name'=>'name','type'=>'xsd:string'),
+                'code' => array('name'=>'website','type'=>'xsd:string'),
+                'serialno' => array('name'=>'website','type'=>'xsd:string'),
+                'website' => array('name'=>'website','type'=>'xsd:string'),
+                'quantity' => array('name'=>'quantiy','type'=>'xsd:string'),
+                'tax1' => array('name'=>'tax1','type'=>'xsd:string'),
+                'tax2' => array('name'=>'tax2','type'=>'xsd:string'),
+                'tax3' => array('name'=>'tax3','type'=>'xsd:string'),
+                'discount_amount' => array('name'=>'discount_amount','type'=>'xsd:string'),
+                'discount_percent' => array('name'=>'discount_percent','type'=>'xsd:string'),
+                'total' => array('name'=>'total','type'=>'xsd:string')
+        )
+);
+$server->wsdl->addComplexType(
+        'salesorder_details',
+        'complexType',
+        'array',
+        '',
+        array(
+                'salesorderid' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'subject' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'potentialid' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'customerno' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'quote_id' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'vtiger_purchaseorder' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'duedate' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'txtTax' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'txtAdjustment' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'exciseduty' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'grandtotal' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'subtotal' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'taxtype' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'discount_percent' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'discount_amount' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                's_h_amount' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'sh_tax1' => array('name'=>'sh_tax1','type'=>'xsd:string'),
+                'sh_tax2' => array('name'=>'sh_tax2','type'=>'xsd:string'),
+                'sh_tax3' => array('name'=>'sh_tax3','type'=>'xsd:string'),
+                'account_id' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_street' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_street' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_city' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_city' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_state' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_state' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_code' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_code' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_country' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_country' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'bill_pobox' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'ship_pobox' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'description' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'terms_conditions' => array('name'=>'salesorderid','type'=>'xsd:string'),
+                'pending' => array('name'=>'pending','type'=>'xsd:string'),
+                'carrier' => array('name'=>'carrier','type'=>'xsd:string'),
+                'sostatus' => array('name'=>'sostatus','type'=>'xsd:string'),
+                'products' => array('name'=>'products','type'=>'tns:salesorder_products')
+        )
+);
+/************************ END SALESORDERS **********************/
 ?>

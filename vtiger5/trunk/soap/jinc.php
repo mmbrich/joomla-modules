@@ -129,7 +129,7 @@ function get_field_values($focus,$columnname,$field='') {
 			." FROM vtiger_attachments "
 			." INNER JOIN vtiger_seattachmentsrel "
 			." ON vtiger_seattachmentsrel.attachmentsid=vtiger_attachments.attachmentsid "
-			." WHERE vtiger_seattachmentsrel.crmid='".$focus->id."' LIMIT 1";
+			." WHERE vtiger_seattachmentsrel.crmid='".$focus->id."' AND type LIKE '%image%'";
 
 
                 $rs = $adb->query($q);

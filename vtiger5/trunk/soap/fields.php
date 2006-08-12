@@ -41,10 +41,61 @@ function save_form_fields($entityid,$module,$fields) {
 
 	$focus = create_entity($module,$entityid);
 
-	// HACK (populating related fields -- clean this up)
 	for($j=0;$j<count($fields);$j++) {
 		if(($fields[$j]["columnname"] == "accountid" || $fields[$j]["columnname"] == "account_id") && $module == "Contacts") {
 			$adb->query("UPDATE vtiger_account set accountname='".$fields[$j]["value"]."' WHERE accountid='".$focus->column_fields["account_id"]."'");
+		} else if(preg_match("/imagename/",$fields[$j]["columnname"])) {
+
+			$adb->println("ATTEMPTING TO UPLOAD FILE ");
+
+			$tmp = explode("|",$fields[$j]["columnname"]);
+			$new_name = $tmp[1];
+			$filepath = decideFilePath();
+			$current_id = $adb->getUniqueID("vtiger_crmentity");
+			$filename = $filepath.$current_id."_".$new_name;
+
+			$adb->println("UPLOAD FILE PATH ".$filename);
+			$adb->println("UPLOAD FILE NAME ".$new_name);
+			$adb->println("FILE CURRENT ID ".$current_id);
+			$adb->println("FILE ENTITY ID ".$entityid);
+
+			// Try to open our storage path
+			if (!$handle = fopen($filename, 'w')) {
+				$adb->println("Cannot open file");
+   			} else {
+				// Attempt to write the file
+   				if (fwrite($handle, base64_decode($fields[$j]["value"])) === FALSE) {
+					$adb->println("Cannot write to file");
+				}	
+
+				// We only support one picture for uploads
+				$q = "select * from vtiger_seattachmentsrel where crmid='".$entityid."'";
+				$rs = $adb->query($q);
+				while($tmprow = $adb->fetch_array($rs)) {
+					$delquery = 'delete from vtiger_seattachmentsrel where crmid='.$tmprow['crmid'];
+                                	$adb->query($delquery);
+
+					$delquery = 'delete from vtiger_crmentity where crmid='.$tmprow['attachmentsid'];
+                                	$adb->query($delquery);
+
+					$delquery = 'delete from vtiger_attachments where attachmentsid='.$tmprow["attachmentsid"];
+                                	$adb->query($delquery);
+				}
+
+				$filetype = "image/jpeg";
+				$date_var = date('YmdHis');
+
+				$sql1 = "insert into vtiger_crmentity (crmid,smcreatorid,smownerid,setype,description,createdtime,modifiedtime) values(".$current_id.",'1','1','".$module." Attachment','Image attachment from Joomla',".$adb->formatString("vtiger_crmentity","createdtime",$date_var).",".$adb->formatString("vtiger_crmentity","modifiedtime",$date_var).")";
+				$tmp = $adb->query($sql1);
+
+				$sql2="insert into vtiger_attachments (attachmentsid, name, description, type, path) values('".$current_id."','".$new_name."','Image upload from Joomla','".$filetype."','".$filepath."')";
+				$result=$adb->query($sql2);
+
+				$sql3="insert into vtiger_seattachmentsrel values('".$entityid."','".$current_id."')";
+                        	$ret = $adb->query($sql3);
+
+				fclose($handle);
+			}
 		} else {
 			$focus->column_fields[$fields[$j]["columnname"]] = $fields[$j]["value"];
 		}
