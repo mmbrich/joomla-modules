@@ -93,8 +93,21 @@ class VTigerField extends VtigerConnection {
                         	$out = '<textarea name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >'.$field["value"].'</textarea>';
                         break;
                         case '69': // picture
-
-                                $out = '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+				// Get the path
+				$pics = $this->GetPicturePaths($field);
+				if(is_array($pics)) {
+				  	if($field["picnum"] == 'all') {
+						for($i=0;$i<count($pics);$i++) {
+							if($i != 0)
+                                				$out = '<br><input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+							else
+                                				$out = '<input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+						}
+				    	} else {
+                                		$out = '<input name="vtiger_'.$field["columnname"].'" type="file" /> &nbsp; &nbsp; <img src="'.$pics[($field["picnum"]-1)].'" border="0" border="0" height="50" hspace="6" width="50" />';
+					}
+				} else 
+                                	$out = '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
                         break;
                         case '56': // checkbox
 				if($field["value"] == "on" || $field["value"] == 1) {
@@ -183,7 +196,7 @@ class VTigerField extends VtigerConnection {
 					for($i=0;$i<count($pics);$i++) {
 				    	$out = '<a href="javascript:;" onclick="window.open(\''.$pics[$i].'\',\'Image\',\'resizable=yes,width=400px,height=400px\')"><div class="mosimage" style="border-width: 1px; float: left; width: 120px;" align="center">';
 						if($i != 0)
-                                			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px/>';
+                                			$out .= '<br><img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px" />';
 						else
                                 			$out .= '<img name="'.$field["columnname"].'" alt="product image" src="'.$pics[$i].'"  border="0" height="67" hspace="6" width="100px" />';
 					}

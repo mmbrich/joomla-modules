@@ -12,8 +12,8 @@
  *
  */
 global $mainframe;
-require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTigerConnection.class.php');
-class VTigerContact extends VtigerConnection {
+require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
+class VTigerContact extends VTigerForm {
 	var $data;
 	var $id;
 	var $jid;
@@ -29,7 +29,7 @@ class VTigerContact extends VtigerConnection {
 			$this->LoadUser();
 		}
 	}
-	private function LoadUser()
+	function LoadUser()
 	{
                 global $database;
                 $q = "SELECT * FROM #__vtiger_portal_contacts "
