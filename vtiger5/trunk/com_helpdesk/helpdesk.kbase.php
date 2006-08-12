@@ -21,7 +21,7 @@ if($articleid != "" && isset($articleid)) {
         {
                 if($articleid == $faq_array[$i]['id'])
                 {
-                        $list .= '<tr><td class="kbFAQ">'.$faq_array[$i]['question'].'</td></tr>';
+                        $list .= '<tr><td class="contentheading">'.$faq_array[$i]['question'].'</td></tr>';
                         $search = array (
                                         '@&(lt|#60);@i',
                                         '@&(gt|#62);@i',
@@ -62,17 +62,19 @@ for($i=0;$i<count($faq_array);$i++)
 	$temp[$i] .= $faq_array[$i]['faqmodifiedtime'];
 }
 
-$list .= '<div class="kbHead">Recently Created Articles</div>';
+$list .= '<div class="moduletable"><h3>Recently Created Articles</h3></div>';
 $list .= '<br><table width="100%" border="0" cellspacing="3" cellpadding="0">';
+
+global $cur_template;
 
 for($i=0;$i<count($faq_array);$i++)
 {
         $record_exist = true;
-        $list .= '<tr><td width="15"><img src="templates/rhuk_solarflare_ii/images/faq.gif" valign="absmiddle"></td><td>';
-        $list .= '<div style="border-bottom:1px solid black".<a class="kbFAQ" href="index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id'].'">'.$faq_array[$i]['question'].'</a></div>';
-        $list .= '</td></tr><tr><td></td><td class="kbAnswer">';
+        $list .= '<tr><td width="15"><img src="templates/'.$cur_template.'/images/faq.gif" valign="absmiddle"></td><td>';
+        $list .= '<div style="border-bottom:1px dotted gray"><a href="index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id'].'">'.$faq_array[$i]['question'].'</a></div>';
+        $list .= '</td></tr><tr><td>&nbsp;</td><td class="kbAnswer">';
         $body=$faq_array[$i]['answer'];
-        $delimiter = strpos($body, "&lt;!--break--&gt;");
+        $delimiter = strpos($body, "<!--break-->");
         if ($delimiter) {
          	$list .= substr($body, 0, $delimiter).'<br />
                 <br /><a href="index.php?option=com_helpdesk&task=KbaseArticle&articleid='.
@@ -84,12 +86,11 @@ for($i=0;$i<count($faq_array);$i++)
         }
 }
 if(!$record_exist)
-        $list .= $mod_strings['LBL_NO_FAQ'];
+        $list .= "No FAQs";
 
 $list .= '</table>';
 
 $list .= '</td></tr></table>';
-//$list .= '</td></tr></table>';
 
 echo $list;
 
