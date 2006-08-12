@@ -38,7 +38,7 @@ class HTML_vtigersalesorders {
 				<strong><?php echo $product["name"];?></strong>
 				</a><br>
 			</td>
-    			<td>$<?php echo number_format($total,'2','.',',');?></td>
+    			<td>$<?php echo number_format($product["total"],'2','.',',');?></td>
 
     			<td><input title="Update Quantity In Cart" class="inputbox" size="4" maxlength="4" name="quantity" value="<?php echo $product["quantity"];?>" type="text" id="quantity_<?php echo $product["productid"];?>"></td>
 
@@ -248,7 +248,7 @@ class HTML_vtigersalesorders {
  	</div>
   	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="index.php?option=com_vtigersalesorders&task=checkout">
+			<a href="index.php?option=com_vtigersalesorders&task=checkout&soid=<?php echo $order["salesorderid"];?>">
      				<img src="http://www.fosslabs.com/components/com_virtuemart/shop_image/ps_image/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
       				Checkout
 			</a>

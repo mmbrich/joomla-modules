@@ -63,6 +63,9 @@ function create_entity($module,$entityid='') {
         } else if($module == "Vendors") {
                 require_once('modules/Vendors/Vendor.php');
                 $focus = new Vendor();
+        } else if($module == "Users") {
+                require_once('modules/Users/User.php');
+                $focus = new User();
         }
 
         if($entityid != "" && $entityid != 0) {

@@ -18,11 +18,12 @@ switch($task) {
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
 		$ret = $SalesOrder->Checkid($my->id);
-		if($ret) {
+		if(!$ret && !$soid)
+			echo "You must log-in or create an account to view sales orders";
+		else {
 			$SalesOrder->soid=$soid;
 			HTML_vtigersalesorders::view($order[0]);
-		} else
-			echo "You must log-in or create an account to view sales orders";
+		}
 	break;
 	case 'updateQuantity':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
@@ -33,7 +34,7 @@ switch($task) {
 			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg);
 		} else {
 			$ret = $SalesOrder->Checkid($my->id);
-			if(!$ret)
+			if(!$ret && !$soid)
 				echo "You must log-in or create an account to view sales orders";
 			else {
 				$SalesOrder->soid=$soid;
@@ -45,21 +46,24 @@ switch($task) {
 	break;
 	case 'addProduct':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+		$productid = mosGetParam( $_REQUEST, 'productid', '' );
+		$qty = mosGetParam( $_REQUEST, 'qty', '1' );
+
 		$ret = $SalesOrder->Checkid($my->id);
-		if(!$ret)
+		if(!$ret && !$soid)
 			echo "You must log-in or create an account to view sales orders";
 		else {
 			$SalesOrder->soid=$soid;
-			$SalesOrder->AddToSalesOrder($soid,$product,$qty);
+			$SalesOrder->AddToSalesOrder($productid,$qty);
 			$msg = "Added Product";
-			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg);
+			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg);
 		}
 	break;
 	case 'removeProduct':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 		$productid = mosGetParam( $_REQUEST, 'productid', '0' );
 		$ret = $SalesOrder->Checkid($my->id);
-		if(!$ret)
+		if(!$ret && !$soid)
 			echo "You must log-in or create an account to view sales orders";
 		else {
 			$SalesOrder->soid=$soid;
@@ -67,6 +71,15 @@ switch($task) {
 			$msg = "Removed Product";
 			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg);
 		}
+	break;
+	case 'checkout':
+		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+		if(!$ret && !$soid)
+			echo "You must log-in or create an account to view sales orders";
+
+		$SalesOrder->soid=$soid;
+		$invoiceid = $SalesOrder->ConvertToInvoice();
+		echo $invoiceid;
 	break;
 	default:
 		echo "Not Authorized";

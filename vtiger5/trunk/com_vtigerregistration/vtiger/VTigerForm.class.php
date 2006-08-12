@@ -42,8 +42,8 @@ class VTigerForm extends VtigerField {
                         	$fields[$j]["columnname"] = $columnname;
                         	$fields[$j]["value"] = $value;
                         	$j++;
+                        	//echo $columnname. " ".$value." ".$entityid."<br><BR>";
                		}
-                        //echo $columnname. " ".$value." ".$entityid."<br><BR>";
         	}
 		// upload the file
 		if(file_exists($_FILES['vtiger_imagename']['tmp_name'])) {
@@ -54,6 +54,7 @@ class VTigerForm extends VtigerField {
 			$fields[$j]["columnname"] = "imagename|".$_FILES["vtiger_imagename"]["name"];
 			$fields[$j]["value"] = base64_encode($fcontents);
 		}
+		//exit();
         	return $this->SaveFormFields($entityid,$module,$fields);
 	}
 	function GetModuleFields($module) 
@@ -68,17 +69,27 @@ class VTigerForm extends VtigerField {
                 $this->setData($this->data);
                 return $this->execCommand('get_modules');
 	}
-	function BuySubscription($module,$entityid)
+	function BuyProduct($productid)
 	{
-		return 10;
-	}
-	function BuyProduct($module,$entityid)
-	{
+		global $my,$mosConfig_absolute_path;
+		require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php");
+		$SO = new VtigerSalesOrder();
+		if(!$SO->Checkid($my->id) && !isset($_COOKIE["current_salesorder"])) {
+			$soid = $SO->CreateNewSalesOrder('');
+			setcookie("current_salesorder", $soid, time()+3600);
+		} else if (isset($_COOKIE["current_salesorder"]))
+			$soid = $_COOKIE["current_salesorder"];
 
-	}
-	function BuyDownload($module,$entityid)
-	{
+		if(!$soid || $soid == 0)
+			$tmp = $SO->GetCurrentSalesOrders($my->id);
 
+		if(is_array($tmp))
+			$soid = $tmp[0]["salesorderid"];
+
+		if($soid == 0 || $soid == "")
+			$soid = $SO->CreateNewSalesOrder($SO->contact->id);
+
+		return $soid;
 	}
 }
 ?>

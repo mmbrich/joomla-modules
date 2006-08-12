@@ -49,14 +49,20 @@ function get_current_salesorders($entityid) {
 	$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
 		." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
 		." FROM vtiger_salesorder "
-		." WHERE contactid='".$entityid."'";
+		." INNER JOIN vtiger_crmentity "
+		." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
+		." WHERE contactid='".$entityid."' "
+		." AND vtiger_crmentity.deleted='0'";
 	$rs = $adb->query($q);
 
-	$sos = array();
+	//$sos = array();
 	while($tmp = $adb->fetch_array($rs)) {
 		$sos[] = $tmp;
 	}
-	return $sos;
+	if(is_array($sos))
+		return $sos;
+	else
+		return 0;
 }
 /************************ GET_CURRENT_SALESORDERS  END ****************************/
 
@@ -166,6 +172,12 @@ $server->register(
 function update_product_quantity($soid,$productid,$quantity) {
 	global $adb;
         $adb->println("Enter into the function update_product_quantity($soid,$productid,$quantity)");
+
+	$q = "SELECT quantity FROM vtiger_inventoryproductrel "
+		." WHERE id='".$soid."' "
+		." AND productid='".$productid."' ";
+	$cur_qty = $adb->query_result($adb->query($q),'0','quantity');
+
 	$q = "UPDATE vtiger_inventoryproductrel "
 		." SET quantity='".$quantity."' "
 		." WHERE id='".$soid."' "
@@ -173,6 +185,29 @@ function update_product_quantity($soid,$productid,$quantity) {
 	$rs = $adb->query($q);
 
 	// TODO Re-calculate SO
+	$prod_info = get_taxinfo($productid);
+        $adb->println("PRODUCT INFO ".$prod_info["taxid"]);
+
+	$q = "SELECT total, subtotal "
+		." FROM vtiger_salesorder "
+		." WHERE salesorderid='".$soid."' ";
+	$rs = $adb->query($q);
+	$gtotal = $adb->query_result($rs,'0','total');
+	$stotal = $adb->query_result($rs,'0','subtotal');
+        $adb->println("CURRENT SO GTOTAL ".$gtotal);
+        $adb->println("CURRENT SO STOTAL ".$stotal);
+
+	$newgtotal = calc_totals($gtotal, ($quantity-$cur_qty), $prod_info);
+	$newstotal = calc_totals($stotal, ($quantity-$cur_qty), $prod_info);
+        $adb->println("NEW SO GTOTAL ".$newgtotal);
+        $adb->println("NEW SO STOTAL ".$newstotal);
+
+	$q = "UPDATE vtiger_salesorder "
+		." SET total='".$newgtotal."', subtotal='".$newstotal."' "
+		." ,taxtype='individual' "
+		." WHERE salesorderid='".$soid."'";
+	$rs = $adb->query($q);
+
 	return true;
 }
 /************************ UPDATE_PRODUCT_QUANTITY END ****************************/
@@ -189,12 +224,64 @@ $server->register(
 function remove_product($soid,$productid) {
 	global $adb;
         $adb->println("Enter into the function remove_product($soid,$productid)");
+
+	$q = "SELECT * FROM vtiger_inventoryproductrel "
+		." INNER JOIN vtiger_producttaxrel "
+		." ON vtiger_producttaxrel.productid=vtiger_inventoryproductrel.productid "
+		." WHERE vtiger_inventoryproductrel.id='".$soid."' "
+		." AND vtiger_inventoryproductrel.productid='".$productid."'";
+	$rs = $adb->query($q);
+	$list_price = $adb->query_result($rs,'0','listprice');
+	$quantity = $adb->query_result($rs,'0','quantity');
+        $adb->println("\n\rLIST PRICE: ".$list_price);
+        $adb->println("\n\rQUANTITY: ".$quantity);
+
+	$taxid = $adb->query_result($rs,'0','taxid');
+	$tax = $adb->query_result($rs,'0','tax'.$taxid);
+        $adb->println("TAX AMOUNT: ".$tax);
+
+	$q = "SELECT total,subtotal "
+		." FROM vtiger_salesorder "
+		." WHERE salesorderid='".$soid."'";
+	$rs = $adb->query($q);
+	$gtotal = $adb->query_result($rs,'0','total');
+	$stotal = $adb->query_result($rs,'0','subtotal');
+
+	$total = ( $list_price * $quantity );
+        $adb->println("\n\rTOTAL PRICE: ".$total);
+
+	$this_total = ( ( ( $total * $tax ) / 100 ) + $total);
+
+        $adb->println("\n\rTOTAL TO REMOVE: ".$this_total);
+
+	$newgtotal = ($gtotal - $this_total);
+	$newstotal = ($stotal - $this_total);
+        $adb->println("\n\rNEW TOTAL : ".$newgtotal);
+
 	$q = "DELETE FROM vtiger_inventoryproductrel "
 		." WHERE id='".$soid."' "
 		." AND productid='".$productid."'";
 	$rs = $adb->query($q);
 
-	// TODO Re-calculate SO
+	$q = "SELECT count(*) FROM vtiger_inventoryproductrel "
+		." WHERE id='".$soid."'";
+	$num_products = $adb->query_result($adb->query($q),'0','count(*)');
+
+	// Check if its the last product
+	if($num_products >= 1) {
+       		$adb->println("UPDATING SO ".$soid);
+		$q = "UPDATE vtiger_salesorder "
+			." SET total='".$newgtotal."', subtotal='".$newstotal."' "
+			." ,taxtype='individual' "
+			." WHERE salesorderid='".$soid."'";
+	} else {
+       		$adb->println("DELETING SO ".$soid);
+		$q = "UPDATE vtiger_crmentity "
+			." SET deleted='1' "
+			." WHERE crmid='".$soid."'";
+	}
+	$rs = $adb->query($q);
+
 	return true;
 }
 /************************ REMOVE_PRODUCT END ****************************/
@@ -203,25 +290,204 @@ function remove_product($soid,$productid) {
 $server->register(
         'add_product',
         array(	'soid'=>'xsd:string',
-		'productid'=>'xsd:string'
+		'productid'=>'xsd:string',
+		'qty'=>'xsd:string'
 	),
         array('return'=>'xsd:string'),
         $NAMESPACE);
 
-function add_product($soid,$productid) {
+function add_product($soid,$productid,$qty) {
 	global $adb;
-        $adb->println("Enter into the function remove_product($soid,$productid)");
-	if($soid == 0) {
-		// New SO
-		$blah='1';
-	} else {
-		// Current SO
-		$blah='1';
+        $adb->println("Enter into the function add_product($soid,$productid)");
+	if($soid == 0)
+		return false;
+	else {
+      	 	$adb->println("Getting Taxes --- ");
+		$prod_info = get_taxinfo($productid);
+
+		// Check to see if product is already in the order
+		// update qty and totals if so.
+		$q = "SELECT * FROM vtiger_inventoryproductrel "
+			." WHERE id='".$soid."'"
+			." AND productid='".$productid."'";
+		$rs = $adb->query($q);
+		if($adb->num_rows($rs) > 0) {
+			$current_product=true;
+			$current_qty = $adb->query_result($rs,'0','quantity');
+		} else
+			$current_product=false;
+
+		if(!$current_product) {
+			$q = "INSERT INTO vtiger_inventoryproductrel "
+				." (id,productid,quantity,listprice,tax".$prod_info["taxid"].") "
+				." VALUES "
+				." ('".$soid."','".$productid."','".$qty."',"
+				." '".$prod_info["list_price"]."','".$prod_info["percent"]."') ";
+			$rs = $adb->query($q);
+		} else {
+			return update_product_quantity($soid,$productid,($qty+$current_qty));
+		}
+
+      	 	$adb->println("Getting Totals ");
+
+		$q = "SELECT total, subtotal "
+			." FROM vtiger_salesorder "
+			." WHERE salesorderid='".$soid."' ";
+		$rs = $adb->query($q);
+		$gtotal = $adb->query_result($rs,'0','total');
+		$stotal = $adb->query_result($rs,'0','subtotal');
+
+      	 	$adb->println("Calculating GTotals ");
+		$newgtotal = calc_totals($gtotal, $qty, $prod_info);
+      	 	$adb->println("Calculating STotals ");
+		$newstotal = calc_totals($stotal, $qty, $prod_info);
+
+      	 	$adb->println("Updating Salesorder ");
+		$q = "UPDATE vtiger_salesorder "
+			." SET total='".$newgtotal."', subtotal='".$newstotal."' "
+			." ,taxtype='individual' "
+			." WHERE salesorderid='".$soid."'";
+		$rs = $adb->query($q);
+	
+		return true;
 	}
-	return true;
 }
 /************************ ADD_PRODUCT END ****************************/
 
+/************************ ADD_PRODUCT START ****************************/
+$server->register(
+        'new_salesorder',
+        array('contactid'=>'xsd:string'),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function new_salesorder($contactid) {
+	global $adb;
+        $adb->println("Enter into the function new_salesorder($contactid)");
+	$date_var = date('YmdHis');
+
+	$SO = create_entity("SalesOrder");
+
+	if($contactid != "") {
+		$Contact = create_entity("Contacts",$contactid);
+		$SO->column_fields["account_id"] = $Contact->column_fields["account_id"];
+		$SO->column_fields["contact_id"] = $contactid;
+	}
+
+	$SO->column_fields["subject"] = $date_var;
+	$SO->column_fields["hdnTaxType"] = "individual";
+	$SO->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
+	$SO->save("SalesOrder");
+
+	return $SO->id;
+}
+/************************ ADD_PRODUCT END ****************************/
+
+/************************ ASSOCIATE_TO_USER START ****************************/
+$server->register(
+        'associate_to_user',
+        array(
+		'contactid'=>'xsd:string',
+		'soid'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function associate_to_user($contactid,$soid) {
+	global $adb;
+        $adb->println("\n\r\n\rEnter into the function associate_to_user($contactid,$soid)\n\r\n\r");
+
+	$CO = create_entity("Contacts",$contactid);
+
+	$q = "UPDATE vtiger_salesorder "
+		." SET accountid='".$CO->column_fields["account_id"]."'"
+		." ,contactid='".$contactid."'"
+		." WHERE salesorderid='".$soid."'";
+	$rs = $adb->query($q);
+	return soid;
+}
+/************************ ASSOCIATE_TO_USER END ****************************/
+
+/************************ CONVERT_TO_INVOICE START ****************************/
+$server->register(
+        'convert_to_invoice',
+        array(
+		'soid'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function convert_to_invoice($soid) {
+	global $adb;
+        $adb->println("\n\r\n\rEnter into the function convert_to_invoice($soid)\n\r\n\r");
+
+	$focus = create_entity("Invoice");
+	$so_focus = create_entity("SalesOrder",$soid);
+
+	global $current_user;
+        $current_owner = 1;
+	$current_user = create_entity("Users",$current_owner);
+
+        $focus = getConvertSoToInvoice($focus,$so_focus,$soid);
+
+        $focus->column_fields['vtiger_purchaseorder'] = $so_focus->column_fields['vtiger_purchaseorder'];
+        $focus->column_fields['terms_conditions'] = $so_focus->column_fields['terms_conditions'];
+
+        $associated_prod = getAssociatedProducts("SalesOrder",$so_focus);
+
+	// Populate info
+	foreach($so_focus->column_fields as $key=>$value) {
+		$focus->column_fields[$key] = $value;
+	}
+
+	$focus->save("Invoice");
+
+	// Populate products
+	$q = "SELECT * FROM vtiger_inventoryproductrel "
+		." WHERE id='".$soid."'";
+	$rs = $adb->query($q);
+	while($row = $adb->fetch_array($rs)) {
+		$q = "INSERT INTO vtiger_inventoryproductrel "
+			." (id,productid,quantity,listprice,tax1,tax2,tax3) "
+			." VALUES "
+			." ('".$focus->id."','".$row["productid"]."','".$row["quantity"]."','".$row["listprice"]."','".$row["tax1"]."','".$row["tax2"]."','".$row["tax3"]."') ";
+		$t = $adb->query($q);
+	}
+
+	return $focus->id;
+}
+/************************ CONVERT_TO_INVOICE END ****************************/
+
+function calc_totals($cur_total, $qty, $prod_info) {
+	global $adb;
+        $adb->println("CALCULATING NEW TOTALS!!!");
+	$total = ( $prod_info["list_price"] * $qty );
+	$this_total = ( ( ( $total * $prod_info["percent"] ) / 100 ) + $total) ;
+
+        $adb->println("OLD TOTAL  ".$cur_total);
+        $adb->println("LIST PRICE TOTAL  ".$total);
+        $adb->println("QTY  ".$qty);
+        $adb->println("NEW TOTAL  ".$this_total);
+
+	$newtotal = ($this_total + $cur_total);
+	return $newtotal;
+
+}
+function get_taxinfo($productid) {
+	global $adb;
+	$q = "SELECT unit_price "
+		." FROM vtiger_products "
+		." WHERE productid='".$productid."' ";
+	$rs = $adb->query($q);
+	$list_price = $adb->query_result($rs,'0','unit_price');
+
+	$q = "SELECT * FROM vtiger_producttaxrel where productid='".$productid."'";
+	$rs = $adb->query($q);
+	$taxid = $adb->query_result($rs,'0','taxid');
+	$percent = $adb->query_result($rs,'0','taxpercentage');
+
+	return array("list_price"=>$list_price,"taxid"=>$taxid,"percent"=>$percent);
+}
 
 /* Begin the HTTP listener service and exit. */
 $server->service($HTTP_RAW_POST_DATA);

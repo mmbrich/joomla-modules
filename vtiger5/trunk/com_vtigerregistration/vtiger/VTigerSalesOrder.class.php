@@ -37,6 +37,11 @@ class VTigerSalesOrder extends VTigerConnection {
 	}
 	function GetCurrentSalesOrders($id)
 	{
+                if (isset($_COOKIE["current_salesorder"])) {
+                        $soid = $_COOKIE["current_salesorder"];
+			return $soid;
+		}
+
 		$this->contact->jid=$id;
 		$this->contact->LoadUser();
 
@@ -53,14 +58,49 @@ class VTigerSalesOrder extends VTigerConnection {
                 $result = $this->execCommand('get_salesorder');
                 return $result;
 	}
-	function AddToSalesOrder($productid)
+	function CreateNewSalesOrder($contactid)
 	{
+		$this->contact->id = $contactid;
+	       	$this->data = array('contactid' => $this->contact->id);
+                $this->setData($this->data);
+                $result = $this->execCommand('new_salesorder');
+		$this->soid = $result;
+                return $result;
+	}
+	function AddToSalesOrder($productid,$qty)
+	{
+		if(!$this->soid) {
+			global $my;
+			if($this->Checkid($my->id))
+				$this->CreateNewSalesOrder($this->contact->id);
+		}
 	       	$this->data = array(
 			'soid' => $this->soid,
-			'productid' => $productid
+			'productid' => $productid,
+			'qty' => $qty
 		);
                 $this->setData($this->data);
                 $result = $this->execCommand('add_product');
+                return $result;
+	}
+	function AssociateToUser()
+	{
+		global $my;
+		$this->soid = $_COOKIE["current_salesorder"];
+
+		$this->contact->jid=$my->id;
+		$this->contact->LoadUser();
+
+	       	$this->data = array(
+			'contactid' => $this->contact->id,
+			'soid' => $this->soid
+		);
+                $this->setData($this->data);
+                $result = $this->execCommand('associate_to_user');
+		if($result != "failed") {
+			$_COOKIE["current_salesorder"] = false;
+			unset($_COOKIE["current_salesorder"]);
+		}
                 return $result;
 	}
 	function RemoveFromSalesOrder($productid)
@@ -82,6 +122,13 @@ class VTigerSalesOrder extends VTigerConnection {
 		);
                 $this->setData($this->data);
                 $result = $this->execCommand('update_product_quantity');
+                return $result;
+	}
+	function ConvertToInvoice()
+	{
+	       	$this->data = array('soid' => $this->soid);
+                $this->setData($this->data);
+                $result = $this->execCommand('convert_to_invoice');
                 return $result;
 	}
 }
