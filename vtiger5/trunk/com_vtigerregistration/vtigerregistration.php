@@ -132,12 +132,6 @@ function saveRegistration() {
                 $row->block = '1';
         }
 
-	/*
-	foreach($_POST as $key=>$value) {
-		echo $key."==>".$value."<br>";
-	}
-	*/
-
 	$row->username = mosGetParam( $_POST, 'username', '' );
 	$row->email = mosGetParam( $_POST, 'vtiger_email', '' );
 	$row->name = mosGetParam( $_POST, 'vtiger_firstname', '' )." ".mosGetParam( $_POST, 'vtiger_lastname', '' );
@@ -165,6 +159,11 @@ function saveRegistration() {
                 echo "<script> alert('CRM REGISTRATION ERROR'); window.history.go(-1); </script>\n";
                 exit();
 	}
+	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
+	$vtigerContact = new VtigerContact();
+	$vtigerContact->id = $userid;
+	$vtigerContact->jid = $row->id;
+	$vtigerContact->AssociateUserToContact();
 
         $name           = $row->name;
         $email          = $row->email;
