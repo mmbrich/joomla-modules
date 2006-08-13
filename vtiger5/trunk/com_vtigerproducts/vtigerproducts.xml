@@ -28,13 +28,13 @@
 <install>
  <queries>
     <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_addcart', 'on', 'checkbox','Allow "Add To Cart" button for each product in the list.');
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_addcart', 'on', 'checkbox','Allow "Add To Cart" button for each product in the list.');
     </query>
     <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_images', 'on', 'checkbox','Allow product images in list.');
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_images', 'on', 'checkbox','Allow product images in list.');
     </query>
     <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_desc_len', '150', 'text','Length of product description in list.');
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_desc_len', '150', 'text','Length of product description in list.');
     </query>
  </queries>
 </install>
