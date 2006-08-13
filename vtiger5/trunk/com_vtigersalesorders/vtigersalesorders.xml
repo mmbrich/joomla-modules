@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mosinstall type="component" version="4.5.2">
-  <name>vtiersalesorders</name>
+  <name>vtigersalesorders</name>
   <author>Matthew Brichacek</author>
   <creationDate>June 2006</creationDate>
   <copyright>(C) 2006 Foss Labs</copyright>
