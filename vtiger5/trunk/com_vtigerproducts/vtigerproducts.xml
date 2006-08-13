@@ -12,17 +12,6 @@
     <filename>vtigerproducts.php</filename>
     <filename>vtigerproducts.html.php</filename>
  </files>
- <queries>
-    <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_addcart', 'on', 'checkbox','Allow "Add To Cart" button for each product in the list.');
-    </query>
-    <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_images', 'on', 'checkbox','Allow product images in list.');
-    </query>
-    <query>
-	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_desc_len', '150', 'text','Length of product description in list.');
-    </query>
- </queries>
  <administration>
     <menu>Vtiger Products</menu>
     <submenu>
@@ -36,4 +25,17 @@
         <filename>toolbar.vtigerproducts.html.php</filename>
     </files>
   </administration>
+<install>
+ <queries>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_addcart', 'on', 'checkbox','Allow "Add To Cart" button for each product in the list.');
+    </query>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_images', 'on', 'checkbox','Allow product images in list.');
+    </query>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` ('name','value','type','descr') VALUES ('product_desc_len', '150', 'text','Length of product description in list.');
+    </query>
+ </queries>
+</install>
 </mosinstall>
