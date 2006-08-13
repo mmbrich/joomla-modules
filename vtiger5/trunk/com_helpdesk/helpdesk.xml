@@ -28,4 +28,17 @@
 	<filename>toolbar.helpdesk.html.php</filename>
     </files>
   </administration>
+<install>
+ <queries>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_kbase_noauth', 'on', 'checkbox','Allow visitors to view the Knowledge Base without authentication.');
+    </query>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_noauth', 'on', 'checkbox','Allow visitors to view the Help Desk without authentication.');
+    </query>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_livechat', 'on', 'checkbox','Allow visitors to chat live with CRM Help Desk Users.');
+    </query>
+ </queries>
+</install>
 </mosinstall>
