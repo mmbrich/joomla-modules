@@ -12,10 +12,12 @@
     <filename>vtigerregistration.php</filename>
     <filename>vtigerregistration.html.php</filename>
     <filename>vtiger/VTigerField.class.php</filename>
+    <filename>vtiger/VTigerForm.class.php</filename>
     <filename>vtiger/VTigerContact.class.php</filename>
     <filename>vtiger/VTigerSalesOrder.class.php</filename>
     <filename>vtiger/VTigerInvoice.class.php</filename>
     <filename>vtiger/VTigerPotential.class.php</filename>
+    <filename>vtiger/VTigerProduct.class.php</filename>
     <filename>vtiger/VTigerHDeskUser.class.php</filename>
     <filename>vtiger/prototype.js</filename>
   </files>
@@ -39,6 +41,8 @@
                                 `id` int(11) NOT NULL auto_increment,
                                 `name` varchar(50) NOT NULL default '',
                                 `value` text,
+                                `type` varchar(50) NOT NULL default 'text',
+                                `descr` text,
                                 PRIMARY KEY  (`id`),
                                 UNIQUE KEY `name` (`name`)
                                 ) TYPE=MyISAM;

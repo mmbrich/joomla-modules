@@ -49,6 +49,18 @@ class VTigerContact extends VTigerForm {
                 $this->setData($this->data);
                 return $this->execCommand('is_allowed_helpdesk');
         }
+	function AssociateUserToContact($jid='')
+	{
+		if($jid != '' && !$this->jid)
+			$this->jid=$jid;
+
+		if($this->id) {
+			global $database;
+			$q = "INSERT INTO #__vtiger_portal_contacts (contactid,entityid) VALUES ('".$this->jid."','".$this->id."')";
+        		$database->setQuery( $q );
+        		$database->query() or die( $database->stderr() );
+		}
+	}
 	function RegisterUser($email,$firstname,$lastname,$password,$jid)
 	{
 		$this->firstname = $firstname;
@@ -60,17 +72,11 @@ class VTigerContact extends VTigerForm {
 					'lastname'=>$lastname,
 					'password'=>$password
 		);
-
 		$this->setData($this->data);
                 $res = $this->execCommand('create_basic_contact');
 		$this->id=$res;
 
-		if($this->id > 0) {
-			global $database;
-			$q = "INSERT INTO #__vtiger_portal_contacts (contactid,entityid) VALUES ('".$jid."','".$this->id."')";
-        		$database->setQuery( $q );
-        		$database->query() or die( $database->stderr() );
-		}
+		$this->AssociateUserToContact($jid);
 
 		return $res;
 	}

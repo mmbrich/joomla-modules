@@ -20,7 +20,7 @@ class HTML_vtigerregistration {
 		?>
 		<br /><br />
 		<center>
-		<form method="POST">
+		<form method="POST" action="index.php">
 		<table border=0 width="65%" align="center">
 		<tr><td> Email Address:</td><td><input type='text' name='email' style='border:solid 1px gray' size='40'></td></tr>
 		<tr><td></td><td><input type='submit' class='button' name='send_pass' value=' Send Password '></td></tr>
