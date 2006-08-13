@@ -39,7 +39,7 @@ class HTML_helpdesk {
 	<?
 	}
 
-	function settings($option,$invoices='',$livechat='') {
+	function settings($option,$values) {
 	?>
                 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:10000;"></div>
                 <form action="<?PHP_SELF?>" method="post" name="adminForm">
@@ -57,30 +57,29 @@ class HTML_helpdesk {
                         Options
                         </th>
                 </tr>
-                <tr>
-                        <td align='right' width='15%'>
-				Live Chat:
+                   <?php
+                   foreach($values as $field) {
+                    ?>
+                     <tr>
+                        <td width="50">
+                                <?php if($field->type == "checkbox" || $field->type == "radio") {
+                                        if($field->value == "on")
+                                                $ext = "CHECKED";
+                                        else
+                                                $ext = "";
+                                ?>
+                                        <input type="<?php echo $field->type;?>" name="<?php echo $field->name;?>" value="on" <?php echo $ext;?> />
+                                <? } else { ?>
+                                        <input type="<?php echo $field->type;?>" name="<?php echo $field->name;?>" size="5" value="<?php echo $field->value;?>" <?php echo $ext;?> />
+                                <? } ?>
                         </td>
-                        <td align='left'>
-				<input type='checkbox' name='livechat' <?php echo $livechat;?> />
+                        <td align="left">
+                                <?php echo $field->descr;?>
                         </td>
-                        <td align='left'>
-				Allows Help Desk customers to chat live with CRM agents
-                        </td>
-                </tr>
-
-                <tr>
-                        <td align='right' width='15%'>
-				Invoices:
-                        </td>
-                        <td align='left'>
-				<input type='checkbox' name='invoices' <?php echo $invoices;?> />
-                        </td>
-                        <td align='left'>
-				Allows Help Desk customers to view invoice details
-                        </td>
-                </tr>
-
+                     </tr>
+                    <?
+                   }
+                   ?>
                 </table>
 
                 <input type="hidden" name="id" value="<?php echo $id; ?>" />

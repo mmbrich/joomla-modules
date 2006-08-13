@@ -15,9 +15,16 @@ require_once( $mainframe->getPath( 'front_html' ) );
 switch($task) {
 	case 'List':
 	default:
+		$q = "SELECT name,value FROM #__vtiger_portal_configuration "
+			." WHERE name LIKE 'product_%'";
+		$database->setQuery($q);
+		$configs = $database->loadObjectList();
+		foreach($configs as $config) {
+			$conf[$config->name] = $config->value;
+		}
 		$category = mosGetParam( $_GET, 'category' , '');
 		$list = $vProduct->ListProducts($category);
-		HTML_product::listProducts($option,$list,$category);
+		HTML_product::listProducts($option,$list,$category,$conf);
 	break;
 }
 ?>

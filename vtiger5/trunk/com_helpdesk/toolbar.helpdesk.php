@@ -17,8 +17,27 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 
-switch ( $act ) {
-        case 'settings':
+switch ($task) {
+        case 'save':
+        case 'apply':
+                $q = "SELECT * FROM #__vtiger_portal_configuration"
+                        ." WHERE name LIKE 'helpdesk_%'";
+                $fields = $database->setQuery($q);
+                $current_config = $database->loadObjectList();
+
+                foreach($current_config as $config) {
+                        $q = "UPDATE #__vtiger_portal_configuration "
+                                ."\n SET value='".$_POST[$config->name]."' "
+                                ."\n WHERE name='".$config->name."' ";
+                        $database->setQuery($q);
+                        $database->query();
+                }
+                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+        break;
+        case 'cancel':
+                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+        break;
+        default:
                 TOOLBAR_helpdesk::_DEFAULT();
         break;
 }
