@@ -12,6 +12,25 @@ require_once( $mainframe->getPath( 'front_html' ) );
 require_once('components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php');
 $SalesOrder = new VtigerSalesOrder();
 
+require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
+$vtigerForm = new VtigerForm();
+
+$q = "SELECT name,value FROM #__vtiger_portal_configuration "
+	." WHERE name LIKE 'salesorder_%'";
+$database->setQuery($q);
+$configs = $database->loadObjectList();
+foreach($configs as $config) {
+	$conf[$config->name] = $config->value;
+}
+
+if(isset($_POST["update_address"])) {
+	$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+	$entityid = mosGetParam( $_REQUEST, 'vt_entityid', '0' );
+	$task = mosGetParam( $_REQUEST, 'task', 'checkout' );
+	$ret = $vtigerForm->SaveVtigerForm("Contacts",$entityid);
+	mosRedirect('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid);
+}
+
 switch($task) {
 	case 'view':
 		global $my;
@@ -88,8 +107,6 @@ switch($task) {
 		HTML_vtigersalesorders::do_payment();
 	break;
 	case 'checkout':
-                require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
-                $vtigerForm = new VtigerForm();
 		if(!$my->id) {
                 	$fields = get_fields();
 
@@ -121,6 +138,20 @@ switch($task) {
 			HTML_vtigersalesorders::view($order[0]);
 			HTML_vtigersalesorders::shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid);
 		}
+	break;
+	case 'updateAddress':
+		$addy_type = mosGetParam( $_REQUEST, 'type', '0' );
+		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+
+		if($type == "mailing")
+			$fields = create_fields(array('mailingstreet','mailingcity','mailingstate','mailingzip','mailingcountry'));
+		else
+			$fields = create_fields(array('otherstreet','othercity','otherstate','otherzip','othercountry'));
+
+		$SalesOrder->soid=$soid;
+		$order = $SalesOrder->GetSalesOrderDetails($soid);
+		HTML_vtigersalesorders::view($order[0]);
+		HTML_vtigersalesorders::update_addy($fields,$type);
 	break;
 	default:
 		echo "Not Authorized";

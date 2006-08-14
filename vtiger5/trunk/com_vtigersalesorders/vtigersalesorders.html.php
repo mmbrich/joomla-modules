@@ -423,7 +423,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="https://www.fosslabs.com/component/page,account.billing/next_page,checkout.index/option,com_virtuemart/Itemid,1/">
+							<a href="index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=mailing&soid=<?php echo $soid;?>">
             						(Update Address)</a>
             					</td>
         				</tr>
@@ -453,7 +453,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="https://www.fosslabs.com/component/page,account.billing/next_page,checkout.index/option,com_virtuemart/Itemid,1/">
+							<a href="index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=other&soid=<?php echo $soid;?>">
             						(Update Address)</a>
             					</td>
         				</tr>
@@ -477,6 +477,43 @@ class HTML_vtigersalesorders {
 				</table>
 			</form>
 		<?
+	}
+	function update_addy($fields,$type)
+	{
+		global $vtigerForm;
+	?>
+                <form action="index.php" method="post" name="vt_form">
+                	<input name="option" value="com_vtigersalesorders" type="hidden">
+                        <input name="task" value="checkout" type="hidden">
+                        <input name="Itemid" value="1" type="hidden">
+                        <input name="soid" value="<?php echo mosGetParam( $_REQUEST, 'soid', '0' );?>" type="hidden">
+			<input name="vt_module" value="Contacts" type="hidden">
+			<input name="vt_entityid" value="<?php echo $fields[0]["entityid"];?>" type="hidden">
+			<input name="update_address" value="<?php echo $type;?>" type="hidden">
+
+                        <h4>Update Address Information.</h4>
+                        <table border="0" cellpadding="2" cellspacing="0" width="100%">
+                         	<tbody>
+                                 	<?php
+                                        foreach($fields as $field) {
+                                        ?>
+                                                <tr>
+                                                        <td align="right" nowrap="nowrap" width="10%"><?php echo $field["fieldlabel"];?>: </td>
+                                                        <td >
+								<?php echo $vtigerForm->_buildEditField($field,'');?>
+                                                        </td>
+                                                </tr>
+                                        <? } ?>
+					<tr>
+						<td colspan='2'>
+							<input type="submit" name="update" value="Update Information" class="button">
+						</td>
+					</tr>
+                                </tbody>
+                        </table>
+		</form>
+		<br>
+	<?
 	}
 	function do_payment()
 	{
