@@ -10,13 +10,27 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	echo "You should install bot_vconnection if you want something to happen here ;)";
 	flush();exit();
 }
+
 require_once( $mainframe->getPath( 'front_html' ) );
+$q = "SELECT name,value FROM #__vtiger_portal_configuration "
+	." WHERE name LIKE 'helpdesk_%'";
+$database->setQuery($q);
+$configs = $database->loadObjectList();
+foreach($configs as $config) {
+ 	$conf[$config->name] = $config->value;
+}
 
 if($my->id && $user->IsAllowed($my->id)) {
 	if(!isset($task) || $task == '')
 		$task = 'ListTickets';
-} else
-	$task = '';
+} else {
+	if((task == "KbaseArticle" || $task == "Kbase") && $conf["helpdesk_kbase_noauth"] != "on")
+		$task = '';
+	if($task == "" && $conf["helpdesk_noauth"] == "on")
+		$task = 'ListTickets';
+	else if(($task != "KbaseArticle" && $task != "Kbase") && $conf["helpdesk_noauth"] != "on")
+		$task = '';
+}
 
 switch($task) {
 	case 'NewTicket':
