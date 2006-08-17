@@ -28,7 +28,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
 	$vForm = new VtigerForm();
 
-	if(mosGetParam( $_POST, 'vt_module', '') != "") {
+	if(mosGetParam( $_POST, 'vt_module', '') != "" && mosGetParam( $_REQUEST, 'option', '') != "com_vtigerregistration") {
 		$module = mosGetParam( $_POST, 'vt_module', '');
 		$action = mosGetParam( $_POST, 'vt_action', '');
 		$entityid = mosGetParam( $_POST, 'vt_entityid', '');
@@ -124,8 +124,10 @@ function botvfield_replacer ( &$matches ) {
 
 			if($module == "Products")
 				$entityid = mosGetParam( $_REQUEST, 'productid', '' );
-			else if($module == "Events")
+			if($module == "Events")
 				$entityid = mosGetParam( $_REQUEST, 'eventid', '' );
+			if($module == "Accounts")
+				$entityid = mosGetParam( $_REQUEST, 'accountid', '' );
 
 			if($my->id && $module == "Contacts") {
 				require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerContact.class.php");
