@@ -378,10 +378,11 @@ class HTML_vtigersalesorders {
 	<?
 	}
 	function shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid) {
+		global $mainframe;
 	?>
-			<form action="index.php" method="post" name="adminForm">
+			<form action="<?php echo preg_replace("/http/i","https",$mainframe->getCfg('live_site'));?>/index.php" method="post" name="adminForm">
     				<input name="option" value="com_vtigersalesorders" type="hidden">
-    				<input name="task" value="makePayment" type="hidden">
+    				<input name="task" value="getPaymentInfo" type="hidden">
     				<input name="Itemid" value="1" type="hidden">
     				<input name="soid" value="<?php echo $soid;?>" type="hidden">
     				<h4>Please select a Shipping Address!</h4>
@@ -515,123 +516,71 @@ class HTML_vtigersalesorders {
 		<br>
 	<?
 	}
-	function do_payment()
+	function get_paymentinfo($cc_fields,$ec_fields)
 	{
+	global $mainframe;
 	?>
-	<form action="https://www.fosslabs.com/index.php" method="post" name="adminForm">
-    		<input name="checkout_next_step" value="99" type="hidden">
-    		<input name="checkout_this_step" value="4" type="hidden">
-    		<input name="zone_qty" value="" type="hidden">
-    		<input name="option" value="com_virtuemart" type="hidden">
+	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site').'/components/com_vtigerregistration';?>/vtiger/prototype.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	function changePaymentInfo(element) {
+		if(element.id == "Credit Card") {
+			var vis_els = document.getElementsByClassName("cc_view");
+			var invis_els = document.getElementsByClassName("ec_view");
+		} else if(element.id == "ECheck") {
+			var vis_els = document.getElementsByClassName("ec_view");
+			var invis_els = document.getElementsByClassName("cc_view");
+		}
+
+		for( i = 0 ; i < invis_els.length ; i++ ) {
+			invis_els[i].style.display = "none";
+		}
+		for( i = 0 ; i < vis_els.length ; i++ ) {
+			vis_els[i].style.display = "";
+		}
+	}
+	</script>
+	<form action="index.php" method="post" name="adminForm">
+    		<input name="option" value="com_vtigersalesorders" type="hidden">
+    		<input name="task" value="makePayment" type="hidden">
     		<input name="Itemid" value="1" type="hidden">
-    		<input name="user_id" value="62" type="hidden">
+    		<input name="soid" value="<? echo  mosGetParam( $_REQUEST, 'soid', '0' );?>" type="hidden">
     		<h4>Please select a Payment Method!</h4>
 
-		<fieldset><legend><strong>Credit Card Payment</strong></legend>
+		<fieldset><legend><strong>Payment Details</strong></legend>
 
 		<table border="0" cellpadding="2" cellspacing="0" width="100%">
 		    <tbody><tr>
 		        <td colspan="2">
-		        	<input name="payment_method_id" id="Credit Card" value="3" onchange="javascript: changeCreditCardList();" checked="checked" type="radio">
-<label for="Credit Card">Credit Card</label><br>		        </td>
-		    </tr>
-		    <tr>
-		        <td colspan="2"><strong>&nbsp;</strong></td>
-
-		    </tr>
-		    <tr>
-		        <td align="right" nowrap="nowrap" width="10%">Credit Card Type:</td>
-		        <td>
-		        	<script language="javascript" type="text/javascript">
-				<!--
-				var originalOrder = '1';
-				var originalPos = 'Credit Card';
-				var orders = new Array();	// array in the format [key,value,text]
-				orders[0] = new Array( 'Credit Card','VISA','Visa' );
-				orders[1] = new Array( 'Credit Card','MC','MasterCard' );
-				orders[2] = new Array( 'Credit Card','jcb','JCB' );
-				orders[3] = new Array( 'Credit Card','australian_bc','Australian Bankcard' );
-				function changeCreditCardList() { 
-					var selected_payment = null;
-      					for (var i=0; i<document.adminForm.payment_method_id.length; i++)
-         					if (document.adminForm.payment_method_id[i].checked)
-            						selected_payment = document.adminForm.payment_method_id[i].id;
-						changeDynaList('creditcard_code',orders,selected_payment, originalPos, originalOrder);
-				}
-				//-->
-				</script>
-		       	 	<script language="Javascript" type="text/javascript"><!--
-				writeDynaList( 'class="inputbox" name="creditcard_code" size="1"',
-				orders, originalPos, originalPos, originalOrder );
-				//-->
-				</script>
+		        	<input name="payment_method_id" id="Credit Card" value="1" onchange="javascript: changePaymentInfo(this);" checked="checked" type="radio">
+				<label for="Credit Card">Credit Card</label>		        
+		        	<input name="payment_method_id" id="ECheck" value="2" onchange="javascript: changePaymentInfo(this);" type="radio">
+				<label for="ECheck">E-Check</label><br>		        
 			</td>
-		</tr>
-	    	<tr valign="top">
-		        <td align="right" nowrap="nowrap" width="10%">
-		        	<label for="order_payment_name">Name On Card:</label>
-		        </td>
-		        <td>
-		        <input class="inputbox" id="order_payment_name" name="order_payment_name" value="" type="text">
-		        </td>
-
-		</tr>
-		<tr valign="top">
-		        <td align="right" nowrap="nowrap" width="10%">
-		        	<label for="order_payment_number">Credit Card Number:</label>
-		        </td>
-		        <td>
-		        <input class="inputbox" id="order_payment_number" name="order_payment_number" value="" type="text">
-		        </td>
-
-		</tr>
-				    <tr valign="top">
-		        <td align="right" nowrap="nowrap" width="10%">
-		        	<label for="credit_card_code">Credit Card Security Code:</label></td>
-		        <td>
-		            <input class="inputbox" id="credit_card_code" name="credit_card_code" value="" type="text">
-		        <span onmouseover=" this.T_TITLE='Tip!'; return escape( 'Please type in the three- or four-digit number on the back of your credit card (On the Front of American Express Cards)' );"><img src="https://www.fosslabs.com/images/M_images/con_info.png" align="middle" border="0">&nbsp;</span>		        </td>
-		</tr>
-
-		<tr>
-		        <td align="right" nowrap="nowrap" width="10%">Expiration Date:</td>
-		        <td><select class="inputbox" name="order_payment_expire_month" size="1">
-<option value="0">Month</option>
-<option value="01">January</option>
-<option value="02">February</option>
-<option value="03">March</option>
-<option value="04">April</option>
-
-<option value="05">May</option>
-<option value="06">June</option>
-<option value="07">July</option>
-<option value="08">August</option>
-<option value="09">September</option>
-<option value="10">October</option>
-<option value="11">November</option>
-<option value="12">December</option>
-</select>
-
-/<select class="inputbox" name="order_payment_expire_year" size="1">
-<option value="2006">2006</option>
-<option value="2007">2007</option>
-<option value="2008">2008</option>
-<option value="2009">2009</option>
-<option value="2010">2010</option>
-<option value="2011">2011</option>
-<option value="2012">2012</option>
-</select>
-
-		       </td>
 		    </tr>
+                    <?php
+                    foreach($cc_fields as $field) {
+			global $vtigerForm;
+                    ?>
+                             <tr class="cc_view">
+                                      <td align="right" nowrap="nowrap" width="10%"><?php echo $field["fieldlabel"];?>: </td>
+                                      <td >
+						<?php echo $vtigerForm->_buildEditField($field,'');?>
+                                      </td>
+                             </tr>
+                    <? 
+		    } 
+                    foreach($ec_fields as $field) {
+                    ?>
+                             <tr class="ec_view" style="display:none">
+                                      <td align="right" nowrap="nowrap" width="10%"><?php echo $field["fieldlabel"];?>: </td>
+                                      <td >
+						<?php echo $vtigerForm->_buildEditField($field,'');?>
+                                      </td>
+                             </tr>
+                    <? } ?>
     	</tbody></table>
     </fieldset>
               
-            <input name="page" value="checkout.index" type="hidden">
-            <input name="func" value="checkoutprocess" type="hidden">
-            <input name="ship_to_info_id" value="e383a3fa6c1eeeea9a287e1ab8a21b05" type="hidden">
-            <input name="shipping_rate_id" value="" type="hidden">
-                <br>
 
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tbody><tr>
@@ -641,7 +590,6 @@ class HTML_vtigersalesorders {
                         </td>
         </tr>
     </tbody></table>
-
 </form>
 	<?
 	}

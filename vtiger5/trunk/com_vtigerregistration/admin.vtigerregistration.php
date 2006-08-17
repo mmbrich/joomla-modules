@@ -20,7 +20,7 @@ if (!($acl->acl_check( 'administration', 'edit', 'users', $my->usertype, 'compon
         mosRedirect( 'index2.php', _NOT_AUTH );
 }
 
-global $mosConfig_useractivation, $mosConfig_allowUserRegistration;
+global $mosConfig_useractivation, $mosConfig_allowUserRegistration,$database;
 if($mosConfig_allowUserRegistration != "1") {
 	mosRedirect( 'index2.php', "You must enable user registration" ); 
 }
@@ -40,13 +40,6 @@ switch ($act) {
 }
 
 switch($task) {
-        case 'save':
-        case 'apply':
-		$tfields = mosGetParam( $_POST, 'fields', '' );
-                $fields=split(',',$tfields);
-                $msg = save_fields( $fields );
-                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
-        break;
         case 'syncContacts':
                 syncContacts( $option );
                 $msg = "Syncronization Successful";
@@ -158,9 +151,13 @@ function settings($option) {
 	    		$rows[$field["id"]]["type"] = $field["type"];
 		}
 	}
+        $q = "SELECT * FROM #__vtiger_portal_configuration "
+                ." WHERE name LIKE 'registration_%'";
+        $database->setQuery($q);
+        $current_config = $database->loadObjectList();
 
 	$row = arrayColumnSort("order", SORT_ASC, SORT_NUMERIC, $rows);
-        HTML_vtigerregistration::settings($option,$row);
+        HTML_vtigerregistration::settings($option,$row,$current_config);
 }
 function arrayColumnSort() {
    $n = func_num_args();
@@ -183,39 +180,5 @@ function arrayColumnSort() {
 
    call_user_func_array("array_multisort", $arv);
    return $ar;
-}
-function save_fields($fields) {
-        global $database;
-        $q = "DELETE FROM #__vtiger_registration_fields";
-        $database->setQuery($q);
-        $database->query() or die( $database->stderr() );
-
-        for($i=0,$num=count($fields);$i<$num;$i++) {
-                $id = $fields[$i];
-		if($id == "") {break;}
-                $add = mosGetParam( $_POST, 'add_'.$id.'' , '');
-
-                $fieldlabel = mosGetParam( $_POST, 'fieldlabel_'.$id.'' , '');
-                $columnname = mosGetParam( $_POST, 'columnname_'.$id.'' , '');
-                $uitype = mosGetParam( $_POST, 'uitype_'.$id.'' , '');
-                $req = mosGetParam( $_POST, 'require_'.$id.'' , '');
-                $order = mosGetParam( $_POST, 'order_'.$id.'' , '');
-
-                $jname = mosGetParam( $_POST, 'jname_'.$id.'' , '');
-                if($add == "on" || $columnname == "email" || $columnname == "firstname")
-                        $show='1';
-                else
-                        $show='0';
-                if($req == "on" || $columnname == "email" || $columnname == "firstname")
-                        $required = '1';
-                else
-                        $required = '0';
-
-                $q = "INSERT INTO #__vtiger_registration_fields VALUES ('".$fields[$i]."','".$columnname."','".$jname."','".$uitype."','".$show."','20','".$required."','".$order."')";
-
-                $database->setQuery($q);
-                $database->query() or die( $database->stderr() );
-        }
-        return "Successfully saved fields";
 }
 ?>

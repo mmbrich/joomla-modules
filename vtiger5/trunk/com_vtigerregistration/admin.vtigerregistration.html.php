@@ -39,7 +39,7 @@ class HTML_vtigerregistration {
         <?
         }
 
-        function settings($option,$fields) {
+        function settings($option,$fields,$values) {
 		global $mainframe;
         ?>
 		<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site');?>/components/<?php echo _MYNAMEIS;?>/vtiger/prototype.js" type="text/javascript"></script>
@@ -87,15 +87,38 @@ class HTML_vtigerregistration {
                         </th>
                 </tr>
                 </table>
+                <form action="<?PHP_SELF;?>" method="post" name="adminForm" id="vtiger_fields">
                 <table class="adminform">
 		<tr>
-			<td><input type="button" name="syncContacts" value="Syncronize" onclick="window.location.href = window.location.href+'&task=syncContacts';"></td>
+			<td><input type="button" name="syncContacts" value="Syncronize" onclick="window.location.href = window.location.href+'&task=syncContacts';return false;"></td>
 			<td>Syncronize Vtiger Contacts and Joomla Users.  This will first remove any stale relationships (from deleted joomla users) and then it will create CRM contacts for any users that are missing in the CRM.</td>
 		</tr>
+                   <?php
+                   foreach($values as $field) {
+                    ?>
+                     <tr>
+                        <td width="50">
+                                <?php if($field->type == "checkbox" || $field->type == "radio") {
+                                        if($field->value == "on")
+                                                $ext = "CHECKED";
+                                        else
+                                                $ext = "";
+                                ?>
+                                        <input type="<?php echo $field->type;?>" name="<?php echo $field->name;?>" value="on" <?php echo $ext;?> />
+                                <? } else { ?>
+                                        <input type="<?php echo $field->type;?>" name="<?php echo $field->name;?>" size="5" value="<?php echo $field->value;?>" <?php echo $ext;?> />
+                                <? } ?>
+                        </td>
+                        <td align="left">
+                                <?php echo $field->descr;?>
+                        </td>
+                     </tr>
+                    <?
+                   }
+                   ?>
 		</table>
 		<br>
 
-                <form action="<?PHP_SELF;?>" method="post" name="adminForm" id="vtiger_fields">
                 <table class="adminheading">
                 <tr>
                         <th>

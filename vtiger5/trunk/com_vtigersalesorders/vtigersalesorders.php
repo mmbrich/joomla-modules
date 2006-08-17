@@ -8,6 +8,7 @@ if(!file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	flush();exit();
 }
 
+global $my,$database;
 require_once( $mainframe->getPath( 'front_html' ) );
 require_once('components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php');
 $SalesOrder = new VtigerSalesOrder();
@@ -23,17 +24,46 @@ foreach($configs as $config) {
 	$conf[$config->name] = $config->value;
 }
 
+// Check for correct ownership
+$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+$SalesOrder->id=$soid;
+if($soid == 0) {
+	echo "Please add an item to your cart";
+	return;
+
+} else if(!isset($_COOKIE["current_salesorder"]) && !$my->id) {
+	//HTML_vtigersalesorders::noauth();
+	echo "No Access Allowed";
+	return;
+
+}  else {
+	if($my->id) {
+		$SalesOrder->contact->jid=$my->id;
+		if(!$SalesOrder->IsOwner($soid)) {
+			echo "No Access Allowed";
+			return;
+		}
+	} else {
+		$SalesOrder->contact->jid=0;
+		if(!$SalesOrder->IsOwner($soid)) {
+			echo "No Access Allowed";
+			return;
+		}
+	}
+}
+
 if(isset($_POST["update_address"])) {
 	$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 	$entityid = mosGetParam( $_REQUEST, 'vt_entityid', '0' );
 	$task = mosGetParam( $_REQUEST, 'task', 'checkout' );
 	$ret = $vtigerForm->SaveVtigerForm("Contacts",$entityid);
+	$SalesOrder->id=$soid;
+	$addy = $SalesOrder->UpdateAddresses($entityid,$_POST["update_address"]);
 	mosRedirect('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid);
 }
 
 switch($task) {
 	case 'view':
-		global $my;
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
 		$ret = $SalesOrder->Checkid($my->id);
@@ -92,19 +122,39 @@ switch($task) {
 			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg);
 		}
 	break;
-	case 'makePayment':
+	case 'getPaymentInfo':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
-		/* if(!$ret && !$soid)
+		if(!$ret && !$soid)
 			echo "You must log-in or create an account to view sales orders";
 
-		$SalesOrder->soid=$soid;
-		$invoiceid = $SalesOrder->ConvertToInvoice();
-		echo $invoiceid;
-		*/
-		$SalesOrder->soid=$soid;
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
+		$cc_fields = create_fields(array('credit_card_name','credit_card_type','credit_card_num','cc_exp_date','cc_code'));
+		$ec_fields = create_fields(array('bank_account_holder','bank_account_num','bank_sorting_number','bank_name','bank_account_type','bank_iban'));
 		HTML_vtigersalesorders::view($order[0]);
-		HTML_vtigersalesorders::do_payment();
+		HTML_vtigersalesorders::get_paymentinfo($cc_fields,$ec_fields);
+	break;
+	case 'makePayment':
+		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
+		if(!$my->id && !$soid)
+			echo "You must log-in or create an account to go further";
+
+		$soid = mosGetParam( $_POST, 'soid', '0' );
+		$SalesOrder->soid=$soid;
+		$SalesOrder->contact->jid = $my->id;
+		$SalesOrder->contact->LoadUser();
+		$entityid = $SalesOrder->contact->id;
+
+		$ret = $vtigerForm->SaveVtigerForm("Contacts",$entityid);
+		$invoiceid = $SalesOrder->ConvertToInvoice();
+		$payment_type = mosGetParam( $_POST, 'payment_method_id', '0' );
+
+		echo "<strong>Please wait while we process your transaction.</strong>";
+		if($SalesOrder->MakePayment($invoiceid,$payment_type) == true)
+			echo "<br><h2>Transaction Completed</h2>";
+		else
+			echo "<br><h2>Transaction Failed</h2>";
+
+		//mosRedirect('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid);
 	break;
 	case 'checkout':
 		if(!$my->id) {

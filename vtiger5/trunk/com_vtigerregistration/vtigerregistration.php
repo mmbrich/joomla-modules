@@ -22,7 +22,12 @@ $basePath = $mainframe->getCfg('absolute_path') . "/components/" . _MYNAMEIS . "
 
 switch($task) {
 	case 'saveVtigerRegistration';
-		saveRegistration();
+        	$q = "SELECT * FROM #__vtiger_portal_configuration "
+                	." WHERE name LIKE 'registration_%'";
+        	$database->setQuery($q);
+        	$current_config = $database->loadObjectList();
+
+		saveRegistration($current_config);
 	break;
 	case 'activate':
 		activate(mosGetParam( $_REQUEST, 'activation', '' ));
@@ -40,7 +45,7 @@ switch($task) {
 		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
 		$vtigerField = new VtigerField();
                 $fields = get_fields();
-                HTML_vtigerregistration::register($fields,$mainframe,$vtigerField);
+                HTML_vtigerregistration::register($fields,$vtigerField);
         break;
 }
 function activate( $option ) {
@@ -107,8 +112,8 @@ function get_fields() {
 	}
 	return $current_rows;
 }
-function saveRegistration() {
-        global $database, $acl, $basePath;
+function saveRegistration($config) {
+        global $database, $acl, $basePath,$mainframe;
         global $mosConfig_sitename, $mosConfig_live_site, $mosConfig_useractivation, $mosConfig_allowUserRegistration;
         global $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_mailfrom, $mosConfig_fromname;
 
@@ -148,9 +153,7 @@ function saveRegistration() {
                 echo "<script> alert('".html_entity_decode($row->getError())."'); window.history.go(-1); </script>\n";
                 exit();
         }
-
         $row->checkin();
-	global $mainframe;
 	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
 	$vtigerForm = new VtigerForm();
 	$userid = $vtigerForm->SaveVtigerForm("Contacts","");
@@ -164,6 +167,12 @@ function saveRegistration() {
 	$vtigerContact->id = $userid;
 	$vtigerContact->jid = $row->id;
 	$vtigerContact->AssociateUserToContact();
+
+
+	foreach($config as $conf) {
+		if($conf->name = "registration_create_account" && $conf->value == "on")
+			$account_id = $vtigerContact->CreateAccount($row->name);
+	}
 
         $name           = $row->name;
         $email          = $row->email;

@@ -49,6 +49,15 @@ class VTigerContact extends VTigerForm {
                 $this->setData($this->data);
                 return $this->execCommand('is_allowed_helpdesk');
         }
+	function CreateAccount($account_name)
+	{
+                $this->data = array(
+			'account_name'=> $account_name,
+			'contactid'=> $this->id
+		);
+                $this->setData($this->data);
+                return $this->execCommand('create_account');
+	}
 	function AssociateUserToContact($jid='')
 	{
 		if($jid != '' && !$this->jid)
