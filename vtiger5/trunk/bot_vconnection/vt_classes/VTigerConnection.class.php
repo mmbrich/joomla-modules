@@ -42,9 +42,23 @@ class VTigerConnection
 	{
 		$this->result = $this->client->call($command, $this->data);
 		if(($this->client->getError()) || ($this->result == "failed"))
-			return "failed";
+			//return "failed";
+			return $this->client->getError();
 		else
 			return $this->result;
+	}
+	function GetCRMServer()
+	{
+		global $database;
+		// load bot_vconnection mambot parameters
+  		$query = "SELECT id FROM #__mambots WHERE element = 'bot_vconnection' AND folder = 'system'";
+  		$database->setQuery( $query );
+  		$id = $database->loadResult();
+  		$mambot = new mosMambot( $database );
+  		$mambot->load( $id );
+  		$mambotParams =& new mosParameters( $mambot->params );
+  		$vtiger_lead_soapserver = $mambotParams->get( 'vtiger_lead_soapserver', 'basic' );
+		return $vtiger_lead_soapserver;
 	}
 }
 ?>
