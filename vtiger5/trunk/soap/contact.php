@@ -116,6 +116,31 @@ function is_allowed_helpdesk($contactid) {
 }
 /************************ IS_ALLOWED_HELPDESK END ****************************/
 
+/************************ CREATE_ACCOUNT START ****************************/
+$server->register(
+        'create_account',
+        array(
+		'account_name'=>'xsd:string',
+		'contactid'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+function create_account($account_name,$contactid) {
+        global $adb;
+        $current_date = date("Y-m-d");
+
+	$account=create_entity("Accounts",'');
+	$account->column_fields["accountname"] = $account_name;
+	$account->column_fields["assigned_user_id"] = '1';
+	$account->column_fields["description"] = 'Created by joomla on '.$current_date;
+	$account->save("Accounts");
+
+	$q = "UPDATE vtiger_contactdetails SET accountid='".$account->id."' where contactid='".$contactid."'";
+	$tmp = $adb->query($q);
+
+	return $account->id;
+}
+/************************ CREATE_ACCOUNT END ****************************/
 
 /* Begin the HTTP listener service and exit. */
 $server->service($HTTP_RAW_POST_DATA);

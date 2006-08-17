@@ -30,9 +30,10 @@ class HTML_vtigerregistration {
 		</center>
 	<?
 	}
-        function register($fields=array(),$mainframe,$vtField) {
+        function register($fields=array(),$vtField) {
+		global $mainframe;
         ?>
-	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site');?>/components/<?php echo _MYNAMEIS;?>/vtiger/prototype.js" type="text/javascript"></script>
+	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site').'/components/com_vtigerregistration';?>/vtiger/prototype.js" type="text/javascript"></script>
 		<script type="text/javascript">
 		function submitbutton() {
 			var els = document.getElementsByClassName("required");
@@ -45,9 +46,10 @@ class HTML_vtigerregistration {
 				ret = false;
 			}
 			for(i=0;i<els.length;i++) {
-				els[i].style.border = '1px solid #cccccc';
-				if(els[i].value == "" || els[i].value.toString == "undefined") {
-					els[i].style.border = '1px solid red';
+				el = els[i].childNodes[1];
+				el.style.border = '1px solid #cccccc';
+				if(el.value == "" || el.value.toString == "undefined") {
+					el.style.border = '1px solid red';
 					ret = false;
 				}
 			}
@@ -99,14 +101,14 @@ class HTML_vtigerregistration {
 		    <tr>
 			<td width="30%">
 				<?php echo $field->name;
-					$ext = 'class="inputbox"';
+					$ext = 'class=""';
 				?>
 				<?php if($field->required == "1" || $field->type == "2") {
 					echo "<font color='red'>*</font>";
-					$ext = 'class="required" style="padding: 2px;border:solid 1px #cccccc;background-color: #ffffff;"';
+					$ext = 'class="required"';
 				} ?>
 			</td>
-		  	<td>
+		  	<td <?php echo $ext;?>>
 			    <?
 				$f = array();
 				$f["uitype"] = $field->type;

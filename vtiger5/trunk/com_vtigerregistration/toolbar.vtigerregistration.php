@@ -18,6 +18,29 @@ defined( '_VALID_MOS' ) or die( 'Restricted access' );
 require_once( $mainframe->getPath( 'toolbar_html' ) );
 
 switch ( $task ) {
+        case 'save':
+        case 'apply':
+                $q = "SELECT * FROM #__vtiger_portal_configuration"
+                        ." WHERE name LIKE 'registration_%'";
+                $fields = $database->setQuery($q);
+                $current_config = $database->loadObjectList();
+
+                foreach($current_config as $config) {
+                        $q = "UPDATE #__vtiger_portal_configuration "
+                                ."\n SET value='".$_POST[$config->name]."' "
+                                ."\n WHERE name='".$config->name."' ";
+                        $database->setQuery($q);
+                        $database->query();
+                }
+
+                $tfields = mosGetParam( $_POST, 'fields', '' );
+                $fields=split(',',$tfields);
+                $msg = save_fields( $fields );
+                //mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+
+		$msg = "Successfully saved options";
+                mosRedirect( 'index2.php?option='. $option.'&act=settings', $msg );
+        break;
         case 'new':
         case 'edit':
         case 'editA':
@@ -26,5 +49,39 @@ switch ( $task ) {
         default:
                 TOOLBAR_vtfields::_DEFAULT();
         break;
+}
+function save_fields($fields) {
+        global $database;
+        $q = "DELETE FROM #__vtiger_registration_fields";
+        $database->setQuery($q);
+        $database->query() or die( $database->stderr() );
+
+        for($i=0,$num=count($fields);$i<$num;$i++) {
+                $id = $fields[$i];
+                if($id == "") {break;}
+                $add = mosGetParam( $_POST, 'add_'.$id.'' , '');
+
+                $fieldlabel = mosGetParam( $_POST, 'fieldlabel_'.$id.'' , '');
+                $columnname = mosGetParam( $_POST, 'columnname_'.$id.'' , '');
+                $uitype = mosGetParam( $_POST, 'uitype_'.$id.'' , '');
+                $req = mosGetParam( $_POST, 'require_'.$id.'' , '');
+                $order = mosGetParam( $_POST, 'order_'.$id.'' , '');
+
+                $jname = mosGetParam( $_POST, 'jname_'.$id.'' , '');
+                if($add == "on" || $columnname == "email" || $columnname == "firstname")
+                        $show='1';
+                else
+                        $show='0';
+                if($req == "on" || $columnname == "email" || $columnname == "firstname")
+                        $required = '1';
+                else
+                        $required = '0';
+
+                $q = "INSERT INTO #__vtiger_registration_fields VALUES ('".$fields[$i]."','".$columnname."','".$jname."','".$uitype."','".$show."','20','".$required."','".$order."')";
+
+                $database->setQuery($q);
+                $database->query() or die( $database->stderr() );
+        }
+        return "Successfully saved fields";
 }
 ?>

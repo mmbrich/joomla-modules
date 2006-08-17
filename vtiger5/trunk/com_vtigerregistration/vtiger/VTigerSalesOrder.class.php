@@ -16,6 +16,7 @@ require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTi
 class VTigerSalesOrder extends VTigerConnection {
         var $data;
 	var $soid;
+	var $id;
 	var $contact;
 	var $file = "salesorder";
 
@@ -34,6 +35,17 @@ class VTigerSalesOrder extends VTigerConnection {
 			return false;
 		else
 			return true;
+	}
+	function UpdateAddresses($contactid,$type)
+	{
+	       	$this->data = array(
+			'contactid' => $contactid,
+			'soid' => $this->id,
+			'type' => $type
+		);
+                $this->setData($this->data);
+                $result = $this->execCommand('update_addresses');
+                return $result;
 	}
 	function GetCurrentSalesOrders($id)
 	{
@@ -130,6 +142,34 @@ class VTigerSalesOrder extends VTigerConnection {
                 $this->setData($this->data);
                 $result = $this->execCommand('convert_to_invoice');
                 return $result;
+	}
+	function MakePayment($invoiceid,$payment_type)
+	{
+	       	$this->data = array(
+			'soid' => $this->soid,
+			'invoiceid' => $invoiceid,
+			'entityid' => $this->contact->id,
+			'paytype' => $payment_type
+		);
+                $this->setData($this->data);
+                $result = $this->execCommand('make_payment');
+                return $result;
+	}
+	function IsOwner()
+	{
+		global $my;
+		if($my->id)
+			$this->contact->LoadUser();
+	       	$this->data = array(
+			'soid' => $this->id,
+			'contactid' => $this->contact->id
+		);
+                $this->setData($this->data);
+                $result = $this->execCommand('check_so_owner');
+		if($result == true)
+			return true;
+		else
+			return false;
 	}
 }
 ?>

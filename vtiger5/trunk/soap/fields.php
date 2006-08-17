@@ -29,10 +29,11 @@ function save_form_fields($entityid,$module,$fields) {
 	$adb->println("Enter into the function save_form_fields($entityid,$module,$fields)");
 
 	if($entityid != "") {
-		$q = "SELECT smownerid FROM vtiger_crmentity WHERE crmid='".$entityid."'";
+		$q = "SELECT smownerid FROM vtiger_crmentity WHERE crmid='".$entityid."' AND smownerid IS NOT NULL";
 		$rs = $adb->query($q);
 		$current_owner = $adb->query_result($rs,'0','smownerid');
-		if($current_owner == "" || !isset($current_owner)) $current_owner=1;
+		if($current_owner == "" || !isset($current_owner) || !$current_owner) 
+			$current_owner=1;
 
         	require_once('modules/Users/User.php');
         	$current_user = new User();
@@ -43,7 +44,18 @@ function save_form_fields($entityid,$module,$fields) {
 
 	for($j=0;$j<count($fields);$j++) {
 		if(($fields[$j]["columnname"] == "accountid" || $fields[$j]["columnname"] == "account_id") && $module == "Contacts") {
-			$adb->query("UPDATE vtiger_account set accountname='".$fields[$j]["value"]."' WHERE accountid='".$focus->column_fields["account_id"]."'");
+			if($focus->mode == 'edit') {
+				$account = create_entity("Accounts",$focus->column_fields["account_id"]);
+				$account->column_fields["accountname"] = $fields[$j]["value"];
+				$account->save("Accounts");
+			 } else {
+				$account = create_entity("Accounts",'');
+				$account->column_fields["accountname"] = $fields[$j]["value"];
+        			$account->column_fields["assigned_user_id"] = '1';
+        			$account->column_fields["description"] = 'Created by joomla on ';
+        			$account->save("Accounts");
+        			$focus->column_fields["account_id"] = $account->id;
+			}
 		} else if(preg_match("/imagename/",$fields[$j]["columnname"])) {
 
 			$adb->println("ATTEMPTING TO UPLOAD FILE ");
@@ -129,9 +141,17 @@ function get_multiple_field_details($fields) {
 		if($field["module"] == "")
 			$field["module"] = "Contacts";
 
-		if($lastid != $field["entityid"])
-			$focus = create_entity($field["module"],$field["entityid"]);
-		$lastid = $field["entityid"];
+		// Forcing the account to only allow related accounts
+		if($field["module"] == "Accounts") {
+			$q = "SELECT accountid FROM vtiger_contactdetails"
+				." WHERE contactid='".$field["entityid"]."'";
+			$entityid = $adb->query_result($adb->query($q),'0','accountid');
+		} else
+			$entityid = $field["entityid"];
+
+		if($lastid != $entityid)
+			$focus = create_entity($field["module"],$entityid);
+		$lastid = $entityid;
 
 		$tabid=getTabid($field["module"]);
 		$q = "SELECT fieldid,columnname,uitype,fieldname,fieldlabel,maximumlength FROM vtiger_field ";

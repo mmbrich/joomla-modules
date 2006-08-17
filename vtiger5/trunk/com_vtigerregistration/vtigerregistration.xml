@@ -68,6 +68,9 @@
                                     PRIMARY KEY  (`id`)
                                     ) TYPE=MyISAM AUTO_INCREMENT=44 ;
 	</query>
+    	<query>
+        	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'registration_create_account', 'on', 'checkbox','When visitors register an account will automatically be created from their account (DO NOT USE WITH ACCOUNT NAME FIELD)');
+    	</query>
       </queries>
     </install>
 </mosinstall>

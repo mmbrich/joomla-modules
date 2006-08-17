@@ -11,6 +11,36 @@
 
 require_once("soap/jinc.php");
 
+/************************ CHECK_SO_OWNER  START ****************************/
+$server->register(
+        'check_so_owner',
+        array(
+		'soid'=>'xsd:string',
+		'contactid'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function check_so_owner($soid,$contactid) {
+	global $adb;
+        $adb->println("Enter into the function check_so_owner($soid,$contactid)");
+	$q = "SELECT contactid FROM vtiger_salesorder "
+		." WHERE salesorderid='".$soid."'";
+
+	if($contactid == 0)
+		$q .= " AND contactid IS NULL";
+	else
+		$q .= " AND contactid='".$contactid."'";
+
+        $adb->println("$q");
+	if($adb->num_rows($adb->query($q)) == 1)
+		return true;
+	else
+		return false;
+}
+/************************ CHECK_SO_OWNER  END ****************************/
+
+
 /************************ GET_CURRENT_SALESORDERS  START ****************************/
 $server->register(
         'get_current_salesorders',
@@ -52,7 +82,8 @@ function get_current_salesorders($entityid) {
 		." INNER JOIN vtiger_crmentity "
 		." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
 		." WHERE contactid='".$entityid."' "
-		." AND vtiger_crmentity.deleted='0'";
+		." AND vtiger_crmentity.deleted='0'"
+		." AND (vtiger_salesorder.sostatus = 'Created' OR vtiger_salesorder.sostatus = 'Approved')";
 	$rs = $adb->query($q);
 
 	//$sos = array();
@@ -377,6 +408,9 @@ function new_salesorder($contactid) {
 	$SO->column_fields["subject"] = $date_var;
 	$SO->column_fields["hdnTaxType"] = "individual";
 	$SO->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
+	$SO->column_fields["sostatus"] = "Created";
+	$ret = billing_addy_update($Contact,$SO);
+	$ret = shipping_addy_update($Contact,$SO);
 	$SO->save("SalesOrder");
 
 	return $SO->id;
@@ -404,9 +438,105 @@ function associate_to_user($contactid,$soid) {
 		." ,contactid='".$contactid."'"
 		." WHERE salesorderid='".$soid."'";
 	$rs = $adb->query($q);
+
+	$ret = update_addresses($contactid,$soid);
 	return soid;
 }
 /************************ ASSOCIATE_TO_USER END ****************************/
+
+/************************ MAKE_PAYMENT START ****************************/
+$server->register(
+        'make_payment',
+        array(
+		'soid'=>'xsd:string',
+		'invoiceid'=>'xsd:string',
+		'entityid'=>'xsd:string',
+		'type'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function make_payment($soid,$invoiceid,$entityid,$type) {
+	global $adb;
+        $adb->println("\n\r\n\rEnter into the function make_payment($soid,$invoiceid,$entityid,$type)\n\r\n\r");
+
+	require_once("modules/Payments/AuthNet.php");
+	$payment = new AuthNet();
+
+	global $current_user;
+        $current_owner = 1;
+	$current_user = create_entity("Users",$current_owner);
+
+        $payment->entityid = $entityid;
+        $payment->billid = $invoiceid;
+
+        $invoice = create_entity("Invoice",$invoiceid);
+	$pay_stat = $payment->PostPayment();
+
+        $so = create_entity("SalesOrder",$invoice->column_fields["salesorder_id"]);
+	if($pay_stat == true) {
+        	$invoice->column_fields["invoicestatus"] = "Paid";
+        	$so->column_fields["sostatus"] = "Delivered";
+	} else {
+        	$so->column_fields["sostatus"] = "Approved";
+		$adb->query("UPDATE vtiger_crmentity SET deleted='1' WHERE crmid='".$invoiceid."'");
+	}
+	$so->save("SalesOrder");
+
+	$invoice->save("Invoice");
+        return $pay_stat;
+}
+/************************ MAKE_PAYMENT END ****************************/
+
+/************************ UPDATE_ADDRESS START ****************************/
+$server->register(
+        'update_addresses',
+        array(
+		'contactid'=>'xsd:string',
+		'soid'=>'xsd:string',
+		'type'=>'xsd:string'
+	),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function update_addresses($contactid,$soid,$type='all') {
+	global $adb;
+        $adb->println("\n\r\n\rEnter into the function update_addresses($contactid,$soid,$type)\n\r\n\r");
+
+	global $current_user;
+        $current_owner = 1;
+	$current_user = create_entity("Users",$current_owner);
+
+	$CO = create_entity("Contacts",$contactid);
+	$focus = create_entity("SalesOrder",$soid);
+
+	if($type == "all") {
+		shipping_addy_update($CO,$focus);
+		billing_addy_update($CO,$focus);
+	} else if($type == "mailing")
+		billing_addy_update($CO,$focus);
+	else if ($type == "other")
+		shipping_addy_update($CO,$focus);
+
+	$focus->save("SalesOrder");
+	return $focus->id;
+}
+function billing_addy_update($CO,$focus) {
+	$focus->column_fields["record_id"] = $soid;
+	$focus->column_fields["bill_street"] = $CO->column_fields["mailingstreet"];
+	$focus->column_fields["bill_city"] = $CO->column_fields["mailingcity"];
+	$focus->column_fields["bill_state"] = $CO->column_fields["mailingstate"];
+	$focus->column_fields["bill_code"] = $CO->column_fields["mailingzip"];
+	$focus->column_fields["bill_country"] = $CO->column_fields["mailingcountry"];
+}
+function shipping_addy_update($CO,$focus) {
+	$focus->column_fields["ship_street"] = $CO->column_fields["otherstreet"];
+	$focus->column_fields["ship_city"] = $CO->column_fields["othercity"];
+	$focus->column_fields["ship_state"] = $CO->column_fields["otherstate"];
+	$focus->column_fields["ship_code"] = $CO->column_fields["otherzip"];
+	$focus->column_fields["ship_country"] = $CO->column_fields["othercountry"];
+}
+/************************ UPDATE_ADDRESS END ****************************/
 
 /************************ CONVERT_TO_INVOICE START ****************************/
 $server->register(
