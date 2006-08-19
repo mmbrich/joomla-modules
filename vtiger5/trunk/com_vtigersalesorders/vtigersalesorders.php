@@ -158,8 +158,10 @@ switch($task) {
 	break;
 	case 'checkout':
 		if(!$my->id) {
-                	$fields = get_fields();
+                	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerField.class.php');
+                	require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtigerregistration.html.php');
 
+                	$fields = get_fields();
 			$field_array = array();
 			$i=0;
 			foreach($fields as $field) {
@@ -173,10 +175,28 @@ switch($task) {
 				$i++;
 			}
 			$soid = mosGetParam( $_REQUEST, 'soid', '0' );
-			$order = $SalesOrder->GetSalesOrderDetails($soid);
-			$SalesOrder->soid=$soid;
-			HTML_vtigersalesorders::view($order[0]);
-			HTML_vtigersalesorders::gather_info($field_array,$vtigerForm,$soid);
+
+                	$registration_enabled = $mainframe->getCfg( 'allowUserRegistration' );
+                	$message_login = $params->def( 'login_message',        0 );
+                	$message_logout = $params->def( 'logout_message',       0 );
+                	$login = $params->def( 'login',                        $return );
+                	$logout = $params->def( 'logout',                       $return );
+                	$name = $params->def( 'name',                         1 );
+                	$greeting = $params->def( 'greeting',             1 );
+                	$pretext = $params->get( 'pretext' );
+                	$posttext = $params->get( 'posttext' );
+
+                	$vtigerField = new VtigerField();
+                	$fields = get_fields();
+
+                	if(empty($my->id)){
+                        	if(!isset($_SESSION)){
+                                	session_start();
+                        	}
+                        	unset($_SESSION['vtiger_session']);
+                	}
+                	HTML_vtigerregistration::login($pretext,$posttext,$login);
+                	HTML_vtigerregistration::register($fields,$vtigerField,$soid);
 		} else {
 
 			$user_fields = create_fields(array('firstname','lastname','accountid'));
