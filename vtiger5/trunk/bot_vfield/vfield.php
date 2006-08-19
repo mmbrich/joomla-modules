@@ -45,13 +45,6 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 				}
 				mosRedirect('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty."&Itemid=".$Itemid);
 			break;
-			case 'SendEmail':
-				$vt_mailto = mosGetParam( $_POST, 'vt_mailto', '');
-				$vt_mail_subject = mosGetParam( $_POST, 'vt_mailsubject', '');
-				$vt_entityid = mosGetParam( $_POST, 'vt_entityid', '');
-
-				$vForm->SendFormEmail($vt_mailto,$vt_mail_subject);
-			break;
 			case 'RelateContact':
 				$vt_relation_entityid = mosGetParam( $_POST, 'vt_relation_entityid', '');
 				$vt_relation_module = mosGetParam( $_POST, 'vt_relation_module', '');
@@ -78,8 +71,8 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 		// Send an email with all the field details
 		$mailto = mosGetParam( $_POST, 'vt_mailto', '');
 		$mail_subject = mosGetParam( $_POST, 'vt_mail_subject', '');
-		if($mailto != "") {
-
+		if($mailto != "" && $mail_subject != "") {
+			$vForm->SendFormEmail($mailto,$mail_subject);
 		}
 
 		$redirect_site = mosGetParam( $_POST, 'vt_redirect_site', '');
@@ -227,10 +220,9 @@ function botvfield_replacer ( &$matches ) {
 					$ret .= "<input type='hidden' name='vt_relation_entityid' value='".$entityid."' />";
 					return $ret."<input type='hidden' name='vt_relation_module' value='".$thisParams[2]."' />";
 				break;
-				// Enable this
 				case 'SendEmail':
-					return "<input type='hidden' name='vt_mailto' value='".$thisParams[2]."' />";
-					return "<input type='hidden' name='vt_mail_subject' value='".$thisParams[3]."' />";
+					$ret .=  "<input type='hidden' name='vt_mailto' value='".$thisParams[2]."' />";
+					return $ret."<input type='hidden' name='vt_mail_subject' value='".$thisParams[3]."' />";
 				break;
 			}
 		break;
