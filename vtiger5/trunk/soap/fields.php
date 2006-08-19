@@ -34,6 +34,13 @@ function save_form_fields($entityid,$module,$fields) {
 	$focus->column_fields['assigned_user_id'] = $current_user->id;
 
 	for($j=0;$j<count($fields);$j++) {
+		$tabid = getTabId($module);
+		$q = "SELECT uitype FROM vtiger_field "
+			." WHERE columnname='".$fields[$j]["columnname"]."'"
+			." AND tabid='".$tabid."'";
+		$uitype = $adb->query_result($adb->query($q),'0','uitype');
+		$adb->println("FIELD UITYPE == $uitype");
+
 		if(($fields[$j]["columnname"] == "accountid" || $fields[$j]["columnname"] == "account_id") && $module == "Contacts") {
 			if($focus->mode == 'edit') {
 				$account = create_entity("Accounts",$focus->column_fields["account_id"]);
@@ -99,6 +106,14 @@ function save_form_fields($entityid,$module,$fields) {
 
 				fclose($handle);
 			}
+		} else if($uitype == "17") { // URL UIs
+			$search = array(
+				'/http:\/\//i',
+				'/https:\/\//i'
+			);
+			$replace = array('','');
+			$adb->println("CLEANING URL");
+			$focus->column_fields[$fields[$j]["columnname"]] = preg_replace($search,$replace,$fields[$j]["value"]);
 		} else {
 			$focus->column_fields[$fields[$j]["columnname"]] = $fields[$j]["value"];
 		}
@@ -260,7 +275,7 @@ function get_new_register_fields($fields) {
 	global $adb;
 	$adb->println("Enter into the function get_new_register_fields($fields)");
 
-	$q = "SELECT fieldid as id,columnname as field,fieldlabel as name,uitype as type, sequence as ord "
+	$q = "SELECT fieldid as id,columnname as field,fieldlabel as name,uitype as type, sequence as ord, maximumlength "
 		." FROM vtiger_field "
 		." WHERE tabid='".getTabid("Contacts")."' "
 		." AND presence='0' "

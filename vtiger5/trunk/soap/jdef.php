@@ -140,6 +140,7 @@ $server->wsdl->addComplexType(
                 'field' => array('name'=>'field','type'=>'xsd:string'),
                 'name' => array('name'=>'name','type'=>'xsd:string'),
                 'type' => array('name'=>'type','type'=>'xsd:string'),
+                'maximumlength' => array('name'=>'maximumlength','type'=>'xsd:string'),
                 'order' => array('name'=>'order','type'=>'xsd:string')
              )
 );
