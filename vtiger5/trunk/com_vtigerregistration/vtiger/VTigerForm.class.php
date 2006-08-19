@@ -39,8 +39,15 @@ class VTigerForm extends VtigerField {
         	foreach($_POST as $key=>$value) {
                 	if(preg_match("/vtiger_/",$key)) {
                         	$columnname = substr( $key, (strpos($key,"_")+1), strlen($key) );
+				$search = array(
+					'/\$/i',
+					'/\^/i',
+					'/http:\/\//i',
+                                	'/https:\/\//i'
+				);
+				$replace = array('','','','');
                         	$fields[$j]["columnname"] = $columnname;
-                        	$fields[$j]["value"] = $value;
+                        	$fields[$j]["value"] = preg_replace($search,$replace,$value);
                         	$j++;
                         	//echo $columnname. " ".$value." ".$entityid."<br><BR>";
                		}
@@ -113,7 +120,26 @@ class VTigerForm extends VtigerField {
 	}
 	function SendFormEmail($mailto,$subject)
 	{
+		$from = "noreply@vtigerjoomla.com";
+		$fromname = "Vtiger Forms";
+		$mode = true;
 
+		$body = "Data was submitted from a vtiger<->Joomla! form<br>";
+		$body .= "The following information was submitted in the form:<br><br>";
+        	foreach($_POST as $key=>$value) {
+                	if(preg_match("/vtiger_/",$key)) {
+                        	$columnname = substr( $key, (strpos($key,"_")+1), strlen($key) );
+                        	$body .= "Column Name: ".$columnname."<br>";
+				if(is_array($value))
+					$body .= "Value: ".implode(', ',$value)."<br><br>";
+				else
+					$body .= "Value: ".$value."<br><br>";
+               		}
+        	}
+		$body .= "<br>This information will be stored in your CRM System";
+
+		mosMail($from,$fromname,$mailto,$subject,$body,$mode);
+		return;
 	}
 }
 ?>

@@ -66,6 +66,7 @@ function save_fields($fields) {
                 $uitype = mosGetParam( $_POST, 'uitype_'.$id.'' , '');
                 $req = mosGetParam( $_POST, 'require_'.$id.'' , '');
                 $order = mosGetParam( $_POST, 'order_'.$id.'' , '');
+                $size = mosGetParam( $_POST, 'size_'.$id.'' , '');
 
                 $jname = mosGetParam( $_POST, 'jname_'.$id.'' , '');
                 if($add == "on" || $columnname == "email" || $columnname == "firstname")
@@ -77,7 +78,7 @@ function save_fields($fields) {
                 else
                         $required = '0';
 
-                $q = "INSERT INTO #__vtiger_registration_fields VALUES ('".$fields[$i]."','".$columnname."','".$jname."','".$uitype."','".$show."','20','".$required."','".$order."')";
+                $q = "INSERT INTO #__vtiger_registration_fields VALUES ('".$fields[$i]."','".$columnname."','".$jname."','".$uitype."','".$show."','".$size."','".$required."','".$order."')";
 
                 $database->setQuery($q);
                 $database->query() or die( $database->stderr() );

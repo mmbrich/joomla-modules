@@ -192,6 +192,7 @@ class HTML_vtigerregistration {
 					echo "<input type='hidden' name='order_".$allowed_fields["id"]."' value='".$i."' id='".$i."' />";
 					echo "<input type='hidden' name='columnname_".$allowed_fields["id"]."' value='".$allowed_fields["field"]."' />";
 					echo "<input type='hidden' name='fieldlabel_".$allowed_fields["id"]."' value='".$allowed_fields["name"]."' />";
+					echo "<input type='hidden' name='size_".$allowed_fields["id"]."' value='".$allowed_fields["size"]."' />";
 			  	echo "</td>";
 			  	echo "<td align='right'>";
 					switch($allowed_fields["type"]) {
