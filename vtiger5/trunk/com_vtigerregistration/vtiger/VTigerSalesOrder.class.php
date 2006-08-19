@@ -47,17 +47,22 @@ class VTigerSalesOrder extends VTigerConnection {
                 $result = $this->execCommand('update_addresses');
                 return $result;
 	}
-	function GetCurrentSalesOrders($id)
+	function GetCurrentSalesOrders($id='')
 	{
-                if (isset($_COOKIE["current_salesorder"])) {
-                        $soid = $_COOKIE["current_salesorder"];
-			return $soid;
+                if (isset($_COOKIE["current_salesorder"]) && $id == "") {
+                        $this->soid = $_COOKIE["current_salesorder"];
+	       		$this->data = array(
+				'entityid' => '',
+				'soid' => $this->soid
+			);
+		} else {
+			$this->contact->jid=$id;
+			$this->contact->LoadUser();
+	       		$this->data = array(
+				'entityid' => $this->contact->id,
+				'soid' => ''
+			);
 		}
-
-		$this->contact->jid=$id;
-		$this->contact->LoadUser();
-
-	       	$this->data = array('entityid' => $this->contact->id);
                 $this->setData($this->data);
                 $result = $this->execCommand('get_current_salesorders');
                 return $result;
@@ -110,8 +115,7 @@ class VTigerSalesOrder extends VTigerConnection {
                 $this->setData($this->data);
                 $result = $this->execCommand('associate_to_user');
 		if($result != "failed") {
-			$_COOKIE["current_salesorder"] = false;
-			unset($_COOKIE["current_salesorder"]);
+			setcookie("current_salesorder", "", time()-3600);
 		}
                 return $result;
 	}

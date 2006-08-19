@@ -91,5 +91,29 @@ class VTigerForm extends VtigerField {
 
 		return $soid;
 	}
+	function RelateContact($contactid,$entityid,$entitymodule)
+	{
+		global $my,$mosConfig_absolute_path;
+		if(!$my->id)
+			return;
+
+		require_once($mosConfig_absolute_path."/components/com_vtigerregistration/vtiger/VTigerContact.class.php");
+		$Contact = new VtigerContact($my->id);
+                if($entitymodule == "Events")
+			$Contact->RelateToEvent($entityid);
+
+                else if($entitymodule == "Potentials")
+			$Contact->RelateToPotential($entityid);
+
+                else if($entitymodule == "Campaigns")
+			$Contact->RelateToCampaign($entityid);
+
+                else if($entitymodule == "Accounts")
+			$Contact->RelateToAccount($entityid);
+	}
+	function SendFormEmail($mailto,$subject)
+	{
+
+	}
 }
 ?>
