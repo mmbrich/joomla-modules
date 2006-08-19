@@ -23,6 +23,33 @@ $server->configureWSDL('vtigersoap');
 // Import array definitions
 require_once('soap/jdef.php');
 
+// Set the default CRM owner for all new entities from joomla.
+$default_ownerid='1';
+
+global $default_ownerid;
+
+function inherit_user($entityid='') {
+	global $default_ownerid,$adb;
+	$adb->println("Enter into the function inherit_user($entityid)");
+        if($entityid != "") {
+                $q = "SELECT smownerid FROM vtiger_crmentity WHERE crmid='".$entityid."' AND smownerid IS NOT NULL";
+                $rs = $adb->query($q);
+                $current_owner = $adb->query_result($rs,'0','smownerid');
+        }
+
+        if($current_owner == "" || !isset($current_owner) || !$current_owner) {
+        	$current_owner=$default_ownerid;
+		$adb->println("No owner found, set to : $current_owner");
+	} else
+		$adb->println("The current owner of this entity is : $current_owner");
+
+        require_once('modules/Users/User.php');
+        $current_user = new User();
+        $current_user->retrieve_entity_info($current_owner,"Users");
+	$adb->println("The current owner of this entity is : $current_user->id");
+	return $current_user;
+}
+
 function create_entity($module,$entityid='') {
         global $adb;
         $adb->println("Enter into the function create_entity($module,$entityid)");
@@ -39,8 +66,8 @@ function create_entity($module,$entityid='') {
         } else if($module == "Leads") {
                 require_once('modules/Leads/Lead.php');
                 $focus = new Lead();
-        } else if($module == "Activities") {
-                require_once('modules/Activities/Activity.php');
+        } else if($module == "Activities" || $module == "Events") {
+                require_once('modules/Calendar/Activity.php');
                 $focus = new Activity();
         } else if($module == "Campaigns") {
                 require_once('modules/Campaigns/Campaign.php');
@@ -86,6 +113,8 @@ function get_field_values($focus,$columnname,$field='') {
 
         global $adb;
         $adb->println("Enter into the function get_field_values($focus,$columnname,".$field["viewtype"].")");
+
+        $adb->println("Will bet getting field value for COLUMNNAME: $columnname IN MODULE: ".$focus->column_fields["record_module"]." THE CURRENT VALUE IS: ".$focus->column_fields[$columnname]." WITH VIEW TYPE: ".$field["viewtype"].")");
 
 	// format comments for trouble tickets
         if($columnname == "comments"

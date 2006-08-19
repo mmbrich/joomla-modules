@@ -44,7 +44,10 @@ function check_so_owner($soid,$contactid) {
 /************************ GET_CURRENT_SALESORDERS  START ****************************/
 $server->register(
         'get_current_salesorders',
-        array('entityid'=>'xsd:string'),
+        array(
+		'entityid'=>'xsd:string',
+		'soid'=>'xsd:string'
+	),
         array('return'=>'tns:so_return_multi'),
         $NAMESPACE);
 
@@ -68,27 +71,43 @@ $server->wsdl->addComplexType(
                 'discount_amount' => array('discount_amount'=>'value','type'=>'xsd:string'),
                 's_h_amount' => array('name'=>'s_h_amount','type'=>'xsd:string'),
                 'terms_conditions' => array('name'=>'terms_conditions','type'=>'xsd:string'),
+                'num_products' => array('name'=>'num_products','type'=>'xsd:string'),
                 'sostatus' => array('name'=>'sostatus','type'=>'xsd:string')
         )
 );
 
-function get_current_salesorders($entityid) {
+function get_current_salesorders($entityid,$soid='') {
 	global $adb;
         $adb->println("Enter into the function get_current_salesorders(".$entityid.")");
 
-	$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
-		." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
-		." FROM vtiger_salesorder "
-		." INNER JOIN vtiger_crmentity "
-		." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
-		." WHERE contactid='".$entityid."' "
-		." AND vtiger_crmentity.deleted='0'"
-		." AND (vtiger_salesorder.sostatus = 'Created' OR vtiger_salesorder.sostatus = 'Approved')";
-	$rs = $adb->query($q);
+	if($entityid != "") {
+		$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
+			." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
+			." FROM vtiger_salesorder "
+			." INNER JOIN vtiger_crmentity "
+			." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
+			." WHERE contactid='".$entityid."' "
+			." AND vtiger_crmentity.deleted='0'"
+			." AND (vtiger_salesorder.sostatus = 'Created' OR vtiger_salesorder.sostatus = 'Approved')";
+		$rs = $adb->query($q);
+	} else {
+		$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
+			." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
+			." FROM vtiger_salesorder "
+			." INNER JOIN vtiger_crmentity "
+			." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
+			." WHERE crmid='".$soid."' "
+			." AND vtiger_crmentity.deleted='0'"
+			." AND (vtiger_salesorder.sostatus = 'Created' OR vtiger_salesorder.sostatus = 'Approved')";
+		$rs = $adb->query($q);
+	}
 
 	//$sos = array();
+	$i=0;
 	while($tmp = $adb->fetch_array($rs)) {
-		$sos[] = $tmp;
+		$sos[$i] = $tmp;
+		$sos[$i]["num_products"] = $adb->num_rows($adb->query("SELECT id FROM vtiger_inventoryproductrel WHERE id='".$tmp["salesorderid"]."'"));
+		$i++;
 	}
 	if(is_array($sos))
 		return $sos;
@@ -310,6 +329,8 @@ function remove_product($soid,$productid) {
 		$q = "UPDATE vtiger_crmentity "
 			." SET deleted='1' "
 			." WHERE crmid='".$soid."'";
+		if(isset($_COOKIE["current_salesorder"]))
+			setcookie("current_salesorder", "", time()-3600);
 	}
 	$rs = $adb->query($q);
 
@@ -335,6 +356,8 @@ function add_product($soid,$productid,$qty) {
 	else {
       	 	$adb->println("Getting Taxes --- ");
 		$prod_info = get_taxinfo($productid);
+		if($prod_info["taxid"] == "")
+			$prod_info["taxid"] = "1";
 
 		// Check to see if product is already in the order
 		// update qty and totals if so.
@@ -396,8 +419,10 @@ function new_salesorder($contactid) {
 	global $adb;
         $adb->println("Enter into the function new_salesorder($contactid)");
 	$date_var = date('YmdHis');
+	$current_user = inherit_user($contactid);
 
 	$SO = create_entity("SalesOrder");
+	$SO->column_fields["assigned_user_id"] = $current_user->id;
 
 	if($contactid != "") {
 		$Contact = create_entity("Contacts",$contactid);
@@ -430,6 +455,7 @@ $server->register(
 function associate_to_user($contactid,$soid) {
 	global $adb;
         $adb->println("\n\r\n\rEnter into the function associate_to_user($contactid,$soid)\n\r\n\r");
+	$current_user = inherit_user($contactid);
 
 	$CO = create_entity("Contacts",$contactid);
 
@@ -464,16 +490,17 @@ function make_payment($soid,$invoiceid,$entityid,$type) {
 	$payment = new AuthNet();
 
 	global $current_user;
-        $current_owner = 1;
-	$current_user = create_entity("Users",$current_owner);
+	$current_user = inherit_user($entityid);
 
         $payment->entityid = $entityid;
         $payment->billid = $invoiceid;
 
         $invoice = create_entity("Invoice",$invoiceid);
+	$invoice->column_fields["assigned_user_id"] = $current_user->id;
 	$pay_stat = $payment->PostPayment();
 
         $so = create_entity("SalesOrder",$invoice->column_fields["salesorder_id"]);
+	$so->column_fields["assigned_user_id"] = $current_user->id;
 	if($pay_stat == true) {
         	$invoice->column_fields["invoicestatus"] = "Paid";
         	$so->column_fields["sostatus"] = "Delivered";
@@ -504,11 +531,11 @@ function update_addresses($contactid,$soid,$type='all') {
         $adb->println("\n\r\n\rEnter into the function update_addresses($contactid,$soid,$type)\n\r\n\r");
 
 	global $current_user;
-        $current_owner = 1;
-	$current_user = create_entity("Users",$current_owner);
+	$current_user = inherit_user($contactid);
 
 	$CO = create_entity("Contacts",$contactid);
 	$focus = create_entity("SalesOrder",$soid);
+	$focus->column_fields["assigned_user_id"] = $current_user->id;
 
 	if($type == "all") {
 		shipping_addy_update($CO,$focus);
@@ -555,13 +582,13 @@ function convert_to_invoice($soid) {
 	$so_focus = create_entity("SalesOrder",$soid);
 
 	global $current_user;
-        $current_owner = 1;
-	$current_user = create_entity("Users",$current_owner);
+	$current_user = inherit_user($soid);
 
         $focus = getConvertSoToInvoice($focus,$so_focus,$soid);
 
         $focus->column_fields['vtiger_purchaseorder'] = $so_focus->column_fields['vtiger_purchaseorder'];
         $focus->column_fields['terms_conditions'] = $so_focus->column_fields['terms_conditions'];
+	$focus->column_fields["assigned_user_id"] = $current_user->id;
 
         $associated_prod = getAssociatedProducts("SalesOrder",$so_focus);
 
@@ -605,6 +632,8 @@ function calc_totals($cur_total, $qty, $prod_info) {
 }
 function get_taxinfo($productid) {
 	global $adb;
+	$taxid='1';
+
 	$q = "SELECT unit_price "
 		." FROM vtiger_products "
 		." WHERE productid='".$productid."' ";
