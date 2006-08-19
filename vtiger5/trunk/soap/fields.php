@@ -27,20 +27,11 @@ $server->register(
 function save_form_fields($entityid,$module,$fields) {
 	global $adb,$current_user;
 	$adb->println("Enter into the function save_form_fields($entityid,$module,$fields)");
-
-	if($entityid != "") {
-		$q = "SELECT smownerid FROM vtiger_crmentity WHERE crmid='".$entityid."' AND smownerid IS NOT NULL";
-		$rs = $adb->query($q);
-		$current_owner = $adb->query_result($rs,'0','smownerid');
-		if($current_owner == "" || !isset($current_owner) || !$current_owner) 
-			$current_owner=1;
-
-        	require_once('modules/Users/User.php');
-        	$current_user = new User();
-        	$current_user->retrieve_entity_info($current_owner,"Users");
-	}
+	$current_user = inherit_user($entityid);
 
 	$focus = create_entity($module,$entityid);
+
+	$focus->column_fields['assigned_user_id'] = $current_user->id;
 
 	for($j=0;$j<count($fields);$j++) {
 		if(($fields[$j]["columnname"] == "accountid" || $fields[$j]["columnname"] == "account_id") && $module == "Contacts") {
@@ -137,7 +128,7 @@ function get_multiple_field_details($fields) {
 	usort($fields,"entityid_sort");
 	foreach($fields as $num=>$field) {
 
-		$adb->println("MODULE IS ".$field["module"]);
+		$adb->println("MODULE IS ".$field["module"]." ENTITY IS: ".$field["entityid"]);
 		if($field["module"] == "")
 			$field["module"] = "Contacts";
 
