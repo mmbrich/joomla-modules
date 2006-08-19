@@ -15,24 +15,26 @@ $_MAMBOTS->registerFunction( 'onPrepareContent', 'botvfield' );
 /**
 * Display vtiger fields within your content or popup
 *
-* @param string vtiger module name (IE: Contacts)
-* @param string columnname from vtiger (IE: firstname) 
-* @param string view type (edit|detail).  edit will make the field editable,
-* detail will wrap the output in a span
 */
 function botvfield( $published, &$row, &$params, $page=0 ) {
 
+	$msg = mosGetParam( $_REQUEST, 'msg', '');
+	if($msg != "")
+		echo "<center><font color='red' style='font-weight:bold'>".$msg."</font></center>";
+
 	global $mosConfig_absolute_path,$fields,$tfields,$vForm;
 	$msg = '';
-
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
 	$vForm = new VtigerForm();
 
+	$Itemid = mosGetParam( $_REQUEST, 'Itemid', '1');
 	if(mosGetParam( $_POST, 'vt_module', '') != "" && mosGetParam( $_REQUEST, 'option', '') != "com_vtigerregistration") {
 		$module = mosGetParam( $_POST, 'vt_module', '');
 		$action = mosGetParam( $_POST, 'vt_action', '');
 		$entityid = mosGetParam( $_POST, 'vt_entityid', '');
 
+		//print_r($_POST);
+		//exit();
 		switch($action) {
 			case 'BuyProduct':
 				$qty = mosGetParam( $_POST, 'prd_qty', '1');
@@ -41,8 +43,28 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 					echo "FAILED TO SAVE FORM";
 					exit();
 				}
-				mosRedirect('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty);
+				mosRedirect('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty."&Itemid=".$Itemid);
 			break;
+			case 'SendEmail':
+				$vt_mailto = mosGetParam( $_POST, 'vt_mailto', '');
+				$vt_mail_subject = mosGetParam( $_POST, 'vt_mailsubject', '');
+				$vt_entityid = mosGetParam( $_POST, 'vt_entityid', '');
+
+				$vForm->SendFormEmail($vt_mailto,$vt_mail_subject);
+			break;
+			case 'RelateContact':
+				$vt_relation_entityid = mosGetParam( $_POST, 'vt_relation_entityid', '');
+				$vt_relation_module = mosGetParam( $_POST, 'vt_relation_module', '');
+				$vt_entityid = mosGetParam( $_POST, 'vt_entityid', '');
+
+				if($vt_relation_entityid == $vt_entityid)
+					mosRedirect("index.php?option=com_vtigerregistration&task=login");
+				else {
+					$vForm->RelateContact($vt_entityid,$vt_relation_entityid,$vt_relation_module);
+					$msg = "Successfully Added";
+				}
+				$res = $vt_relation_entityid;
+			break; 
 			default:
 				$res = $vForm->SaveVtigerForm($module,$entityid);
 				if($res == "failed") {
@@ -64,7 +86,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 		if($redirect_site != "")
 			mosRedirect( $redirect_site );
 		else
-			mosRedirect('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&msg='.$msg);
+			mosRedirect('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&Itemid='.$Itemid.'&msg='.$msg);
 	}
 
 	// Special Commands
@@ -166,16 +188,14 @@ function botvfield_replacer ( &$matches ) {
 				return $ret;
 			}
 			// If the amount is blank then we need to get it from the qtyindemand
-			if($thisParams[2] == "" || !isset($thisParams[2])) {
-				$tval = $vForm->GetSingleFieldDetails(
-					"Products",
-					"qtyindemand",
-					mosGetParam( $_REQUEST, 'productid', '' )
-				);
-			}
 			switch($thisParams[1]) {
 				case 'BuyProduct':
 					if($thisParams[2] == "" || !isset($thisParams[2])) {
+						$tval = $vForm->GetSingleFieldDetails(
+							"Products",
+							"qtyindemand",
+							mosGetParam( $_REQUEST, 'productid', '' )
+						);
 						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					} else {
 						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
@@ -187,6 +207,27 @@ function botvfield_replacer ( &$matches ) {
 				case 'SetColumn':
 					return "<input type='hidden' name='vtiger_".$thisParams[2]."' value='".$thisParams[3]."' />";
 				break;
+				case 'RelateContact':
+					$mod = $thisParams[2];
+					$entityid = mosGetParam( $_REQUEST, 'entityid', '');
+					if($mod == "Events") {
+						if($entityid == '')
+							$entityid = mosGetParam( $_REQUEST, 'eventid', '');
+				  	} else if($mod == "Potentials") {
+						if($entityid == '')
+							$entityid = mosGetParam( $_REQUEST, 'potentialid', '');
+					} else if($mod == "Campaigns") {
+						if($entityid == '')
+							$entityid = mosGetParam( $_REQUEST, 'campaignid', '');
+					} else if($mod == "Accounts") {
+						if($entityid == '')
+							$entityid = mosGetParam( $_REQUEST, 'accountid', '');
+					}
+					$ret .= "<input type='hidden' name='vt_action' value='RelateContact' />";
+					$ret .= "<input type='hidden' name='vt_relation_entityid' value='".$entityid."' />";
+					return $ret."<input type='hidden' name='vt_relation_module' value='".$thisParams[2]."' />";
+				break;
+				// Enable this
 				case 'SendEmail':
 					return "<input type='hidden' name='vt_mailto' value='".$thisParams[2]."' />";
 					return "<input type='hidden' name='vt_mail_subject' value='".$thisParams[3]."' />";
