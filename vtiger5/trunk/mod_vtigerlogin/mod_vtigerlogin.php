@@ -62,10 +62,13 @@ if(empty($my->id)){
         }
         unset($_SESSION['vtiger_session']);
 }
+require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
 
 if ( $my->id ) {
-// Logout output
-// ie HTML when already logged in and trying to logout
+	$vuser = new VtigerContact($my->id);
+
+	// Logout output
+	// ie HTML when already logged in and trying to logout
 	if ( $name ) {
 		$name = $my->name;
 	} else {
@@ -73,15 +76,17 @@ if ( $my->id ) {
 	}	
 	?>
 	<form action="<?php echo sefRelToAbs( 'index.php?option=logout' ); ?>" method="post" name="logout">	
+	<div align="center">
 	<?php
 	if ( $greeting ) {
 		echo _HI;
 		echo $name;
 	}
-        require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
-        $vuser = new VtigerContact($my->id);
 	?>
-	<br />
+	<div>
+	<div align="center">
+		<a href='<?php echo sefRelToAbs("index.php?option=com_vtigerregistration&task=changePass");?>'>Change Password</a>
+	</div>
 	
 	<div align="center">
 		<input type="submit" name="Submit" class="button" value="<?php echo _BUTTON_LOGOUT; ?>" />
