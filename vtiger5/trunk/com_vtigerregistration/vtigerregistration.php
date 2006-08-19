@@ -15,9 +15,14 @@
 // no direct access
 defined( '_VALID_MOS' ) or die( 'Restricted access' );
 
+global $mainframe,$my,$vtuser;
+
 require_once( $mainframe->getPath( 'front_html' ) );
 define('_MYNAMEIS', 'com_vtigerregistration');
 $basePath = $mainframe->getCfg('absolute_path') . "/components/" . _MYNAMEIS . "/";
+
+require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
+$vtuser = new VtigerContact();
 
 
 switch($task) {
@@ -27,17 +32,52 @@ switch($task) {
         	$database->setQuery($q);
         	$current_config = $database->loadObjectList();
 
-		saveRegistration($current_config);
+		saveRegistration($current_config,mosGetParam( $_POST, 'soid', '' ));
 	break;
 	case 'activate':
 		activate(mosGetParam( $_REQUEST, 'activation', '' ));
 	break;
+	case 'login':
+		$registration_enabled = $mainframe->getCfg( 'allowUserRegistration' );
+		$message_login = $params->def( 'login_message',        0 );
+		$message_logout = $params->def( 'logout_message',       0 );
+
+		$login = $params->def( 'login', $return );
+		$logout = $params->def( 'logout',                       $return );
+		$name = $params->def( 'name',                         1 );
+		$greeting = $params->def( 'greeting',             1 );
+		$pretext = $params->get( 'pretext' );
+		$posttext = $params->get( 'posttext' );
+
+		if(empty($my->id)){
+        		if(!isset($_SESSION)){
+                		session_start();
+        		}
+        		unset($_SESSION['vtiger_session']);
+		}
+
+                HTML_vtigerregistration::login($pretext,$posttext,$login);
+	break;
 	case 'lostPassword':
                 HTML_vtigerregistration::lostPassword();
 	break;
+	case 'changePass':
+		if(!$my->id)
+			mosNotAuth();
+		else
+                	HTML_vtigerregistration::changePass($my->id);
+	break;
+	case 'savePassword':
+		if(!$my->id)
+			mosNotAuth();
+		else {
+			$vtuser->jid = $my->id;
+			$vtuser->LoadUser();
+			$vtuser->ChangePassword(mosGetParam( $_POST, 'newpass', '' ) );
+        		mosRedirect( 'index.php', _USER_DETAILS_SAVE );
+		}
+	break;
 	case 'sendPassword':
-		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
-		$vtuser = new VtigerContact();
 		$vtuser->ForgotPassword(mosGetParam( $_POST, 'email', '' ));
 		echo "Your password has been sent to ".mosGetParam( $_POST, 'email', '' );
 	break;
@@ -47,6 +87,8 @@ switch($task) {
                 $fields = get_fields();
                 HTML_vtigerregistration::register($fields,$vtigerField);
         break;
+	default:
+	break;
 }
 function activate( $option ) {
         global $database, $my;
@@ -112,7 +154,7 @@ function get_fields() {
 	}
 	return $current_rows;
 }
-function saveRegistration($config) {
+function saveRegistration($config,$soid='') {
         global $database, $acl, $basePath,$mainframe;
         global $mosConfig_sitename, $mosConfig_live_site, $mosConfig_useractivation, $mosConfig_allowUserRegistration;
         global $mosConfig_mailfrom, $mosConfig_fromname, $mosConfig_mailfrom, $mosConfig_fromname;
@@ -128,9 +170,9 @@ function saveRegistration($config) {
         }
 
         mosMakeHtmlSafe($row);
-        $row->id                = 0;
-        $row->usertype  = '';
-        $row->gid               = $acl->get_group_id( 'Registered', 'ARO' );
+        $row->id = 0;
+        $row->usertype = '';
+        $row->gid = $acl->get_group_id( 'Registered', 'ARO' );
 
         if ( $mosConfig_useractivation == 1 ) {
                 $row->activation = md5( mosMakePassword() );
@@ -167,6 +209,7 @@ function saveRegistration($config) {
 	$vtigerContact->id = $userid;
 	$vtigerContact->jid = $row->id;
 	$vtigerContact->AssociateUserToContact();
+	$vtigerContact->InsertPortalData($row->username, $pwd);
 
 
 	foreach($config as $conf) {
@@ -231,10 +274,13 @@ function saveRegistration($config) {
                 // send email to admin & super admin set to recieve system emails
                 mosMail($adminEmail2, $adminName2, $admin->email, $subject2, $message2);
         }
-        if ( $mosConfig_useractivation == 1 ){
-                echo _REG_COMPLETE_ACTIVATE;
-        } else {
-                echo _REG_COMPLETE;
-        }
+	if($soid != "") 
+		mosRedirect('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid=1');
+	else {
+        	if ( $mosConfig_useractivation == 1 )
+                	echo _REG_COMPLETE_ACTIVATE;
+        	else
+                	echo _REG_COMPLETE;
+	}
 }
 ?>

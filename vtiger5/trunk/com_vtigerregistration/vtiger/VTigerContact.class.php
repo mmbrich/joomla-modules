@@ -19,11 +19,12 @@ class VTigerContact extends VTigerForm {
 	var $jid;
 	var $customer_name;
 	var $username;
+	var $file = "contact";
 	
 
 	function VtigerContact($jid='')
 	{
-		$this->conn = $this->VtigerConnection("contact");
+		$this->conn = $this->VtigerConnection($this->file);
 		if($jid != '') {
 			$this->jid=$jid;
 			$this->LoadUser();
@@ -89,13 +90,13 @@ class VTigerContact extends VTigerForm {
 
 		return $res;
 	}
-	function CheckAndCreate($email) 
+	function CheckUser($email) 
 	{
 		$this->data = array(
 			'email'=>$email
 		);
                 $this->setData($this->data);
-                $this->id = $this->execCommand('check_and_create');
+                $this->id = $this->execCommand('check_user');
 		return $this->id;
 	}
 	function SetField($fieldid,$value) 
@@ -110,25 +111,102 @@ class VTigerContact extends VTigerForm {
                 $res = $this->execCommand('set_field');
 		echo $res;
 	}
-	function ChangePassword($password,$newpasswd)
+	function ChangePassword($newpasswd)
 	{
-		$res = $this->Authenticate($_SESSION["vt_user_name"],$_SESSION["vt_user_pass"]);
-		if($res == $_SESSION["vt_id"]) {
-        		$this->data = array('id'=>"$this->id",
-				'username'=>$_SESSION["vt_user_name"],
-				'password'=>$newpasswd);
-			$this->setData($this->data);
-                	$res = $this->execCommand('change_password');
-		} else
-			return 'error';
+		global $database, $acl, $basePath,$mainframe;
+		if($newpasswd != "") { 
+			$this->setData(array(
+				'newpass'=>$newpasswd,
+				'id'=>$this->id
+			));
+        		$this->execCommand('update_password');
+			return $this->_change_password($newpasswd);
+		} else {
+                        echo "<script> alert(\""._PASS_MATCH."\"); window.history.go(-1); </script>\n";
+                        exit();
+		}
+	}
+	function _change_password($newpass)
+	{
+        	global $database, $my, $mosConfig_frontend_userparams;
+        	$user_id = $my->id;
+
+        	$row = new mosUser( $database );
+        	$row->load( $user_id );
+
+        	$orig_password = $row->password;
+        	$orig_username = $row->username;
+
+        	mosMakeHtmlSafe($newpass);
+        	mosMakeHtmlSafe($row);
+
+                $row->password = md5( $newpass );
+
+        	if (!$row->check()) {
+                	echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+                	exit();
+        	}
+
+        	if (!$row->store()) {
+                	echo "<script> alert('".$row->getError()."'); window.history.go(-1); </script>\n";
+                	exit();
+        	}
+		return;
+	}
+	function InsertPortalData($username, $password)
+	{
+		$this->data = array(
+			'username'=>$username,
+			'password'=>$password,
+			'entityid'=>$this->id
+		);
+                $this->setData($this->data);
+                return $this->execCommand('insert_portal_data');
 	}
 	function ForgotPassword($email)
 	{
-		$this->conn = $this->VtigerConnection("customerportal");
-		$this->setData(array('email'=>"$email"));
-        	$this->execCommand('send_mail_for_password');
-		$this->conn = $this->VtigerConnection("contact");
+		$this->setData(array(
+			'email'=>"$email"
+		));
+        	$ret = $this->execCommand('forgot_password');
+		if($ret != '1') {
+			echo $ret;
+			exit();
+		}
+	}
+        function RelateToEvent($eventid)
+	{
+		$this->data = array(
+                        'eventid'=>$eventid,
+                        'contactid'=>$this->id
+                );
+		$this->setData($this->data);
+        	$ret = $this->execCommand('relate_to_event');
 		return;
+	}
+        function RelateToPotential($potentialid)
+	{
+		$this->setData(array(
+			'potentialid'=>$potentialid,
+			'contactid'=>$this->id
+		));
+        	return $this->execCommand('relate_to_potential');
+	}
+        function RelateToCampaign($campaignid)
+	{
+		$this->setData(array(
+			'campaignid'=>$campaignid,
+			'contactid'=>$this->id
+		));
+        	return $this->execCommand('relate_to_campaign');
+	}
+        function RelateToAccount($accountid)
+	{
+		$this->setData(array(
+			'accountid'=>$accountid,
+			'contactid'=>$this->id
+		));
+        	return $this->execCommand('relate_to_account');
 	}
 }
 ?>

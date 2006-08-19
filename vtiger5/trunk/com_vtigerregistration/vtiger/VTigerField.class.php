@@ -86,6 +86,7 @@ class VTigerField extends VtigerConnection {
                         case '11':
                         case '75':
                         case '22': 
+                        case '6': // Date
                         	$out = '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
                         break;
                         case '21':
@@ -180,6 +181,7 @@ class VTigerField extends VtigerConnection {
                         case '111': // Picklist
                         case '22': // Picklist
                         case '75': // Picklist
+                        case '6': // Date
                         	$out = '<span name="'.$field["columnname"].'">'.$field["value"].'</span>';
                         break;
                         case '21':

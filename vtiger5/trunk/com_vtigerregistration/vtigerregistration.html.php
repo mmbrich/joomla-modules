@@ -20,17 +20,76 @@ class HTML_vtigerregistration {
 		?>
 		<br /><br />
 		<center>
-		<form method="POST" action="index.php">
+		<form method="POST" action="index.php" name="lost_pass">
 		<table border=0 width="65%" align="center">
 		<tr><td> Email Address:</td><td><input type='text' name='email' style='border:solid 1px gray' size='40'></td></tr>
 		<tr><td></td><td><input type='submit' class='button' name='send_pass' value=' Send Password '></td></tr>
 		<input type="hidden" name="task" value="sendPassword" />
+		<input type="hidden" name="option" value="com_vtigerregistration" />
 		</table>
 		</form>
 		</center>
 	<?
 	}
-        function register($fields=array(),$vtField) {
+	function changePass($id) {
+	?>
+		<script type="text/javascript">
+		function validate_pass() {
+			var np1 = document.getElementById("np").value;
+			var np2 = document.getElementById("np2").value;
+
+			if(np1 != np2) {
+				alert("Your passwords do not match");
+				return false;
+			} else if(np1 == "" || np2 == "") {
+				alert("Your may not use blank passwords");
+				return false;
+			} else
+				return true;
+		}
+		</script>
+		<br /><br />
+		<center>
+			<form method="POST" action="index.php" name="change_pass">
+				<table border=0 width="100%" align="center">
+					<tr>
+						<td > 
+							Old Password:
+						</td>
+						<td>
+							<input type='password' name='oldpass' style='border:solid 1px gray' size='20'>
+						</td>
+					</tr>
+					<tr>
+						<td > 
+							New Password:
+						</td>
+						<td>
+							<input type='password' name='newpass' id="np" style='border:solid 1px gray' size='20'>
+						</td>
+					</tr>
+					<tr>
+						<td > 
+							Confirm New Password:
+						</td>
+						<td>
+							<input type='password' name='newpass2' id="np2" style='border:solid 1px gray' size='20'>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<input type='submit' class='button' name='send_pass' value=' Send Password ' onclick='return validate_pass();'>
+						</td>
+					</tr>
+					<input type="hidden" name="task" value="savePassword" />
+					<input type="hidden" name="option" value="com_vtigerregistration" />
+				</table>
+			</form>
+		</center>
+	<?
+	}
+        function register($fields=array(),$vtField,$soid='') {
 		global $mainframe;
         ?>
 	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site').'/components/com_vtigerregistration';?>/vtiger/prototype.js" type="text/javascript"></script>
@@ -59,9 +118,12 @@ class HTML_vtigerregistration {
 				alert(msg);
 		}
 		</script>
-		<form action="index.php" method="post" name="mosForm" id="reg_user">
-		<div class="componentheading">User Registration:</div>
+                <br>
+                <fieldset>
+                <legend><span class="sectiontableheader">User Registration</span></legend>
+                <br>
 
+		<form action="index.php" method="post" name="mosForm" id="reg_user">
 		<table class="contentpane" border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tbody><tr>
 			<td colspan="2">Fields marked with an asterisk (<font color="red">*</font>) are required.</td>
@@ -139,8 +201,57 @@ class HTML_vtigerregistration {
 		<input name="useractivation" value="1" type="hidden">
 		<input name="option" value="com_vtigerregistration" type="hidden">
 		<input name="task" value="saveVtigerRegistration" type="hidden">
+		<input name="soid" value="<?php echo $soid;?>" type="hidden">
 		<input value="Send Registration" class="button" onclick="submitbutton()" type="button">
 		</form>
+                </fieldset>
+	<?
+	}
+	function login($pretext,$posttext,$login) {
+		global $mosConfig_lang;
+		$validate = josSpoofValue(1);
+		if(mosGetParam( $_REQUEST, 'soid', '' ) != '') {
+			$login = 'index.php?option=com_vtigersalesorders?task=checkout';
+		}
+	?>
+                <fieldset>
+                	<legend><span class="sectiontableheader">Please Log In</span></legend>
+                	<br>
+        		<form action="<?php echo sefRelToAbs( 'index.php' ); ?>" method="post" name="login" >
+        		<?php
+        			echo $pretext;
+        		?>
+
+                        	<div style="width: 98%; text-align: center;">
+                                	<div style="float: left; width: 30%; text-align: right;">
+                                        	<label for="username_login"><?php echo _USERNAME;?>:</label>
+                                	</div>
+                                	<div style="float: left; margin-left: 2px; width: 60%; text-align: left;">
+                                        	<input id="username_login" name="username" class="inputbox" size="20" type="text">
+                                	</div>
+                                	<br><br>
+                                	<div style="float: left; width: 30%; text-align: right;">
+                                        	<label for="passwd_login"><?php echo _PASSWORD;?>:</label>
+                                	</div>
+                                	<div style="float: left; margin-left: 2px; width: 30%; text-align: left;">
+                                        	<input id="passwd_login" name="passwd" class="inputbox" size="20" type="password">
+                                	</div><br><br>
+                                	<center><div style="width: 30%; text-align: left;">
+						<input type="submit" name="Submit" class="button" value="<?php echo _BUTTON_LOGIN; ?>" />
+                                	</div></center>
+				</div>
+        			<?php
+        				echo $posttext;
+        			?>
+
+        			<input type="hidden" name="option" value="login" />
+        			<input type="hidden" name="op2" value="login" />
+        			<input type="hidden" name="lang" value="<?php echo $mosConfig_lang;?>" />
+        			<input type="hidden" name="return" value="<?php echo  sefRelToAbs( $login );?>" />
+        			<input type="hidden" name="message" value="<?php echo $message_login;?>" />
+        			<input type="hidden" name="<?php echo $validate; ?>" value="1" />
+			</form>
+		</fieldset>
 	<?
 	}
 }
