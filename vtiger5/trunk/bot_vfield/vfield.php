@@ -153,7 +153,8 @@ function botvfield_replacer ( &$matches ) {
 			if($entityid == "")
 				$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
 
-			$out =  "<form enctype='multipart/form-data' name='vt_form' method='POST'>";
+			$out = form_validate();
+			$out .=  "<form enctype='multipart/form-data' name='vt_form' method='POST'>";
 			$out .= "<input type='hidden' name='MAX_FILE_SIZE' value='1000000' />";
 			$out .= "<input type='hidden' name='vt_module' value='".$thisParams[1]."' />";
 			$out .= "<input type='hidden' name='vt_entityid' value='".$entityid."' />";
@@ -168,9 +169,9 @@ function botvfield_replacer ( &$matches ) {
 				return $ret;
 			}
 			if($thisParams[1])
-				return "<input type='submit' value='".$thisParams[1]."' class='button'></form>";
+				return "<input type='submit' value='".$thisParams[1]."' class='button' onclick='return validate_vtiger_form(this);' /></form>";
 			else
-				return "<input type='submit' value='Submit' class='button'></form>";
+				return "<input type='submit' value='Submit' class='button' onclick='return validate_vtiger_form(this);' /></form>";
 		break;
 
 		// Special actions to take with the form
@@ -263,6 +264,11 @@ function field_counter( &$matches ) {
 	if($thisParams[4] != "" && isset($thisParams[4]))
 		$picnum=$thisParams[4];
 
+	if(trim($thisParams[5]) == "required")
+		$required='true';
+	else
+		$required='false';
+
 	$num = count($fields);
 	$fields[$num] = array();
 	$fields[$num]["module"] = $module;
@@ -271,6 +277,7 @@ function field_counter( &$matches ) {
 	$fields[$num]["showlabel"] = $showlabel;
 	$fields[$num]["entityid"] = $entityid;
 	$fields[$num]["picnum"] = $picnum;
+	$fields[$num]["required"] = $required;
 }
 
 // Replace fields with populated field array
@@ -291,7 +298,7 @@ function vfield_replacer( &$matches ) {
 					continue;
 	
 			if($field["viewtype"] == "edit")
-                        	return $vForm->_buildEditField($field,$field["showlabel"]);
+                        	return $vForm->_buildEditField($field,$field["showlabel"],$field["required"]);
 			else if($field["viewtype"] == "data") {
 				if($field["columnname"] == "imagename" && $field["picnum"] != "all") {
 					$values = explode("|",$field["value"]);
@@ -303,5 +310,30 @@ function vfield_replacer( &$matches ) {
 		}
 	    }
 	}
+}
+
+function form_validate() {
+?>
+<script language="javascript" type="text/javascript" src="components/com_vtigerregistration/vtiger/prototype.js"></script>
+<script type="text/javascript">
+function validate_vtiger_form(form) {
+	var els = document.getElementsByClassName("required");
+	var ret = true;
+	for(var i=0;i<els.length;i++) {
+		if(els[i].childNodes[0].value == "" || typeof(els[i].childNodes[0].value) === "undefined") {
+			ret = false;
+			els[i].childNodes[0].style.border = "1px solid red";
+		} else {
+			els[i].childNodes[0].style.border = "1px solid gray";
+			els[i].childNodes[0].className = "inputbox";
+		}
+	}
+	if(!ret)
+		alert("Please fill out all required fields");
+	
+	return ret;
+}
+</script>
+<?
 }
 ?>

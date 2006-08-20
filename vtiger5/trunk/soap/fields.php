@@ -183,6 +183,7 @@ function get_multiple_field_details($fields) {
         	$tfield[$num]["showlabel"] = $field["showlabel"];
         	$tfield[$num]["entityid"] = $field["entityid"];
         	$tfield[$num]["picnum"] = $field["picnum"];
+        	$tfield[$num]["required"] = $field["required"];
 
 		// Populate the picklist values and field values where needed
 		if($field["entityid"] != "") {

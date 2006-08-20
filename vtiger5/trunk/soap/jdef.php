@@ -59,6 +59,7 @@ $server->wsdl->addComplexType(
                 'fieldlabel' => array('name'=>'fieldlabel','type'=>'xsd:string'),
                 'maximumlength' => array('name'=>'maximumlength','type'=>'xsd:string'),
                 'value' => array('name'=>'value','type'=>'xsd:string'),
+                'required' => array('name'=>'required','type'=>'xsd:string'),
                 'values' => array('name'=>'values','type'=>'xsd:string')
         )
 );
@@ -80,6 +81,7 @@ $server->wsdl->addComplexType(
                 'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
                 'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
                 'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
+                'required' => array('name'=>'required','type'=>'xsd:string'),
                 'picnum' => array('name'=>'picnum','type'=>'xsd:string')
         )
 );
@@ -95,6 +97,7 @@ $server->wsdl->addComplexType(
                 'viewtype' => array('name'=>'viewtype','type'=>'xsd:string'),
                 'showlabel' => array('name'=>'showlabel','type'=>'xsd:string'),
                 'entityid' => array('name'=>'entityid','type'=>'xsd:string'),
+                'required' => array('name'=>'required','type'=>'xsd:string'),
                 'picnum' => array('name'=>'picnum','type'=>'xsd:string')
         )
 );
