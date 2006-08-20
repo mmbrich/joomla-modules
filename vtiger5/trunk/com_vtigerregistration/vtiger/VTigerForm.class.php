@@ -43,9 +43,24 @@ class VTigerForm extends VtigerField {
 					'/\$/i',
 					'/\^/i',
 					'/http:\/\//i',
-                                	'/https:\/\//i'
+                                	'/https:\/\//i',
+                                	'/ftp:\/\//i',
+                                	'/mailto:/i',
+					'/,/i',
+					'/\'/',
+					'/\"/'
 				);
-				$replace = array('','','','');
+				$replace = array(
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'\\\'',
+					'\\\"'
+				);
                         	$fields[$j]["columnname"] = $columnname;
                         	$fields[$j]["value"] = preg_replace($search,$replace,$value);
                         	$j++;

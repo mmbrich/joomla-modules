@@ -68,9 +68,14 @@ class VTigerField extends VtigerConnection {
 		else
 			return $this->_buildDetailField($field,$showlabel,$picnum);
 	}
-	function _buildEditField($field,$showlabel)
+	function _buildEditField($field,$showlabel,$required=false)
 	{
         	$classname  = 'inputbox';
+
+		if($required == 'true')
+			$out = "<span class='required'>";
+		else
+			$out = '';
 
 		switch($field["uitype"]) {
  			case '55':
@@ -87,11 +92,11 @@ class VTigerField extends VtigerConnection {
                         case '75':
                         case '22': 
                         case '6': // Date
-                        	$out = '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
+                        	$out .= '<input class="'.$classname.'" name="vtiger_'.$field["columnname"].'" value="'.$field["value"].'" maxlength="'.$field["maximumlength"].'" type="text">';
                         break;
                         case '21':
                         case '19':
-                        	$out = '<textarea name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >'.$field["value"].'</textarea>';
+                        	$out .= '<textarea name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >'.$field["value"].'</textarea>';
                         break;
                         case '69': // picture
 				// Get the path
@@ -100,22 +105,22 @@ class VTigerField extends VtigerConnection {
 				  	if($field["picnum"] == 'all') {
 						for($i=0;$i<count($pics);$i++) {
 							if($i != 0)
-                                				$out = '<br><input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+                                				$out .= '<br><input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
 							else
-                                				$out = '<input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+                                				$out .= '<input name="vtiger_'.$field["columnname"].'" value="'.$pics[$i].'" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
 						}
 				    	} else {
-                                		$out = '<input name="vtiger_'.$field["columnname"].'" type="file" /> &nbsp; &nbsp; <img src="'.$pics[($field["picnum"]-1)].'" border="0" border="0" height="50" hspace="6" width="50" />';
+                                		$out .= '<input name="vtiger_'.$field["columnname"].'" type="file" /> &nbsp; &nbsp; <img src="'.$pics[($field["picnum"]-1)].'" border="0" border="0" height="50" hspace="6" width="50" />';
 					}
 				} else 
-                                	$out = '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
+                                	$out .= '<input name="vtiger_'.$field["columnname"].'" value="" maxlength="'.$field["maximumlength"].'" type="file" class="'.$classname.'" >';
                         break;
                         case '56': // checkbox
 				if($field["value"] == "on" || $field["value"] == 1) {
-                                	$out = '<input name="vtiger_'.$field["columnname"].'_el" CHECKED type="checkbox" class="'.$classname.'"  onclick="toggle_cb(\'vtiger_'.$field["columnname"].'\');" />';
+                                	$out .= '<input name="vtiger_'.$field["columnname"].'_el" CHECKED type="checkbox" class="'.$classname.'"  onclick="toggle_cb(\'vtiger_'.$field["columnname"].'\');" />';
                                 	$out .= '<input name="vtiger_'.$field["columnname"].'" type="hidden" value="on" />';
 				} else {
-                                	$out = '<input name="vtiger_'.$field["columnname"].'" type="checkbox" class="'.$classname.'" />';
+                                	$out .= '<input name="vtiger_'.$field["columnname"].'" type="checkbox" class="'.$classname.'" />';
 				}
                         break;
                         case '15': // Picklist
@@ -124,7 +129,7 @@ class VTigerField extends VtigerConnection {
 					$values = $field["values"];
 				else 
 					$values = explode(",",$field["values"]);
-                                $out = '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
+                                $out .= '<select name="vtiger_'.$field["columnname"].'" class="'.$classname.'" >';
 				$j=0;
                                 foreach($values as $key=>$value) {
 					if($value != "" && $field["value"] == $value)
@@ -142,7 +147,7 @@ class VTigerField extends VtigerConnection {
 				else 
 					$values = explode(",",$field["values"]);
 
-				$out ='';
+				$out .='';
                                 $out .= '<select MULTIPLE name="vtiger_'.$field["columnname"].'[]" class="'.$classname.'" >';
                                 foreach($values as $key=>$value) {
 					if(preg_match("/".$value."/",$field["value"]) && $value != "")
@@ -153,10 +158,12 @@ class VTigerField extends VtigerConnection {
                                 $out .= '</select>';
                         break;
                         default:
-                                $out = "";
+                                $out .= "";
                         break;
 
 		}
+		if($required)
+			$out .= "</span>";
 		if($showlabel)
 			return $field["fieldlabel"]." ".$out;
 		else
