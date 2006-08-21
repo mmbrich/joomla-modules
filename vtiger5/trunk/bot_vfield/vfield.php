@@ -190,9 +190,9 @@ function botvfield_replacer ( &$matches ) {
 							"qtyindemand",
 							mosGetParam( $_REQUEST, 'productid', '' )
 						);
-						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					} else {
-						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					}
 				break;
 				case 'RedirectSite':
