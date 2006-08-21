@@ -76,7 +76,8 @@ function syncVtiger($option) {
 		$entityid = $vtContact->CheckUser($user->email);
 		// if there is no entity in the CRM, lets create one.
 		if($entityid == 0) {
-			$entityid = $vtContact->RegisterUser($user->email,$user->username,$user->name,'NA',$user->id);
+			$vtContact->jid=$user->id;
+			$entityid = $vtContact->RegisterUser($user->email,$user->username,$user->name,'NA');
 		}
 		echo $entityid." == ".$user->email."<br>";
 	}
