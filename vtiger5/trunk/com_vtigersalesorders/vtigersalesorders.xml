@@ -10,6 +10,11 @@
   <files>
     <filename module="com_vtigersalesorders">vtigersalesorders.php</filename>
     <filename module="com_vtigersalesorders">vtigersalesorders.html.php</filename>
+
+    <filename module="com_vtigersalesorders">images/forward.png</filename>
+    <filename module="com_vtigersalesorders">images/back.png</filename>
+    <filename module="com_vtigersalesorders">images/delete_f2.gif</filename>
+    <filename module="com_vtigersalesorders">images/edit.gif</filename>
   </files>
   <params>
     <param name="count" type="text" size="20" default="" label="Number of items" description="The number of items to display" />
