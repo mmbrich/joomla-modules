@@ -31,7 +31,7 @@ if(!$my->id) {
 			<table border='0' cellspacing='0' cellpadding='0' style='text-align:center' align='center'>
 				<tr>
 					<td colspan='3'>
-						<a href='index.php?option=com_vtigersalesorders&task=view&soid=<?php echo $tmp[0]["salesorderid"];?>'>
+						<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$tmp[0]["salesorderid"]);?>'>
 							You have <?php echo $tmp[0]["num_products"];?> products in your cart.
 						</a>
 					</td>
@@ -65,7 +65,7 @@ if(!$my->id) {
 		?>
 			<tr>
 				<td colspan='3'>
-					<a href='index.php?option=com_vtigersalesorders&task=view&soid=<?php echo $order["salesorderid"];?>'>
+					<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$order["salesorderid"]);?>'>
 						You have <?php echo $order["num_products"];?> products in your cart.
 					</a>
 				</td>
