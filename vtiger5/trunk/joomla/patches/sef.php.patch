@@ -1,0 +1,169 @@
+--- sef.php.orig	2006-08-26 20:07:18.000000000 -0600
++++ sef.php	2006-08-26 20:09:50.000000000 -0600
+@@ -44,6 +44,96 @@
+ 			}
+ 		}
+ 
++                /* Added for vtiger */
++                $productid = '';
++                $accountid = '';
++                $entityid = '';
++                $soid = '';
++                $contactid = '';
++                $qty = '';
++                foreach($url_array as $key=>$value) {
++                        if ( preg_match( '/productid/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['productid']      = $temp[1];
++                                $_REQUEST['productid']  = $temp[1];
++                                $_POST['productid']     = $temp[1];
++                                $productid              = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                        if ( preg_match( '/soid/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['soid']           = $temp[1];
++                                $_REQUEST['soid']       = $temp[1];
++                                $_POST['soid']          = $temp[1];
++                                $soid                   = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                        if ( preg_match( '/entityid/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['entityid']       = $temp[1];
++                                $_REQUEST['entityid']   = $temp[1];
++                                $_POST['entityid']      = $temp[1];
++                                $entityid               = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                        if ( preg_match( '/contactid/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['contactid']      = $temp[1];
++                                $_REQUEST['contactid']  = $temp[1];
++                                $_POST['contactid']     = $temp[1];
++                                $contactid              = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                        if ( preg_match( '/prd_qty/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['prd_qty']        = $temp[1];
++                                $_REQUEST['prd_qty']    = $temp[1];
++                                $_POST['prd_qty']       = $temp[1];
++                                $prd_qty                = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                        if ( preg_match( '/accountid/' , $value ) ) {
++                                $temp = explode(',', $value);
++                                $_GET['accountid']      = $temp[1];
++                                $_REQUEST['accountid']  = $temp[1];
++                                $_POST['accountid']     = $temp[1];
++                                $accountid              = $temp[1];
++                                unset($url_array[$key]);
++                        }
++                }
++               if(isset($_POST["vt_module"])) {
++                        $_GET['vt_module']              = $_POST["vt_module"];
++                        $_REQUEST['vt_module']          = $_POST["vt_module"];
++                        $_POST['vt_module']             = $_POST["vt_module"];
++                        $vt_module                      = $_POST["vt_module"];
++                }
++                if(isset($_POST["vt_action"])) {
++                        $_GET['vt_action']              = $_POST["vt_action"];
++                        $_REQUEST['vt_action']          = $_POST["vt_action"];
++                        $vt_action                      = $_POST["vt_action"];
++                }
++                if(isset($_POST["vt_entityid"])) {
++                        $_GET['vt_entityid']            = $_POST["vt_entityid"];
++                        $_REQUEST['vt_entityid']        = $_POST["vt_entityid"];
++                        $vt_entityid                    = $_POST["vt_entityid"];
++                }
++                if(isset($_POST["prd_qty"])) {
++                        $_GET['prd_qty']                = $_POST["prd_qty"];
++                        $_REQUEST['prd_qty']            = $_POST["prd_qty"];
++                        $prd_qty                        = $_POST["prd_qty"];
++                }
++                if(isset($_POST["productid"])) {
++                        $_GET['productid']              = $_POST["productid"];
++                        $_REQUEST['productid']          = $_POST["productid"];
++                        $productid                      = $_POST["productid"];
++                }
++                if(isset($_POST["accountid"])) {
++                        $_GET['accountid']              = $_POST["accountid"];
++                        $_REQUEST['accountid']          = $_POST["accountid"];
++                        $accountid                      = $_POST["accountid"];
++                }
++
++
+ 		if (isset($url_array[$pos+8]) && $url_array[$pos+8] != '' && in_array('category', $url_array) && ( strpos( $url_array[$pos+5], 'order,' ) !== false ) && ( strpos( $url_array[$pos+6], 'filter,' ) !== false ) ) {
+ 			// $option/$task/$sectionid/$id/$Itemid/$order/$filter/$limit/$limitstart
+ 			$task 					= $url_array[$pos+1];
+@@ -277,6 +367,34 @@
+ 			$QUERY_STRING .= '&amp;lang='. $lang;
+ 		}
+ 
++                if ($productid!='')
++                        $QUERY_STRING .= '&amp;productid='. $productid;
++
++                if ($entityid!='')
++                        $QUERY_STRING .= '&amp;entityid='. $entityid;
++
++                if ($soid!='')
++                        $QUERY_STRING .= '&amp;soid='. $soid;
++
++                if ($contactid!='')
++                        $QUERY_STRING .= '&amp;contactid='. $contactid;
++
++                if ($prd_qty!='')
++                        $QUERY_STRING .= '&amp;prd_qty='. $prd_qty;
++
++                if ($vt_module!='')
++                        $QUERY_STRING .= '&amp;vt_module='. $vt_module;
++
++                if ($vt_action!='')
++                        $QUERY_STRING .= '&amp;vt_action='. $vt_action;
++
++                if ($vt_entityid!='')
++                        $QUERY_STRING .= '&amp;vt_entityid='. $vt_entityid;
++
++                if ($accountid!='')
++                        $QUERY_STRING .= '&amp;accountid='. $accountid;
++
++
+ 		$_SERVER['QUERY_STRING'] 	= $QUERY_STRING;
+ 		$REQUEST_URI 				= $uri[0].'index.php?'.$QUERY_STRING;
+ 		$_SERVER['REQUEST_URI'] 	= $REQUEST_URI;
+@@ -481,6 +599,27 @@
+ 					$sefstring .= 'lang,'. $parts['lang'].'/';					
+ 				}
+ 
++                                // product id
++                                if ( isset( $parts['productid'] ) ) {
++                                        $sefstring .= 'productid,'. $parts['productid'].'/';
++                                }
++                                // account id
++                                if ( isset( $parts['accountid'] ) ) {
++                                        $sefstring .= 'accountid,'. $parts['accountid'].'/';
++                                }
++                                // soid id
++                                if ( isset( $parts['soid'] ) ) {
++                                        $sefstring .= 'soid,'. $parts['soid'].'/';
++                                }
++                                // entityid id
++                                if ( isset( $parts['entityid'] ) ) {
++                                        $sefstring .= 'entityid,'. $parts['entityid'].'/';
++                                }
++                                // prd_qty id
++                                if ( isset( $parts['prd_qty'] ) ) {
++                                        $sefstring .= 'prd_qty,'. $parts['prd_qty'].'/';
++                                }
++
+ 				$string = $sefstring;
+ 				
+ 			// all other components
+@@ -542,4 +681,4 @@
+ 		return $string;
+ 	}
+ }
+-?>
+\ No newline at end of file
++?>
