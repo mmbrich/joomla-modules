@@ -43,7 +43,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 					echo "FAILED TO SAVE FORM";
 					exit();
 				}
-				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty."&Itemid=".$Itemid));
+				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&prd_qty='.$qty."&Itemid=".$Itemid));
 			break;
 			case 'RelateContact':
 				$vt_relation_entityid = mosGetParam( $_POST, 'vt_relation_entityid', '');
