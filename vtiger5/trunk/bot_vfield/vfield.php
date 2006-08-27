@@ -43,7 +43,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 					echo "FAILED TO SAVE FORM";
 					exit();
 				}
-				mosRedirect('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty."&Itemid=".$Itemid);
+				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=addProduct&productid='.$entityid.'&soid='.$res.'&qty='.$qty."&Itemid=".$Itemid));
 			break;
 			case 'RelateContact':
 				$vt_relation_entityid = mosGetParam( $_POST, 'vt_relation_entityid', '');
@@ -51,7 +51,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 				$vt_entityid = mosGetParam( $_POST, 'vt_entityid', '');
 
 				if($vt_relation_entityid == $vt_entityid)
-					mosRedirect("index.php?option=com_vtigerregistration&task=login");
+					mosRedirect(sefRelToAbs("index.php?option=com_vtigerregistration&task=login"));
 				else {
 					$vForm->RelateContact($vt_entityid,$vt_relation_entityid,$vt_relation_module);
 					$msg = "Successfully Added";
@@ -79,7 +79,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 		if($redirect_site != "")
 			mosRedirect( $redirect_site );
 		else
-			mosRedirect('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&Itemid='.$Itemid.'&msg='.$msg);
+			mosRedirect(sefRelToAbs('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&Itemid='.$Itemid.'&msg='.$msg));
 	}
 
 	// Special Commands
