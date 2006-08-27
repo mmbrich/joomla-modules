@@ -22,9 +22,15 @@ switch($task) {
 		foreach($configs as $config) {
 			$conf[$config->name] = $config->value;
 		}
-		$category = mosGetParam( $_GET, 'category' , '');
+		$category = mosGetParam( $_REQUEST, 'category' , '');
 		$list = $vProduct->ListProducts($category);
-		HTML_product::listProducts($option,$list,$category,$conf);
+
+		$limit = mosGetParam( $_REQUEST, 'limit' , '10');
+		$limit_start = mosGetParam( $_REQUEST, 'limitstart' , '0');
+        	require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/pageNavigation.php' );
+        	$pageNav = new mosPageNav( count($list), $limit_start, $limit );
+
+		HTML_product::listProducts( $option, $list, $category, $conf, $limit, $limit_start, $pageNav );
 	break;
 }
 ?>
