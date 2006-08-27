@@ -276,7 +276,7 @@ function remove_product($soid,$productid) {
         $adb->println("Enter into the function remove_product($soid,$productid)");
 
 	$q = "SELECT * FROM vtiger_inventoryproductrel "
-		." INNER JOIN vtiger_producttaxrel "
+		." LEFT JOIN vtiger_producttaxrel "
 		." ON vtiger_producttaxrel.productid=vtiger_inventoryproductrel.productid "
 		." WHERE vtiger_inventoryproductrel.id='".$soid."' "
 		." AND vtiger_inventoryproductrel.productid='".$productid."'";
