@@ -12,14 +12,14 @@ class HTML_product {
 			<tr>
 				<?php if($config["product_images"] == "on") { ?>
 				    <td width="133px" height="78px" valign="top" align="center">
-					<a href="<?php echo $product["website"]."&Itemid=".$itemid."&productid=".$product["productid"];?>">
+					<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>">
 						<img src="<?php echo $product["image"];?>" alt="<?php echo $product["productname"];?>" width="129px" height="78px" border='0' />
 					</a>
 				    </td>
 				<? } ?>
 				<td valign="top">
 					<div style="margin-left:5px;margin-bottom:5px">
-						<a href="<?php echo $product["website"]."&Itemid=".$itemid."&productid=".$product["productid"];?>" style="font-size: 16px; font-weight: bold;"><?php echo $product["productname"];?></a>
+						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>" style="font-size: 16px; font-weight: bold;"><?php echo $product["productname"];?></a>
 					</div>
 					<div style="margin-left:5px;margin-bottom:5px">
 					<?php 
@@ -27,7 +27,7 @@ class HTML_product {
 					?>
 					</div>
 					<div style="margin-left:5px;margin-bottom:5px">
-						<a href="<?php echo $product["website"]."&Itemid=".$itemid."&productid=".$product["productid"];?>">Product Details...</a>
+						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>">Product Details...</a>
 					</div>
 				</td>
 			</tr>
