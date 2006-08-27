@@ -127,7 +127,11 @@ class VTigerSalesOrder extends VTigerConnection {
 		);
                 $this->setData($this->data);
                 $result = $this->execCommand('remove_product');
-                return $result;
+		if($result == "deleted") {
+			setcookie("current_salesorder", "", time()-3600);
+                	return 1;
+		} else 
+                	return $result;
 	}
 	function UpdateProductQuantity($productid,$quantity)
 	{

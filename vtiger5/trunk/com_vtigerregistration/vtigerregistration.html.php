@@ -105,12 +105,14 @@ class HTML_vtigerregistration {
 				ret = false;
 			}
 			for(i=0;i<els.length;i++) {
-				el = els[i].childNodes[1];
-				el.style.border = '1px solid #cccccc';
-				if(el.value == "" || el.value.toString == "undefined") {
-					el.style.border = '1px solid red';
-					ret = false;
-				}
+				try {
+					el = els[i].childNodes[1];
+					el.style.border = '1px solid #cccccc';
+					if(el.value == "" || el.value.toString == "undefined") {
+						el.style.border = '1px solid red';
+						ret = false;
+					}
+				}catch(e){}
 			}
 			if(ret)
 				$("reg_user").submit();
