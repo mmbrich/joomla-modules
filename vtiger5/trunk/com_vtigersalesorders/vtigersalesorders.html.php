@@ -32,9 +32,9 @@ class HTML_vtigersalesorders {
 		$total = ($product["total"]*$product["quantity"]);
 		?>
   			<tr class="sectiontableentry1" valign="top">
-			<form action="http://www.fosslabs.com/index.php" method="post"></form>
+			<form action="index.php" method="POST"></form>
 			<td>
-				<a href="<?php echo $product["website"];?>&productid=<?php echo $product["productid"];?>">
+				<a href="<?php echo sefRelToAbs($product["website"]."&productid=".$product["productid"]);?>">
 				<strong><?php echo $product["name"];?></strong>
 				</a><br>
 			</td>
@@ -94,7 +94,7 @@ class HTML_vtigersalesorders {
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="product_id" value="<?php echo $product["productid"];?>" type="hidden">
         				<input name="quantity" type="hidden" id="quan_<? echo $product["productid"];?>">
-        				<input name="update" title="Update Quantity In Cart" src="http://www.fosslabs.com/components/com_virtuemart/shop_image/ps_image/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
+        				<input name="update" title="Update Quantity In Cart" src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
       				</form>
       			</td>
     			<td>
@@ -104,7 +104,7 @@ class HTML_vtigersalesorders {
         				<input name="task" value="removeProduct" type="hidden">
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="productid" value="<?php echo $product["productid"];?>" type="hidden">
-      					<input name="delete" title="Delete Product From Cart" src="http://www.fosslabs.com/components/com_virtuemart/shop_image/ps_image/delete_f2.gif" alt="Delete Product From Cart" border="0" type="image">
+      					<input name="delete" title="Delete Product From Cart" src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/delete_f2.gif" alt="Delete Product From Cart" border="0" type="image">
       				</form>
 			</td>
   		</tr>
@@ -220,7 +220,7 @@ class HTML_vtigersalesorders {
 		<!-- OUT FOR NOW
   		<tr>
 		<td width="100%" colspan="7">If you have a coupon code, please enter it below:<br>
-    		<form action="http://www.fosslabs.com/index.php" method="post">
+    		<form action="index.php" method="POST">
 			<input name="coupon_code" maxlength="30" class="inputbox" type="text" width="10">
 			<input name="Itemid" value="36" type="hidden">
 			<input name="do_coupon" value="yes" type="hidden">
@@ -248,16 +248,16 @@ class HTML_vtigersalesorders {
 	</table>
  	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="index.php?option=com_vtigerproducts">
-     				<img src="http://www.fosslabs.com/components/com_virtuemart/shop_image/ps_image/back.png" alt="Back" align="middle" border="0" height="32" width="32">
+			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigerproducts');?>">
+     				<img src="<?php echo mosConfig_live_site;?>/components/com_vtigersalesorders/images/back.png" alt="Back" align="middle" border="0" height="32" width="32">
       				Continue Shopping
 			</a>
 		</h3>
  	</div>
   	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="index.php?option=com_vtigersalesorders&task=checkout&soid=<?php echo $soid;?>">
-     				<img src="http://www.fosslabs.com/components/com_virtuemart/shop_image/ps_image/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
+			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid);?>">
+     				<img src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
       				Checkout
 			</a>
 		</h3>
@@ -353,7 +353,7 @@ class HTML_vtigersalesorders {
         	<br><br>
         		<div class="sectiontableheader">New? Please Provide Your Billing Information</div>
         		<br>
-			<form action="https://www.fosslabs.com/index.php" method="post" name="adminForm">
+			<form action="index.php" method="post" name="adminForm">
 				<div style="width: 100%;">
 					<div style="padding: 5px; text-align: center;"><strong>(* = Required)</strong></div>
    					<fieldset>
@@ -424,7 +424,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=mailing&soid=<?php echo $soid;?>">
+							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=mailing&soid='.$soid);?>">
             						(Update Address)</a>
             					</td>
         				</tr>
@@ -454,7 +454,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=other&soid=<?php echo $soid;?>">
+							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=other&soid='.$soid);?>">
             						(Update Address)</a>
             					</td>
         				</tr>
