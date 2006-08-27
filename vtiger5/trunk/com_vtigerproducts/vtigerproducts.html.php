@@ -9,8 +9,9 @@ class HTML_product {
 		$link = "index.php?option=com_vtigerproducts&category=".$category;
 		if(is_array($details)) {
 		    if($config["product_show_pagination"] == "on") {
-                	echo $pageNav->writePagesCounter();
-			echo $pageNav->getLimitBox($link);
+                	echo "<div style='float:left'>".$pageNav->writePagesCounter()."</div>";
+			echo "<div style='float:right'>Number of products per page: ".$pageNav->getLimitBox($link)."</div>";
+			echo "<br clear='both'><br>";
 		    }
 		    for($i=0;$i<$limit;$i++) {
 			$product = $details[($i+$limit_start)];
