@@ -3,23 +3,30 @@
 defined('_VALID_MOS') or die('Restricted access');
 
 class HTML_product {
-	function listProducts($option,$details,$category,$config) {
-		$itemid = mosGetParam( $_REQUEST, 'Itemid' , '1');
+	function listProducts( $option, $details, $category, $config, $limit, $limit_start, $pageNav ) {
+		$Itemid = mosGetParam( $_REQUEST, 'Itemid' , '');
+
+		$link = "index.php?option=com_vtigerproducts&category=".$category;
 		if(is_array($details)) {
-		    foreach($details as $key=>$product) {
-		    ?>
-		    <table border='0' width='95%' cellpadding='0' cellspacing='0' valign="top">
+		    if($config["product_show_pagination"] == "on") {
+                	echo $pageNav->writePagesCounter();
+			echo $pageNav->getLimitBox($link);
+		    }
+		    for($i=0;$i<$limit;$i++) {
+			$product = $details[($i+$limit_start)];
+		    	?>
+		    	<table border='0' width='95%' cellpadding='0' cellspacing='0' valign="top">
 			<tr>
 				<?php if($config["product_images"] == "on") { ?>
 				    <td width="133px" height="78px" valign="top" align="center">
-					<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>">
+					<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">
 						<img src="<?php echo $product["image"];?>" alt="<?php echo $product["productname"];?>" width="129px" height="78px" border='0' />
 					</a>
 				    </td>
 				<? } ?>
 				<td valign="top">
 					<div style="margin-left:5px;margin-bottom:5px">
-						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>" style="font-size: 16px; font-weight: bold;"><?php echo $product["productname"];?></a>
+						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>" style="font-size: 16px; font-weight: bold;"><?php echo $product["productname"];?></a>
 					</div>
 					<div style="margin-left:5px;margin-bottom:5px">
 					<?php 
@@ -27,7 +34,7 @@ class HTML_product {
 					?>
 					</div>
 					<div style="margin-left:5px;margin-bottom:5px">
-						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$itemid."&productid=".$product["productid"]);?>">Product Details...</a>
+						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">Product Details...</a>
 					</div>
 				</td>
 			</tr>
@@ -47,9 +54,12 @@ class HTML_product {
 				    </td>
 				<? } ?>
 			</tr>
-		    </table>
-		    <?
-		    echo "<br><br>";
+		    	</table>
+		    	<?
+		    	echo "<br><br>";
+		    }
+		    if($config["product_show_pagination"] == "on") {
+			echo "<div align='center'>".$pageNav->writePagesLinks($link)."</div>";
 		    }
 		} else {
 			echo "<b>No Products Defined</b>";
