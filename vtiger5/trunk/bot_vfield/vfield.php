@@ -27,7 +27,8 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
 	$vForm = new VtigerForm();
 
-	$Itemid = mosGetParam( $_REQUEST, 'Itemid', '1');
+	$Itemid = mosGetParam( $_REQUEST, 'Itemid', '0');
+
 	if(mosGetParam( $_POST, 'vt_module', '') != "" && mosGetParam( $_REQUEST, 'option', '') != "com_vtigerregistration") {
 		$module = mosGetParam( $_POST, 'vt_module', '');
 		$action = mosGetParam( $_POST, 'vt_action', '');
@@ -158,6 +159,7 @@ function botvfield_replacer ( &$matches ) {
 			$out .= "<input type='hidden' name='MAX_FILE_SIZE' value='1000000' />";
 			$out .= "<input type='hidden' id='vt_module' name='vt_module' value='".$thisParams[1]."' />";
 			$out .= "<input type='hidden' id='vt_entityid' name='vt_entityid' value='".$entityid."' />";
+			$out .= "<input type='hidden' name='Itemid' value='".$Itemid."' />";
 			return $out;
 		break;
 
