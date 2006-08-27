@@ -89,7 +89,7 @@ class HTML_vtigerregistration {
 		</center>
 	<?
 	}
-        function register($fields=array(),$vtField,$soid='') {
+        function register($fields=array(),$vtField,$soid='',$Itemid='') {
 		global $mainframe;
         ?>
 	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site').'/components/com_vtigerregistration';?>/vtiger/prototype.js" type="text/javascript"></script>
@@ -204,16 +204,17 @@ class HTML_vtigerregistration {
 		<input name="option" value="com_vtigerregistration" type="hidden">
 		<input name="task" value="saveVtigerRegistration" type="hidden">
 		<input name="soid" value="<?php echo $soid;?>" type="hidden">
+		<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
 		<input value="Send Registration" class="button" onclick="submitbutton()" type="button">
 		</form>
                 </fieldset>
 	<?
 	}
-	function login($pretext,$posttext,$login) {
+	function login($pretext,$posttext,$login,$soid='',$Itemid) {
 		global $mosConfig_lang;
 		$validate = josSpoofValue(1);
 		if(mosGetParam( $_REQUEST, 'soid', '' ) != '') {
-			$login = sefRelToAbs('index.php?option=com_vtigersalesorders?task=checkout');
+			$return = 'index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid='.$Itemid;
 		}
 	?>
                 <fieldset>
@@ -247,10 +248,7 @@ class HTML_vtigerregistration {
         			?>
 
         			<input type="hidden" name="option" value="login" />
-        			<input type="hidden" name="op2" value="login" />
         			<input type="hidden" name="lang" value="<?php echo $mosConfig_lang;?>" />
-        			<input type="hidden" name="return" value="<?php echo  sefRelToAbs( $login );?>" />
-        			<input type="hidden" name="message" value="<?php echo $message_login;?>" />
         			<input type="hidden" name="<?php echo $validate; ?>" value="1" />
 			</form>
 		</fieldset>
