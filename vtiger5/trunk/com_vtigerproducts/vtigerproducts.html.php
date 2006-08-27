@@ -14,6 +14,8 @@ class HTML_product {
 		    }
 		    for($i=0;$i<$limit;$i++) {
 			$product = $details[($i+$limit_start)];
+			if( ( $i + $limit_start ) >= count($details) ) 
+				break;
 		    	?>
 		    	<table border='0' width='95%' cellpadding='0' cellspacing='0' valign="top">
 			<tr>
