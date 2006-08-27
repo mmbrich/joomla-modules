@@ -211,7 +211,7 @@ class HTML_vtigerregistration {
 		global $mosConfig_lang;
 		$validate = josSpoofValue(1);
 		if(mosGetParam( $_REQUEST, 'soid', '' ) != '') {
-			$login = 'index.php?option=com_vtigersalesorders?task=checkout';
+			$login = sefRelToAbs('index.php?option=com_vtigersalesorders?task=checkout');
 		}
 	?>
                 <fieldset>
