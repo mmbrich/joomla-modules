@@ -329,12 +329,14 @@ function remove_product($soid,$productid) {
 		$q = "UPDATE vtiger_crmentity "
 			." SET deleted='1' "
 			." WHERE crmid='".$soid."'";
-		if(isset($_COOKIE["current_salesorder"]))
-			setcookie("current_salesorder", "", time()-3600);
+		$ret = "deleted";
 	}
 	$rs = $adb->query($q);
 
-	return true;
+	if($ret == "deleted")
+		return $ret;
+	else
+		return true;
 }
 /************************ REMOVE_PRODUCT END ****************************/
 
