@@ -156,8 +156,8 @@ function botvfield_replacer ( &$matches ) {
 			$out = form_validate();
 			$out .=  "<form enctype='multipart/form-data' name='vt_form' method='POST'>";
 			$out .= "<input type='hidden' name='MAX_FILE_SIZE' value='1000000' />";
-			$out .= "<input type='hidden' name='vt_module' value='".$thisParams[1]."' />";
-			$out .= "<input type='hidden' name='vt_entityid' value='".$entityid."' />";
+			$out .= "<input type='hidden' id='vt_module' name='vt_module' value='".$thisParams[1]."' />";
+			$out .= "<input type='hidden' id='vt_entityid' name='vt_entityid' value='".$entityid."' />";
 			return $out;
 		break;
 
@@ -190,9 +190,9 @@ function botvfield_replacer ( &$matches ) {
 							"qtyindemand",
 							mosGetParam( $_REQUEST, 'productid', '' )
 						);
-						return "<input type='text' name='prd_qty' value='".$tval[0]["value"]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$tval[0]["value"]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					} else {
-						return "<input type='text' name='prd_qty' value='".$thisParams[2]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$thisParams[2]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
 					}
 				break;
 				case 'RedirectSite':
@@ -319,17 +319,19 @@ function form_validate() {
 function validate_vtiger_form(form) {
 	var els = document.getElementsByClassName("required");
 	var ret = true;
-	for(var i=0;i<els.length;i++) {
-		if(els[i].childNodes[0].value == "" || typeof(els[i].childNodes[0].value) === "undefined") {
-			ret = false;
-			els[i].childNodes[0].style.border = "1px solid red";
-		} else {
-			els[i].childNodes[0].style.border = "1px solid gray";
-			els[i].childNodes[0].className = "inputbox";
+	try {
+		for(var i=0;i<els.length;i++) {
+			if(els[i].childNodes[0].value == "" || typeof(els[i].childNodes[0].value) === "undefined") {
+				ret = false;
+				els[i].childNodes[0].style.border = "1px solid red";
+			} else {
+				els[i].childNodes[0].style.border = "1px solid gray";
+				els[i].childNodes[0].className = "inputbox";
+			}
 		}
-	}
-	if(!ret)
-		alert("Please fill out all required fields");
+		if(!ret)
+			alert("Please fill out all required fields");
+	} catch(e) {}
 	
 	return ret;
 }
