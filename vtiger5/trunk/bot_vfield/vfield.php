@@ -27,7 +27,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
 	$vForm = new VtigerForm();
 
-	$Itemid = mosGetParam( $_REQUEST, 'Itemid', '0');
+	$Itemid = mosGetParam( $_REQUEST, 'Itemid', '');
 
 	if(mosGetParam( $_POST, 'vt_module', '') != "" && mosGetParam( $_REQUEST, 'option', '') != "com_vtigerregistration") {
 		$module = mosGetParam( $_POST, 'vt_module', '');
