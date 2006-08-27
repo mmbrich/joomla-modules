@@ -54,6 +54,7 @@ Create Ticket
 <tr>
 <td style="padding-top: 10px">
 <form name="addTicket" method="POST">
+<input type=hidden name="option" value="com_helpdesk">
 <input type=hidden name=username value="'.$_REQUEST['username'].'">
 <input type=hidden name=fun value="save">
 <table border="0" cellspacing="2" cellpadding="2">
