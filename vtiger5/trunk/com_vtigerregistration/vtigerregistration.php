@@ -225,7 +225,7 @@ function saveRegistration($config,$soid='') {
         $subject        = html_entity_decode($subject, ENT_QUOTES);
 
         if ($mosConfig_useractivation == 1){
-                $message = sprintf (_USEND_MSG_ACTIVATE, $name, $mosConfig_sitename, $mosConfig_live_site."/index.php?option=com_vtigerregistration&task=activate&activation=".$row->activation, $mosConfig_live_site, $username, $pwd);
+                $message = sprintf (_USEND_MSG_ACTIVATE, $name, $mosConfig_sitename, sefRelToAbs("index.php?option=com_vtigerregistration&task=activate&activation=".$row->activation), $mosConfig_live_site, $username, $pwd);
         } else {
                 $message = sprintf (_USEND_MSG, $name, $mosConfig_sitename, $mosConfig_live_site);
         }
@@ -275,7 +275,7 @@ function saveRegistration($config,$soid='') {
                 mosMail($adminEmail2, $adminName2, $admin->email, $subject2, $message2);
         }
 	if($soid != "") 
-		mosRedirect('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid=1');
+		mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid=1'));
 	else {
         	if ( $mosConfig_useractivation == 1 )
                 	echo _REG_COMPLETE_ACTIVATE;
