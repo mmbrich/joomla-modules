@@ -26,14 +26,11 @@ foreach($configs as $config) {
 
 // Check for correct ownership
 $soid = mosGetParam( $_REQUEST, 'soid', '0' );
+$Itemid = mosGetParam( $_REQUEST, 'Itemid', '0' );
+
 $SalesOrder->id=$soid;
 if($soid == 0) {
 	echo "Please add an item to your cart";
-	return;
-
-} else if(!isset($_COOKIE["current_salesorder"]) && !$my->id) {
-	//HTML_vtigersalesorders::noauth();
-	echo "No Access Allowed";
 	return;
 
 }  else {
@@ -59,7 +56,7 @@ if(isset($_POST["update_address"])) {
 	$ret = $vtigerForm->SaveVtigerForm("Contacts",$entityid);
 	$SalesOrder->id=$soid;
 	$addy = $SalesOrder->UpdateAddresses($entityid,$_POST["update_address"]);
-	mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid));
+	mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid.'&Itemid='.$Itemid));
 }
 
 switch($task) {
@@ -81,7 +78,7 @@ switch($task) {
 		$quantity = mosGetParam( $_REQUEST, 'quantity', '0' );
 		if($productid == 0 || $quantity == 0) {
 			$msg = "Failed to update";
-			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$soid.'&msg='.$msg));
 		} else {
 			$ret = $SalesOrder->Checkid($my->id);
 			if(!$ret && !$soid)
@@ -90,14 +87,14 @@ switch($task) {
 				$SalesOrder->soid=$soid;
 				$SalesOrder->UpdateProductQuantity($productid,$quantity);
 				$msg = "Updated Product";
-				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
+				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$soid.'&msg='.$msg));
 			}
 		}
 	break;
 	case 'addProduct':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 		$productid = mosGetParam( $_REQUEST, 'productid', '' );
-		$qty = mosGetParam( $_REQUEST, 'qty', '1' );
+		$qty = mosGetParam( $_REQUEST, 'prd_qty', '1' );
 
 		$ret = $SalesOrder->Checkid($my->id);
 		if(!$ret && !$soid)
@@ -106,7 +103,11 @@ switch($task) {
 			$SalesOrder->soid=$soid;
 			$SalesOrder->AddToSalesOrder($productid,$qty);
 			$msg = "Added Product";
-			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
+			if(!isset($_COOKIE["current_salesorder"]) || $_COOKIE["current_salesorder"] == 0 || $_COOKIE["current_salesorder"] != $soid) {
+				setcookie("current_salesorder", "", time()-3600);
+				setcookie("current_salesorder", $soid, time()+3600);
+			}
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$soid.'&msg='.$msg));
 		}
 	break;
 	case 'removeProduct':
@@ -119,7 +120,7 @@ switch($task) {
 			$SalesOrder->soid=$soid;
 			$SalesOrder->RemoveFromSalesOrder($productid);
 			$msg = "Removed Product";
-			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg));
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$SalesOrder->soid.'&msg='.$msg));
 		}
 	break;
 	case 'getPaymentInfo':
@@ -154,7 +155,7 @@ switch($task) {
 		else
 			echo "<br><h2>Transaction Failed</h2>";
 
-		//mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid));
+		//mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid.'&Itemid='.$Itemid));
 	break;
 	case 'checkout':
 		if(!$my->id) {
