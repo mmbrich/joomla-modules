@@ -59,7 +59,7 @@ if(isset($_POST["update_address"])) {
 	$ret = $vtigerForm->SaveVtigerForm("Contacts",$entityid);
 	$SalesOrder->id=$soid;
 	$addy = $SalesOrder->UpdateAddresses($entityid,$_POST["update_address"]);
-	mosRedirect('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid);
+	mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid));
 }
 
 switch($task) {
@@ -81,7 +81,7 @@ switch($task) {
 		$quantity = mosGetParam( $_REQUEST, 'quantity', '0' );
 		if($productid == 0 || $quantity == 0) {
 			$msg = "Failed to update";
-			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg);
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
 		} else {
 			$ret = $SalesOrder->Checkid($my->id);
 			if(!$ret && !$soid)
@@ -90,7 +90,7 @@ switch($task) {
 				$SalesOrder->soid=$soid;
 				$SalesOrder->UpdateProductQuantity($productid,$quantity);
 				$msg = "Updated Product";
-				mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg);
+				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
 			}
 		}
 	break;
@@ -106,7 +106,7 @@ switch($task) {
 			$SalesOrder->soid=$soid;
 			$SalesOrder->AddToSalesOrder($productid,$qty);
 			$msg = "Added Product";
-			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg);
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$soid.'&msg='.$msg));
 		}
 	break;
 	case 'removeProduct':
@@ -119,7 +119,7 @@ switch($task) {
 			$SalesOrder->soid=$soid;
 			$SalesOrder->RemoveFromSalesOrder($productid);
 			$msg = "Removed Product";
-			mosRedirect('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg);
+			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$SalesOrder->soid.'&msg='.$msg));
 		}
 	break;
 	case 'getPaymentInfo':
@@ -154,7 +154,7 @@ switch($task) {
 		else
 			echo "<br><h2>Transaction Failed</h2>";
 
-		//mosRedirect('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid);
+		//mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task='.$task.'&soid='.$soid));
 	break;
 	case 'checkout':
 		if(!$my->id) {
