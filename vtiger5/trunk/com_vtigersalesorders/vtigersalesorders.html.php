@@ -6,6 +6,7 @@ class HTML_vtigersalesorders {
 	function view($order)
 	{
 		global $my;
+		$Itemid = mosGetParam($_REQUEST, 'Itemid', '');
 		if(!is_array($order["products"])) {
 			echo "<h3>Cart is empty</h3>";
 			return;
@@ -34,7 +35,7 @@ class HTML_vtigersalesorders {
   			<tr class="sectiontableentry1" valign="top">
 			<form action="index.php" method="POST"></form>
 			<td>
-				<a href="<?php echo sefRelToAbs($product["website"]."&productid=".$product["productid"]);?>">
+				<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">
 				<strong><?php echo $product["name"];?></strong>
 				</a><br>
 			</td>
@@ -94,7 +95,7 @@ class HTML_vtigersalesorders {
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="product_id" value="<?php echo $product["productid"];?>" type="hidden">
         				<input name="quantity" type="hidden" id="quan_<? echo $product["productid"];?>">
-        				<input name="update" title="Update Quantity In Cart" src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
+        				<input name="update" title="Update Quantity In Cart" src="components/com_vtigersalesorders/images/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
       				</form>
       			</td>
     			<td>
@@ -104,7 +105,7 @@ class HTML_vtigersalesorders {
         				<input name="task" value="removeProduct" type="hidden">
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="productid" value="<?php echo $product["productid"];?>" type="hidden">
-      					<input name="delete" title="Delete Product From Cart" src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/delete_f2.gif" alt="Delete Product From Cart" border="0" type="image">
+      					<input name="delete" title="Delete Product From Cart" src="components/com_vtigersalesorders/images/delete_f2.gif" alt="Delete Product From Cart" border="0" type="image">
       				</form>
 			</td>
   		</tr>
@@ -235,7 +236,7 @@ class HTML_vtigersalesorders {
 	</table>
 	<? 
 	}
-	function shopping_footer($soid)
+	function shopping_footer($soid,$Itemid)
 	{
 	?>
 	<br>
@@ -248,16 +249,16 @@ class HTML_vtigersalesorders {
 	</table>
  	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigerproducts');?>">
-     				<img src="<?php echo mosConfig_live_site;?>/components/com_vtigersalesorders/images/back.png" alt="Back" align="middle" border="0" height="32" width="32">
+			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigerproducts&Itemid='.$Itemid);?>">
+     				<img src="components/com_vtigersalesorders/images/back.png" alt="Back" align="middle" border="0" height="32" width="32">
       				Continue Shopping
 			</a>
 		</h3>
  	</div>
   	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid);?>">
-     				<img src="<?php echo $mosConfig_live_site;?>/components/com_vtigersalesorders/images/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
+			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid='.$Itemid);?>">
+     				<img src="components/com_vtigersalesorders/images/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
       				Checkout
 			</a>
 		</h3>
@@ -377,13 +378,13 @@ class HTML_vtigersalesorders {
 		</fieldset>
 	<?
 	}
-	function shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid) {
+	function shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid,$Itemid='') {
 		global $mainframe;
 	?>
 			<form action="<?php echo preg_replace("/http/i","https",$mainframe->getCfg('live_site'));?>/index.php" method="post" name="adminForm">
     				<input name="option" value="com_vtigersalesorders" type="hidden">
     				<input name="task" value="getPaymentInfo" type="hidden">
-    				<input name="Itemid" value="1" type="hidden">
+    				<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
     				<input name="soid" value="<?php echo $soid;?>" type="hidden">
     				<h4>Please select a Shipping Address!</h4>
     				<table border="0" cellpadding="2" cellspacing="0" width="100%">
@@ -424,7 +425,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=mailing&soid='.$soid);?>">
+							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid='.$Itemid.'&task=updateAddress&type=mailing&soid='.$soid);?>">
             						(Update Address)</a>
             					</td>
         				</tr>
@@ -454,7 +455,7 @@ class HTML_vtigersalesorders {
 					<tr><td colspan='2'>&nbsp;</td></tr>
        		 			<tr>
 						<td colspan="2" align="center">
-							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid=1&task=updateAddress&type=other&soid='.$soid);?>">
+							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid='.$Itemid.'&task=updateAddress&type=other&soid='.$soid);?>">
             						(Update Address)</a>
             					</td>
         				</tr>
@@ -479,14 +480,14 @@ class HTML_vtigersalesorders {
 			</form>
 		<?
 	}
-	function update_addy($fields,$type)
+	function update_addy($fields,$type,$Itemid)
 	{
 		global $vtigerForm;
 	?>
                 <form action="index.php" method="post" name="vt_form">
                 	<input name="option" value="com_vtigersalesorders" type="hidden">
                         <input name="task" value="checkout" type="hidden">
-                        <input name="Itemid" value="1" type="hidden">
+                        <input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
                         <input name="soid" value="<?php echo mosGetParam( $_REQUEST, 'soid', '0' );?>" type="hidden">
 			<input name="vt_module" value="Contacts" type="hidden">
 			<input name="vt_entityid" value="<?php echo $fields[0]["entityid"];?>" type="hidden">
@@ -516,7 +517,7 @@ class HTML_vtigersalesorders {
 		<br>
 	<?
 	}
-	function get_paymentinfo($cc_fields,$ec_fields)
+	function get_paymentinfo($cc_fields,$ec_fields,$Itemid)
 	{
 	global $mainframe;
 	?>
@@ -542,7 +543,7 @@ class HTML_vtigersalesorders {
 	<form action="index.php" method="post" name="adminForm">
     		<input name="option" value="com_vtigersalesorders" type="hidden">
     		<input name="task" value="makePayment" type="hidden">
-    		<input name="Itemid" value="1" type="hidden">
+    		<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
     		<input name="soid" value="<? echo  mosGetParam( $_REQUEST, 'soid', '0' );?>" type="hidden">
     		<h4>Please select a Payment Method!</h4>
 

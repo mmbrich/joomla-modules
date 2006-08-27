@@ -69,7 +69,7 @@ switch($task) {
 		else {
 			$SalesOrder->soid=$soid;
 			HTML_vtigersalesorders::view($order[0]);
-			HTML_vtigersalesorders::shopping_footer($soid);
+			HTML_vtigersalesorders::shopping_footer($soid,$Itemid);
 		}
 	break;
 	case 'updateQuantity':
@@ -132,7 +132,7 @@ switch($task) {
 		$cc_fields = create_fields(array('credit_card_name','credit_card_type','credit_card_num','cc_exp_date','cc_code'));
 		$ec_fields = create_fields(array('bank_account_holder','bank_account_num','bank_sorting_number','bank_name','bank_account_type','bank_iban'));
 		HTML_vtigersalesorders::view($order[0]);
-		HTML_vtigersalesorders::get_paymentinfo($cc_fields,$ec_fields);
+		HTML_vtigersalesorders::get_paymentinfo($cc_fields,$ec_fields,$Itemid);
 	break;
 	case 'makePayment':
 		$soid = mosGetParam( $_REQUEST, 'soid', '0' );
@@ -175,13 +175,12 @@ switch($task) {
 				} 
 				$i++;
 			}
-			$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 
                 	$registration_enabled = $mainframe->getCfg( 'allowUserRegistration' );
                 	$message_login = $params->def( 'login_message',        0 );
                 	$message_logout = $params->def( 'logout_message',       0 );
-                	$login = $params->def( 'login',                        $return );
-                	$logout = $params->def( 'logout',                       $return );
+                	$login = $params->def( 'login', $return );
+                	$logout = $params->def( 'logout', $return );
                 	$name = $params->def( 'name',                         1 );
                 	$greeting = $params->def( 'greeting',             1 );
                 	$pretext = $params->get( 'pretext' );
@@ -196,8 +195,8 @@ switch($task) {
                         	}
                         	unset($_SESSION['vtiger_session']);
                 	}
-                	HTML_vtigerregistration::login($pretext,$posttext,$login);
-                	HTML_vtigerregistration::register($fields,$vtigerField,$soid);
+                	HTML_vtigerregistration::login($pretext,$posttext,$login,$soid,$Itemid);
+                	HTML_vtigerregistration::register($fields,$vtigerField,$soid,$Itemid);
 		} else {
 
 			$user_fields = create_fields(array('firstname','lastname','accountid'));
@@ -207,7 +206,7 @@ switch($task) {
 			$order = $SalesOrder->GetSalesOrderDetails($soid);
 			$SalesOrder->soid=$soid;
 			HTML_vtigersalesorders::view($order[0]);
-			HTML_vtigersalesorders::shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid);
+			HTML_vtigersalesorders::shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid,$Itemid);
 		}
 	break;
 	case 'updateAddress':
@@ -222,7 +221,7 @@ switch($task) {
 		$SalesOrder->soid=$soid;
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
 		HTML_vtigersalesorders::view($order[0]);
-		HTML_vtigersalesorders::update_addy($fields,$type);
+		HTML_vtigersalesorders::update_addy($fields,$type,$Itemid);
 	break;
 	default:
 		echo "Not Authorized";
