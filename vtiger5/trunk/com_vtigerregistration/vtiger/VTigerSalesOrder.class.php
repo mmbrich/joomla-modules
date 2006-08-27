@@ -116,6 +116,7 @@ class VTigerSalesOrder extends VTigerConnection {
                 $result = $this->execCommand('associate_to_user');
 		if($result != "failed") {
 			setcookie("current_salesorder", "", time()-3600);
+			mosRedirect('index.php');
 		}
                 return $result;
 	}
