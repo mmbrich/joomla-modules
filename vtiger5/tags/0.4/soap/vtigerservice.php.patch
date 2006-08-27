@@ -1,0 +1,25 @@
+--- vtigerservice.php.orig	2006-08-17 03:38:51.000000000 -0600
++++ vtigerservice.php	2006-08-14 10:07:23.000000000 -0600
+@@ -35,6 +35,22 @@
+ 	{
+ 		include("soap/thunderbirdplugin.php");
+ 	}
++	elseif($_REQUEST['service'] == "contact")
++	{
++		include("soap/contact.php");
++	}
++	elseif($_REQUEST['service'] == "fields")
++	{
++		include("soap/fields.php");
++	}
++	elseif($_REQUEST['service'] == "product")
++	{
++		include("soap/products.php");
++	}
++	elseif($_REQUEST['service'] == "salesorder")
++	{
++		include("soap/salesorder.php");
++	}
+ 	else
+ 	{
+ 		echo "No Service Configured for $_REQUEST[service]";
