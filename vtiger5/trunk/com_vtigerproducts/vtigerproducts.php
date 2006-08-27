@@ -29,6 +29,10 @@ switch($task) {
 		if($limit >= count($list))
 			$limit=count($list);
 
+		if($conf["product_show_pagination"] != "on")
+			$limit=count($list);
+			
+
 		$limit_start = mosGetParam( $_REQUEST, 'limitstart' , '0');
         	require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/pageNavigation.php' );
         	$pageNav = new mosPageNav( count($list), $limit_start, $limit );
