@@ -71,14 +71,14 @@ for($i=0;$i<count($faq_array);$i++)
 {
         $record_exist = true;
         $list .= '<tr><td width="15"><img src="templates/'.$cur_template.'/images/faq.gif" valign="absmiddle"></td><td>';
-        $list .= '<div style="border-bottom:1px dotted gray"><a href="index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id'].'">'.$faq_array[$i]['question'].'</a></div>';
+        $list .= '<div style="border-bottom:1px dotted gray"><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']).'">'.$faq_array[$i]['question'].'</a></div>';
         $list .= '</td></tr><tr><td>&nbsp;</td><td class="kbAnswer">';
         $body=$faq_array[$i]['answer'];
         $delimiter = strpos($body, "<!--break-->");
         if ($delimiter) {
          	$list .= substr($body, 0, $delimiter).'<br />
-                <br /><a href="index.php?option=com_helpdesk&task=KbaseArticle&articleid='.
-                $faq_array[$i]['id'].'">More...</a><br /></td></tr><tr>
+                <br /><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.
+                $faq_array[$i]['id']).'">More...</a><br /></td></tr><tr>
                 <td height="10"></td></tr>';
         } else {
                 $list .= $faq_array[$i]['answer'].'

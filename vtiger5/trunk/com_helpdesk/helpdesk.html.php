@@ -28,7 +28,7 @@ class HTML_helpdesk {
                         echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
                         for($i=0;$i<count($tickets);$i++) {
                                 if($tickets[$i]["status"] == "Open")
-                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."index.php?option=com_helpdesk&task=ShowTicket&ticketid=".$tickets[$i]["ticketid"]."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
+                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"])."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
                         }
                         echo "</tbody></table>";
 
@@ -39,7 +39,7 @@ class HTML_helpdesk {
                         echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
                         for($i=0;$i<count($tickets);$i++) {
                                 if($tickets[$i]["status"] == "Closed")
-                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".$mosConfig_secure_site."index.php?option=com_helpdesk&task=ShowTicket&ticketid=".$tickets[$i]["ticketid"]."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
+                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"])."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
                         }
                         echo "</tbody></table>";
                 }

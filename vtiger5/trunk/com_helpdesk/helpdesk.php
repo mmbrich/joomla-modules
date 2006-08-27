@@ -42,7 +42,7 @@ switch($task) {
 			$cat= mosGetParam( $_POST, 'category', '' );
 			$user->CreateTicket($title,$desc,$prio,$severity,$cat);
 			$msg = "Successfully Created Ticket";
-			mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets',$msg);
+			mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ListTickets',$msg));
 		} else
 			HTML_helpdesk::newTicket($user);
 	break;
@@ -66,14 +66,14 @@ switch($task) {
 		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
 		$user->CloseTicket($ticketid);
 		$msg = "Successfully Closed Ticket";
-		mosRedirect( 'index.php?option=com_helpdesk&task=ListTickets',$msg);
+		mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ListTickets',$msg));
 	break;
 	case 'UpdateComment':
 		$ticketid = mosGetParam( $_POST, 'ticketid', '' );
 		$comments = mosGetParam( $_POST, 'comments', '' );
 		$user->UpdateComment($ticketid,$comments);
 		$msg = "Successfully Updated Ticket Comment";
-		mosRedirect( 'index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg);
+		mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg));
 	break;
 	default:
 		echo "Not Authorized";
