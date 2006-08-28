@@ -37,5 +37,7 @@ DEFINE(_TICKET_CLOSED_TICKETS, 'Closed Tickets');
 DEFINE(_TICKET_CLOSED_STATUS, 'Closed');
 DEFINE(_TICKET_OPEN_STATUS, 'Open');
 
+DEFINE(_TICKET_CREATE_INTRO, 'Please enter the required information in the following fields to submit a ticket.');
+DEFINE(_TICKET_CREATE_TICKET, 'Create Ticket');
 
 ?>
