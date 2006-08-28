@@ -62,7 +62,7 @@ for($i=0;$i<count($faq_array);$i++)
 	$temp[$i] .= $faq_array[$i]['faqmodifiedtime'];
 }
 
-$list .= '<div class="moduletable"><h3>Recently Created Articles</h3></div>';
+$list .= '<div class="moduletable"><h3>'._RECENT_ARTICLES.'</h3></div>';
 $list .= '<br><table width="100%" border="0" cellspacing="3" cellpadding="0">';
 
 global $cur_template;
@@ -70,7 +70,7 @@ global $cur_template;
 for($i=0;$i<count($faq_array);$i++)
 {
         $record_exist = true;
-        $list .= '<tr><td width="15"><img src="templates/'.$cur_template.'/images/faq.gif" valign="absmiddle"></td><td>';
+        $list .= '<tr><td width="15"><img src="components/com_helpdesk/images/faq.gif" valign="absmiddle"></td><td>';
         $list .= '<div style="border-bottom:1px dotted gray"><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']).'">'.$faq_array[$i]['question'].'</a></div>';
         $list .= '</td></tr><tr><td>&nbsp;</td><td class="kbAnswer">';
         $body=$faq_array[$i]['answer'];
@@ -86,7 +86,7 @@ for($i=0;$i<count($faq_array);$i++)
         }
 }
 if(!$record_exist)
-        $list .= "No FAQs";
+        $list .= _NO_FAQS;
 
 $list .= '</table>';
 

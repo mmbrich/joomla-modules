@@ -11,6 +11,13 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	flush();exit();
 }
 
+# Get the right language if it exists
+if (file_exists($mosConfig_absolute_path.'/components/com_helpdesk/languages/helpdesk_'.$mosConfig_lang.'.php')) {
+    include($mosConfig_absolute_path.'/components/com_helpdesk/languages/helpdesk_'.$mosConfig_lang.'.php');
+} else {
+    include($mosConfig_absolute_path.'/components/com_helpdesk/languages/helpdesk_english.php');
+}
+
 require_once( $mainframe->getPath( 'front_html' ) );
 $q = "SELECT name,value FROM #__vtiger_portal_configuration "
 	." WHERE name LIKE 'helpdesk_%'";
@@ -34,12 +41,12 @@ if($my->id && $user->IsAllowed($my->id)) {
 
 switch($task) {
 	case 'NewTicket':
-		$title = mosGetParam( $_POST, 'title', '' );
+		$title = mosGetParam( $_REQUEST, 'title', '' );
 		if(isset($title) && $title != "") {
-			$desc = mosGetParam( $_POST, 'description', '' );
-			$prio= mosGetParam( $_POST, 'priority', '' );
-			$severity = mosGetParam( $_POST, 'severity', '' );
-			$cat= mosGetParam( $_POST, 'category', '' );
+			$desc = mosGetParam( $_REQUEST, 'description', '' );
+			$prio= mosGetParam( $_REQUEST, 'priority', '' );
+			$severity = mosGetParam( $_REQUEST, 'severity', '' );
+			$cat= mosGetParam( $_REQUEST, 'category', '' );
 			$user->CreateTicket($title,$desc,$prio,$severity,$cat);
 			$msg = "Successfully Created Ticket";
 			mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ListTickets',$msg));
@@ -50,12 +57,12 @@ switch($task) {
 		HTML_helpdesk::knowledgeBase($user);
 	break;
         case 'KbaseArticle':
-		$articleid = mosGetParam( $_GET, 'articleid', '' );
+		$articleid = mosGetParam( $_REQUEST, 'articleid', '' );
                 HTML_helpdesk::knowledgeBase($user,$articleid);
         break;
 	case 'ShowTicket':
 		$tickets = $user->ListTickets();
-		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
+		$ticketid = mosGetParam( $_REQUEST, 'ticketid', '' );
 		HTML_helpdesk::showTicket($user,$ticketid,$tickets);
 	break;
 	case 'ListTickets':
@@ -63,14 +70,14 @@ switch($task) {
 		HTML_helpdesk::listTickets($tickets);
 	break;
 	case 'CloseTicket':
-		$ticketid = mosGetParam( $_GET, 'ticketid', '' );
+		$ticketid = mosGetParam( $_REQUEST, 'ticketid', '' );
 		$user->CloseTicket($ticketid);
 		$msg = "Successfully Closed Ticket";
 		mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ListTickets',$msg));
 	break;
 	case 'UpdateComment':
-		$ticketid = mosGetParam( $_POST, 'ticketid', '' );
-		$comments = mosGetParam( $_POST, 'comments', '' );
+		$ticketid = mosGetParam( $_REQUEST, 'ticketid', '' );
+		$comments = mosGetParam( $_REQUEST, 'comments', '' );
 		$user->UpdateComment($ticketid,$comments);
 		$msg = "Successfully Updated Ticket Comment";
 		mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$ticketid.'',$msg));

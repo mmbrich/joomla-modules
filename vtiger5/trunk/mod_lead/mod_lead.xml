@@ -9,8 +9,12 @@
   <description>A basic form to create a Vtiger lead</description>
   <files>
     <filename module="mod_lead">mod_lead.php</filename>
+    <filename module="mod_lead">vtiger/VTigerLead.class.php</filename>
+
     <filename module="mod_lead">vtiger/languages/lead_english.php</filename>
     <filename module="mod_lead">vtiger/languages/lead_french.php</filename>
-    <filename module="mod_lead">vtiger/VTigerLead.class.php</filename>
+    <filename module="mod_lead">vtiger/languages/lead_german.php</filename>
+    <filename module="mod_lead">vtiger/languages/lead_germani.php</filename>
+    <filename module="mod_lead">vtiger/languages/lead_germanf.php</filename>
   </files>
 </mosinstall>

@@ -14,6 +14,9 @@
     <filename module="com_helpdesk">helpdesk.detailview.php</filename>
     <filename module="com_helpdesk">helpdesk.kbase.php</filename>
     <filename module="com_helpdesk">helpdesk.newticket.php</filename>
+
+    <filename module="com_helpdesk">images/faq.gif</filename>
+    <filename module="com_helpdesk">languages/helpdesk_english.php</filename>
   </files>
   <administration>
     <menu>Vtiger Help Desk</menu>

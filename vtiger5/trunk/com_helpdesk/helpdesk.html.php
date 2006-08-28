@@ -17,33 +17,85 @@ class HTML_helpdesk {
 
         function listTickets($tickets) {
                 echo "<div style='width:100%;text-align:center'>";
-                if($tickets == '')
+                if($tickets == '' || !is_array($tickets))
                         echo "No Tickets";
                 else {
-                        echo "<div class='moduletable'><h3>Open Tickets</h3></div>";
+		?>
+                        <div class='moduletable'><h3><?php echo _TICKET_OPEN_TICKETS;?></h3></div>
 
-                        /* OPEN TICKETS */
-                        echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-                        echo "<tr><thead>";
-                        echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
+                        <!-- OPEN TICKETS -->
+                        <table border=1 cellpadding=0 cellspacing=0 width='100%'>
+			<thead>
+                            <tr>
+                        	<th><?php echo _TICKET_ID;?></th>
+				<th><?php echo _TICKET_TITLE;?></th>
+				<th><?php echo _TICKET_PRIORITY;?></th>
+				<th><?php echo _TICKET_STATUS;?></th>
+				<th><?php echo _TICKET_PRIORITY;?></th>
+				<th><?php echo _TICKET_MODIFIED_TIME;?></th>
+				<th><?php echo _TICKET_CREATED_TIME;?></th>
+			    </tr>
+			</thead>
+			<tbody>
+		<?
                         for($i=0;$i<count($tickets);$i++) {
-                                if($tickets[$i]["status"] == "Open")
-                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"])."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
+                                if($tickets[$i]["status"] == _TICKET_OPEN_STATUS) {
+		?>
+                                        <tr>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["ticketid"];?></td>
+						<td style='padding-left:3px'><a href='<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"]);?>'><?php echo $tickets[$i]["title"];?></a></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["priority"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["status"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["category"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["modifiedtime"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["createdtime"];?></td>
+					</tr>
+		<?
+				}
                         }
-                        echo "</tbody></table>";
+		?>
+                        </tbody></table>
 
-                        /* CLOSED TICKETS */
-                        echo "<br /><br /><div class='moduletable'><h3>Closed Tickets</h3></div>";
-                        echo "<table border=1 cellpadding=0 cellspacing=0 width='100%'>";
-                        echo "<thead><tr>";
-                        echo "<th>Ticket ID</th><th>Title</th><th>Priority</th><th>Status</th><th>Category</th><th>Modified Time</th><th>Created Time</th></thead></tr><tbody>";
+                        <!-- CLOSED TICKETS -->
+                        <br /><br /><div class='moduletable'><h3><?php echo _TICKET_CLOSED_TICKETS;?></h3></div>
+                        <table border=1 cellpadding=0 cellspacing=0 width='100%'>
+			<thead>
+                            <tr>
+                        	<th><?php echo _TICKET_ID;?></th>
+				<th><?php echo _TICKET_TITLE;?></th>
+				<th><?php echo _TICKET_PRIORITY;?></th>
+				<th><?php echo _TICKET_STATUS;?></th>
+				<th><?php echo _TICKET_PRIORITY;?></th>
+				<th><?php echo _TICKET_MODIFIED_TIME;?></th>
+				<th><?php echo _TICKET_CREATED_TIME;?></th>
+				</thead>
+			    </tr>
+			</thead>
+			<tbody>
+		<?
                         for($i=0;$i<count($tickets);$i++) {
-                                if($tickets[$i]["status"] == "Closed")
-                                        echo "<tr><td style='padding-left:3px'>".$tickets[$i]["ticketid"]."</td><td style='padding-left:3px'><a href='".sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"])."'>".$tickets[$i]["title"]."</a></td><td style='padding-left:3px'>".$tickets[$i]["priority"]."</td><td style='padding-left:3px'>".$tickets[$i]["status"]."</td><td style='padding-left:3px'>".$tickets[$i]["category"]."</td><td style='padding-left:3px'>".$tickets[$i]["modifiedtime"]."</td><td style='padding-left:3px'>".$tickets[$i]["createdtime"]."</td></tr>";
+                                if($tickets[$i]["status"] == _TICKET_CLOSED_STATUS) {
+		?>
+                                        <tr>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["ticketid"];?></td>
+						<td style='padding-left:3px'><a href='<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=ShowTicket&ticketid='.$tickets[$i]["ticketid"]);?>'><?php echo $tickets[$i]["title"];?></a></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["priority"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["status"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["category"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["modifiedtime"];?></td>
+						<td style='padding-left:3px'><?php echo $tickets[$i]["createdtime"];?></td>
+					</tr>
+		<?
+				}
                         }
-                        echo "</tbody></table>";
+		?>
+                        </tbody>
+		    </table>
+		<?
                 }
-                echo "</div>";
+		?>
+                </div>
+		<?
         }
 }
 ?>
