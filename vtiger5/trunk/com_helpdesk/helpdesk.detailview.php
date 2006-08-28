@@ -23,14 +23,14 @@ if($ticket['status'] != 'Closed') {
 
 echo "</div><br /><br />";
 echo "<table border=0 width='95%' cellpadding=0 cellspacing=8>";
-echo "<tr><td>Ticket Id:</td><td>".$ticket["ticketid"]."</td><td>Priority:</td><td>".$ticket['priority']."</td><td>Created Time:</td><td>".$ticket["createdtime"]."</td></tr>";
-echo "<tr><td>Category:</td><td>".$ticket["category"]."</td><td>Status:</td><td>".$ticket['status']."</td><td>Modified Time:</td><td>".$ticket["modifiedtime"]."</td></tr>";
-echo "<tr><td>Severity:</td><td>".$ticket["severity"]."</td><td>Product Name:</td><td colspan='3'>".$ticket['productname']."</td></tr>";
-echo "<tr><td>Title:</td><td colspan='5'>".$ticket["title"]."</td></tr>";
-echo "<tr><td>Description:</td><td colspan='5'>".$ticket["description"]."</td></tr>";
-echo "<tr><td>Solution:</td><td colspan='5' style='border:1px solid gray'>".$ticket["solution"]."</td></tr>";
+echo "<tr><td>"._TICKET_ID.":</td><td>".$ticket["ticketid"]."</td><td>"._TICKET_PRIORITY.":</td><td>".$ticket['priority']."</td><td>"._TICKET_CREATED_TIME.":</td><td>".$ticket["createdtime"]."</td></tr>";
+echo "<tr><td>"._TICKET_CATEGORY.":</td><td>".$ticket["category"]."</td><td>"._TICKET_STATUS.":</td><td>".$ticket['status']."</td><td>"._TICKET_MODIFIED_TIME.":</td><td>".$ticket["modifiedtime"]."</td></tr>";
+echo "<tr><td>"._TICKET_SEVERITY.":</td><td>".$ticket["severity"]."</td><td>"._TICKET_PRODUCT_NAME.":</td><td colspan='3'>".$ticket['productname']."</td></tr>";
+echo "<tr><td>"._TICKET_TITLE.":</td><td colspan='5'>".$ticket["title"]."</td></tr>";
+echo "<tr><td>"._TICKET_DESCRIPTION.":</td><td colspan='5'>".$ticket["description"]."</td></tr>";
+echo "<tr><td>"._TICKET_SOLUTION.":</td><td colspan='5' style='border:1px solid gray'>".$ticket["solution"]."</td></tr>";
 if($commentcount >= 1) {
-	echo "<td align='right' valign='top' nowrap>Comments: </td>";
+	echo "<td align='right' valign='top' nowrap>"._TICKET_COMMENTS.": </td>";
         echo "<td colspan='5'> <div class='commentArea' style='border:solid 1px gray;overflow:auto'>";
 }
 
@@ -41,7 +41,7 @@ if($commentcount >= 1 && is_array($commentresult))
         $list = '';
         for($j=0;$j<$commentcount;$j++)
         {
-		$list .= '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">Comment From : '.$commentresult[$j]['owner'];
+		$list .= '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">'._TICKET_COMMENT_FROM.' : '.$commentresult[$j]['owner'];
 		$list .= '<br>On : '.$commentresult[$j]['createdtime'];
                 $list .= "<br>Comment : ".$commentresult[$j]['comments'].'</div><br>';
         }
@@ -49,20 +49,21 @@ if($commentcount >= 1 && is_array($commentresult))
 
 }
 
-
-
 echo "</div></td></tr>";
 
 $list='';
-if(($ticket['status'] != 'Closed') || ($ticket['status'] != "Submitted For Quote"))
+if($ticket['status'] != _TICKET_CLOSED_STATUS)
 {
-	$list .= '<tr><td>Add Comment :</td>';
+	$list .= '<tr><td>'._TICKET_ADD_COMMENT.' :</td>';
         $list .= '<td align="right" valign="top" colspan="5">';
-        $list .= '<form name="updateComments" method="post">';
+        $list .= '<form name="updateComments" method="post" action="index.php">';
+
+        $list .= '<input type="hidden" name="option" value="com_helpdesk" >';
         $list .= '<input type="hidden" name="task" value="UpdateComment" >';
         $list .= '<input type="hidden" name="ticketid" value="'.$ticketid.'">';
+
         $list .= '<textarea name="comments" cols="55" rows="7" style="border:1px solid gray"></textarea>';
-        $list .= "<br><input class='button' type='submit' name='submit' value='Update Ticket'></form></td></tr>";
+        $list .= "<br><input class='button' type='submit' name='submit' value='"._TICKET_UPDATE_BUTTON."'></form></td></tr>";
 }
 echo $list;
 
