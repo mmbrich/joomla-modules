@@ -12,16 +12,15 @@ if(@array_key_exists('productid',$result[1][0]) && @array_key_exists('productnam
 elseif(@array_key_exists('id',$result[1][0]) && @array_key_exists('question',$result[1][0]) && @array_key_exists('answer',$result[1][0]))
         $faq_array = $result[1];
 
-
 if($articleid != "" && isset($articleid)) {
-        $list = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td valign="top">';
-        $list .= '<table width="100%" border=0 cellspacing=0 cellpadding=0>';
-
+	?>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td valign="top">
+        <table width="100%" border=0 cellspacing=0 cellpadding=0>
+	<?
         for($i=0;$i<count($faq_array);$i++)
         {
                 if($articleid == $faq_array[$i]['id'])
                 {
-                        $list .= '<tr><td class="contentheading">'.$faq_array[$i]['question'].'</td></tr>';
                         $search = array (
                                         '@&(lt|#60);@i',
                                         '@&(gt|#62);@i',
@@ -32,68 +31,99 @@ if($articleid != "" && isset($articleid)) {
                                         '>',
 					'"');
                         $body = preg_replace($search, $replace, $faq_array[$i]['answer']);
-                        $list .= '<tr><td><br /><br />'.$body.'</td></tr></table>';
 
                         $faq_id = $faq_array[$i]['id'];
                         $faq_createdtime = $faq_array[$i]['faqcreatedtime'];
                         $faq_modifiedtime = $faq_array[$i]['faqmodifiedtime'];
                         $faq_productid = $faq_array[$i]['product_id'];
                         $faq_category = $faq_array[$i]['category'];
-
                         $comments_array = $faq_array[$i]['comments'];
                         $createdtime_array = $faq_array[$i]['createdtime'];
+
+                        ?> 
+				<tr><td class="contentheading"><?php echo $faq_array[$i]['question'];?></td></tr>
+                        	<tr><td><br /><br /><?php echo $body;?></td></tr></table> 
+			<?
                 }
         }
-        $list .= '</td></tr></table>';
-
-	echo $list;
+        ?> 
+		</td></tr></table> 
+	<?
 return;
 }
 
+?>
+<table width="100%" height="100%" border=0 cellspacing=0 cellpadding=0>
+<tr>
 
-$list = '<table width="100%" height="100%" border=1 cellspacing=0 cellpadding=0><tr><td valign="top" width="30%">';
+<td valign="top" width="30%">Category List Goes Here :) </td>
 
-$list .= '</td><td class="kbMain" width="70%"> ';
+<td class="kbMain" width="70%">
 
-$list = '<table border=0 width="100%" cellspacing=0 cellpadding=0><tr><td>';
+<table border=1 width="100%" cellspacing=0 cellpadding=0>
 
-for($i=0;$i<count($faq_array);$i++)
-{
-	$temp[$i] .= $faq_array[$i]['faqmodifiedtime'];
-}
-
-$list .= '<div class="moduletable"><h3>'._RECENT_ARTICLES.'</h3></div>';
-$list .= '<br><table width="100%" border="0" cellspacing="3" cellpadding="0">';
+<tr>
+<td>
+<div class="moduletable">
+<h3><?php echo _RECENT_ARTICLES;?></h3>
+</div>
+<br>
+<table width="100%" border="0" cellspacing="3" cellpadding="0">
+<?
 
 global $cur_template;
-
-for($i=0;$i<count($faq_array);$i++)
-{
-        $record_exist = true;
-        $list .= '<tr><td width="15"><img src="components/com_helpdesk/images/faq.gif" valign="absmiddle"></td><td>';
-        $list .= '<div style="border-bottom:1px dotted gray"><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']).'">'.$faq_array[$i]['question'].'</a></div>';
-        $list .= '</td></tr><tr><td>&nbsp;</td><td class="kbAnswer">';
+for($i=0;$i<count($faq_array);$i++) {
+	$record_exist = true;
+	?>
+        <tr>
+	<td width="15"><img src="components/com_helpdesk/images/faq.gif" valign="absmiddle">
+	</td>
+	<td>
+        <div style="border-bottom:1px dotted gray">
+	<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']);?>"><?php echo $faq_array[$i]['question'];?></a> 
+	<?php echo "<br />"._FAQ_CATEGORY.": ".$faq_array[$i]['category'];?>
+	<?php echo "<br />"._FAQ_CREATED_ON.": ".$faq_array[$i]['faqcreatedtime'];?>
+	<?php echo "<br />"._FAQ_LAST_MODIFIED.": ".$faq_array[$i]['faqmodifiedtime'];?>
+	</div>
+        </td>
+	</tr>
+	<tr>
+	<td>&nbsp;</td>
+	<td class="kbAnswer">
+	<?
         $body=$faq_array[$i]['answer'];
         $delimiter = strpos($body, "<!--break-->");
         if ($delimiter) {
-         	$list .= substr($body, 0, $delimiter).'<br />
-                <br /><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.
-                $faq_array[$i]['id']).'">More...</a><br /></td></tr><tr>
-                <td height="10"></td></tr>';
+        	echo substr($body, 0, $delimiter);
+		?>
+		<br />
+                <br />
+		<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']);?>">More...</a>
+		<br />
+		</td>
+		<tr>
+                <td height="10">&nbsp;</td>
+		</tr>
+	<?
         } else {
-                $list .= $faq_array[$i]['answer'].'
-                </td></tr><tr><td height="10"><br /></td></tr>';
+        	echo $faq_array[$i]['answer'];
+		?>
+                </td>
+		</tr>
+		<tr>
+		<td height="10"><br /></td>
+		</tr>
+	<?
         }
 }
 if(!$record_exist)
-        $list .= _NO_FAQS;
-
-$list .= '</table>';
-
-$list .= '</td></tr></table>';
-
-echo $list;
-
+	echo _NO_FAQS;
+?>
+</table>
+</td>
+</tr>
+</table>
+<?
 
 function getNoofFaqsPerCategory($category_name,$faq_array)
 {

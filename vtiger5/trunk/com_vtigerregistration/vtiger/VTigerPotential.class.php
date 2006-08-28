@@ -15,10 +15,8 @@ global $mainframe;
 require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
 class VTigerPotential extends VtigerForm {
         var $data;
-	var $file = "potential";
 
         function VtigerPotential()
         {
-                $this->conn = $this->VtigerConnection($this->file);
         }
 }

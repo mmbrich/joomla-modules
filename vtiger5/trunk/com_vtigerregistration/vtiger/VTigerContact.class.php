@@ -24,7 +24,6 @@ class VTigerContact extends VTigerForm {
 
 	function VtigerContact($jid='')
 	{
-		$this->conn = $this->VtigerConnection($this->file);
 		if($jid != '') {
 			$this->jid=$jid;
 			$this->LoadUser();
@@ -98,7 +97,6 @@ class VTigerContact extends VTigerForm {
 	}
 	function SetField($fieldid,$value) 
 	{
-		$this->conn = $this->VtigerConnection("contact");
 		$this->data = array(
 			'entityid'=>$this->id,
 			'fieldid'=>$fieldid,

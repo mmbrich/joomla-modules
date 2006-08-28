@@ -22,7 +22,6 @@ class VTigerHDeskUser extends VtigerContact {
 
 	function VtigerHDeskUser($jid='')
 	{
-		$this->conn = $this->VtigerConnection("customerportal");
 		global $database;
 		$this->jid = $jid;
 		$q = "SELECT entityid FROM #__vtiger_portal_contacts "

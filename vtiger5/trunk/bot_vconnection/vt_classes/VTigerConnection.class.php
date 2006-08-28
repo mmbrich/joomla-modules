@@ -19,8 +19,10 @@ class VTigerConnection
 	var $data;
 	var $command;
 	var $server;
+	var $username;
+	var $password;
 
-	function VTigerConnection($file)
+	function VTigerConnection($file='joomla')
 	{
 		global $database;
 		// load bot_vconnection mambot parameters
@@ -31,6 +33,7 @@ class VTigerConnection
   		$mambot->load( $id );
   		$mambotParams =& new mosParameters( $mambot->params );
   		$vtiger_lead_soapserver = $mambotParams->get( 'vtiger_lead_soapserver', 'basic' );
+		$file="joomla";
   
 		$this->client = new soapclient2($vtiger_lead_soapserver."/vtigerservice.php?service=".$file);
 	}
@@ -40,6 +43,9 @@ class VTigerConnection
 	}
 	function execCommand($command)
 	{
+		if(!$this->client)
+			$this->VtigerConnection();
+
 		$this->result = $this->client->call($command, $this->data);
 		if(($this->client->getError()) || ($this->result == "failed"))
 			//return "failed";
