@@ -19,4 +19,8 @@ DEFINE(_PWD_CONF ,'Confirm Password');
 DEFINE(_SEND_REG ,'Send Registration');
 
 DEFINE(_PLS_LOG_IN ,'Please Log In');
+
+/* mod_vtigerlogin */
+DEFINE(_CHANGE_PASSWORD ,'Change Password');
+
 ?>

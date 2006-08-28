@@ -19,6 +19,12 @@ global $mosConfig_frontend_login;
 if ( $mosConfig_frontend_login != NULL && ($mosConfig_frontend_login === 0 || $mosConfig_frontend_login === '0')) {
 	return;
 }
+// Get the right language if it exists
+if (file_exists($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php')) {
+    include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php');
+} else {
+    include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_english.php');
+}
 
 
 // url of current page that user will be returned to after login
@@ -85,7 +91,7 @@ if ( $my->id ) {
 	?>
 	<div>
 	<div align="center">
-		<a href='<?php echo sefRelToAbs("index.php?option=com_vtigerregistration&task=changePass");?>'>Change Password</a>
+		<a href='<?php echo sefRelToAbs("index.php?option=com_vtigerregistration&task=changePass");?>'><?php echo _CHANGE_PASSWORD;?></a>
 	</div>
 	
 	<div align="center">
