@@ -2,8 +2,8 @@
 // no direct access
 defined('_VALID_MOS') or die('Restricted access');
 
-$ticketid=$_GET["ticketid"];
-$commentresult = $user->GetTicketComments($_GET["ticketid"]);
+$ticketid=$_REQUEST["ticketid"];
+$commentresult = $user->GetTicketComments($_REQUEST["ticketid"]);
 $commentcount=sizeof($commentresult);
 
 $innerarray = $commentresult[0];
@@ -16,25 +16,68 @@ for($i=0;$i<$outercount;$i++) {
          	$ticket = $tickets[$i];
         }
 }
+?>
+<br />
+<div style='height:16px;border-bottom:2px solid gray'>
+	<div class='moduletable'>
+		<h3><?php echo _TICKET_INFORMATION;?>:</h3>
+	</div>
+<?
 
-echo "<br /><div style='height:16px;border-bottom:2px solid gray'><div class='moduletable'><h3>"._TICKET_INFORMATION.":</h3></div>";
-if($ticket['status'] != 'Closed') {
- 	echo '<div class="pageTitle uline" style="float:right"><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=CloseTicket&ticketid='.$ticketid).'">Close This Ticket</a>&nbsp;&nbsp;</div>';
+if($ticket['status'] != _TICKET_CLOSED_STATUS) {
+ 	echo '<div class="pageTitle uline" style="float:right">';
+	echo '<a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=CloseTicket&ticketid='.$ticketid).'">'._TICKET_CLOSE_TICKET.'</a>';
+	echo '&nbsp;&nbsp;</div>';
 }
+?>
+</div>
 
-echo "</div><br /><br />";
-echo "<table border=0 width='95%' cellpadding=0 cellspacing=8>";
-echo "<tr><td>"._TICKET_ID.":</td><td>".$ticket["ticketid"]."</td><td>"._TICKET_PRIORITY.":</td><td>".$ticket['priority']."</td><td>"._TICKET_CREATED_TIME.":</td><td>".$ticket["createdtime"]."</td></tr>";
-echo "<tr><td>"._TICKET_CATEGORY.":</td><td>".$ticket["category"]."</td><td>"._TICKET_STATUS.":</td><td>".$ticket['status']."</td><td>"._TICKET_MODIFIED_TIME.":</td><td>".$ticket["modifiedtime"]."</td></tr>";
-echo "<tr><td>"._TICKET_SEVERITY.":</td><td>".$ticket["severity"]."</td><td>"._TICKET_PRODUCT_NAME.":</td><td colspan='3'>".$ticket['productname']."</td></tr>";
-echo "<tr><td>"._TICKET_TITLE.":</td><td colspan='5'>".$ticket["title"]."</td></tr>";
-echo "<tr><td>"._TICKET_DESCRIPTION.":</td><td colspan='5'>".$ticket["description"]."</td></tr>";
-echo "<tr><td>"._TICKET_SOLUTION.":</td><td colspan='5' style='border:1px solid gray'>".$ticket["solution"]."</td></tr>";
+<br /><br />
+
+<table border=0 width='95%' cellpadding=0 cellspacing=8>
+
+<tr>
+	<td><?php echo _TICKET_ID;?>:</td>
+	<td><?php echo $ticket["ticketid"];?></td>
+	<td><?php echo _TICKET_PRIORITY;?>:</td>
+	<td><?php echo $ticket['priority'];?></td>
+	<td><?php echo _TICKET_CREATED_TIME;?>:</td>
+	<td><?php echo $ticket["createdtime"];?></td>
+</tr>
+
+<tr>
+	<td><?php echo _TICKET_CATEGORY;?>:</td>
+	<td><?php echo $ticket["category"];?></td>
+	<td><?php echo _TICKET_STATUS;?>:</td>
+	<td><?php echo $ticket['status'];?></td>
+	<td><?php echo _TICKET_MODIFIED_TIME;?>:</td>
+	<td><?php echo $ticket["modifiedtime"];?></td>
+</tr>
+<tr>
+	<td><?php echo _TICKET_SEVERITY;?>:</td>
+	<td><?php echo $ticket["severity"];?></td>
+	<td><?php echo _TICKET_PRODUCT_NAME;?>:</td>
+	<td colspan='3'><?php echo $ticket['productname'];?></td>
+</tr>
+
+<tr>
+	<td><?php echo _TICKET_TITLE;?>:</td>
+	<td colspan='5'><?php echo $ticket["title"];?></td>
+</tr>
+<tr>
+	<td><?php echo _TICKET_DESCRIPTION;?>:</td>
+	<td colspan='5'><?php echo $ticket["description"];?></td>
+</tr>
+<tr>
+	<td><?php echo _TICKET_SOLUTION;?>:</td>
+	<td colspan='5' style='border:1px solid gray'><?php echo $ticket["solution"];?></td>
+</tr>
+
+<?
 if($commentcount >= 1) {
 	echo "<td align='right' valign='top' nowrap>"._TICKET_COMMENTS.": </td>";
         echo "<td colspan='5'> <div class='commentArea' style='border:solid 1px gray;overflow:auto'>";
 }
-
 //This is to display the existing comments if any
 if($commentcount >= 1 && is_array($commentresult))
 {
@@ -50,7 +93,10 @@ if($commentcount >= 1 && is_array($commentresult))
 
 }
 
-echo "</div></td></tr>";
+?>
+	</div></td>
+</tr>
+<?
 
 $list='';
 if($ticket['status'] != _TICKET_CLOSED_STATUS)
@@ -67,6 +113,6 @@ if($ticket['status'] != _TICKET_CLOSED_STATUS)
         $list .= "<br><input class='button' type='submit' name='submit' value='"._TICKET_UPDATE_BUTTON."'></form></td></tr>";
 }
 echo $list;
-
-echo "</table>";
 ?>
+
+</table>
