@@ -9,20 +9,6 @@
 *
  ********************************************************************************/
 
-require_once("config.php");
-require_once('include/logging.php');
-require_once('include/nusoap/nusoap.php');
-require_once('include/database/PearDatabase.php');
-require_once('include/utils/utils.php');
-
-$log = &LoggerManager::getLogger('JOOMLA_SOAP');
-$NAMESPACE = 'http://www.vtiger.com/vtigercrm/';
-$server = new soap_server;
-$server->configureWSDL('vtigersoap');
-
-// Import array definitions
-require_once('soap/jdef.php');
-
 // Set the default CRM owner for all new entities from joomla.
 $default_ownerid='1';
 

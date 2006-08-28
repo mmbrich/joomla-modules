@@ -9,8 +9,6 @@
 *
  ********************************************************************************/
 
-require_once("soap/jinc.php");
-
 /************************ SAVE_FORM_FIELDS  START ****************************/
 $server->register(
 	'save_form_fields',
@@ -384,9 +382,4 @@ function get_modules($module='') {
 	return $modules;
 }
 /************************ GET_MODULES END ****************************/
-
-
-/* Begin the HTTP listener service and exit. */ 
-$server->service($HTTP_RAW_POST_DATA); 
-exit(); 
 ?>

@@ -9,8 +9,6 @@
 *
  ********************************************************************************/
 
-require_once("soap/jinc.php");
-
 /************************ CHECK_USER  START ****************************/
 $server->register(
         'check_user',
@@ -340,8 +338,4 @@ function forgot_password ($email) {
 		return $mail->ErrorInfo;
 }
 /************************ FORGOT_PASSWORD END ****************************/
-
-/* Begin the HTTP listener service and exit. */
-$server->service($HTTP_RAW_POST_DATA);
-exit();
 ?>
