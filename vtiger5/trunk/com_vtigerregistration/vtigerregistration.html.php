@@ -90,7 +90,13 @@ class HTML_vtigerregistration {
 	<?
 	}
         function register($fields=array(),$vtField,$soid='',$Itemid='') {
-		global $mainframe;
+		global $mainframe,$mosConfig_absolute_path;
+		// Get the right language if it exists since this function gets called outside of registration at times
+		if (file_exists($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php')) {
+    			include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php');
+		} else {
+    			include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_english.php');
+		}
         ?>
 	<script language="JavaScript" src="<?php echo $mainframe->getCfg('live_site').'/components/com_vtigerregistration';?>/vtiger/prototype.js" type="text/javascript"></script>
 		<script type="text/javascript">
