@@ -27,6 +27,7 @@ switch ($act) {
                 about();
         break;
         case "settings":
+        default:
                 settings( $option );
         break;
 }
