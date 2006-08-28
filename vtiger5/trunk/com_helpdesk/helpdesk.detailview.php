@@ -16,7 +16,8 @@ for($i=0;$i<$outercount;$i++) {
          	$ticket = $tickets[$i];
         }
 }
-echo "<br /><div style='height:16px;border-bottom:2px solid gray'><div class='moduletable'><h3>Ticket Information:</h3></div>";
+
+echo "<br /><div style='height:16px;border-bottom:2px solid gray'><div class='moduletable'><h3>"._TICKET_INFORMATION.":</h3></div>";
 if($ticket['status'] != 'Closed') {
  	echo '<div class="pageTitle uline" style="float:right"><a href="'.sefRelToAbs('index.php?option=com_helpdesk&task=CloseTicket&ticketid='.$ticketid).'">Close This Ticket</a>&nbsp;&nbsp;</div>';
 }
