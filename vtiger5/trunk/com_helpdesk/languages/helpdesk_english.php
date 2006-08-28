@@ -39,5 +39,6 @@ DEFINE(_TICKET_OPEN_STATUS, 'Open');
 
 DEFINE(_TICKET_CREATE_INTRO, 'Please enter the required information in the following fields to submit a ticket.');
 DEFINE(_TICKET_CREATE_TICKET, 'Create Ticket');
+DEFINE(_TICKET_INFORMATION, 'Ticket Information');
 
 ?>
