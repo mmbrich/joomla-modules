@@ -32,6 +32,11 @@ DEFINE(_REQUIRED ,'(* = Required)');
 DEFINE(_BILL_TO_INFO ,'Bill To Information');
 DEFINE(_SELECT_SHIPPING ,'Please select a Shipping Address!');
 DEFINE(_UPDATE_ADDY ,'Update Address');
+DEFINE(_UPDATE_ADDY_INFO ,'Update Address Information.');
+DEFINE(_UPDATE_INFO ,'Update Information.');
+
+DEFINE(_SHIP_INFO ,'Shipping Information');
+DEFINE(_BILL_INFO ,'Billing Information');
 
 DEFINE(_PAYMENT_DETAILS ,'Payment Details');
 DEFINE(_CREDIT_CARD ,'Credit Card');

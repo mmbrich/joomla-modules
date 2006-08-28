@@ -408,7 +408,7 @@ class HTML_vtigersalesorders {
     				<table border="0" cellpadding="2" cellspacing="0" width="100%">
         			    <tbody>
 					<tr class="sectiontableheader">
-            					<th colspan="2" align="left">Billing Information</th>
+            					<th colspan="2" align="left"><?php echo _BILL_INFO;?></th>
         				</tr>
 					<?php
 					foreach($mailing_fields as $field) {
@@ -438,7 +438,7 @@ class HTML_vtigersalesorders {
         			<table border="0" cellpadding="2" cellspacing="0" width="100%">
             			    <tbody>
 					<tr class="sectiontableheader">
-                				<th colspan="2" align="left">Shipping Information :
+                				<th colspan="2" align="left"><?php echo _SHIP_INFO;?> :
                 				</th>
             				</tr>
 					<?php
@@ -493,7 +493,7 @@ class HTML_vtigersalesorders {
 			<input name="vt_entityid" value="<?php echo $fields[0]["entityid"];?>" type="hidden">
 			<input name="update_address" value="<?php echo $type;?>" type="hidden">
 
-                        <h4>Update Address Information.</h4>
+                        <h4><?php echo _UPDATE_ADDY_INFO;?></h4>
                         <table border="0" cellpadding="2" cellspacing="0" width="100%">
                          	<tbody>
                                  	<?php
@@ -508,7 +508,7 @@ class HTML_vtigersalesorders {
                                         <? } ?>
 					<tr>
 						<td colspan='2'>
-							<input type="submit" name="update" value="Update Information" class="button">
+							<input type="submit" name="update" value="<?php echo _UPDATE_INFO;?>" class="button">
 						</td>
 					</tr>
                                 </tbody>
