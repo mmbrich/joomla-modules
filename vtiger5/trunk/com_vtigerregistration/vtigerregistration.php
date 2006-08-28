@@ -24,6 +24,12 @@ $basePath = $mainframe->getCfg('absolute_path') . "/components/" . _MYNAMEIS . "
 require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
 $vtuser = new VtigerContact();
 
+// Get the right language if it exists
+if (file_exists($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php')) {
+    include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_'.$mosConfig_lang.'.php');
+} else {
+    include($mosConfig_absolute_path.'/components/com_vtigerregistration/languages/vtigerregistration_english.php');
+}
 
 switch($task) {
 	case 'saveVtigerRegistration';

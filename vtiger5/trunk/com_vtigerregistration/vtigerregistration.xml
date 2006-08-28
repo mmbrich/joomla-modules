@@ -20,6 +20,7 @@
     <filename>vtiger/VTigerProduct.class.php</filename>
     <filename>vtiger/VTigerHDeskUser.class.php</filename>
     <filename>vtiger/prototype.js</filename>
+    <filename>languages/vtigerregistration_english.php</filename>
   </files>
   <administration>
     <menu>Vtiger Registration</menu>

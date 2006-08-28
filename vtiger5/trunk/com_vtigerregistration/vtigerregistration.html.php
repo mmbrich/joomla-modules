@@ -22,8 +22,8 @@ class HTML_vtigerregistration {
 		<center>
 		<form method="POST" action="index.php" name="lost_pass">
 		<table border=0 width="65%" align="center">
-		<tr><td> Email Address:</td><td><input type='text' name='email' style='border:solid 1px gray' size='40'></td></tr>
-		<tr><td></td><td><input type='submit' class='button' name='send_pass' value=' Send Password '></td></tr>
+		<tr><td> <?php echo _EMAIL_ADDY;?>:</td><td><input type='text' name='email' style='border:solid 1px gray' size='40'></td></tr>
+		<tr><td></td><td><input type='submit' class='button' name='send_pass' value=' <?php echo _SEND_PASSWORD;?> '></td></tr>
 		<input type="hidden" name="task" value="sendPassword" />
 		<input type="hidden" name="option" value="com_vtigerregistration" />
 		</table>
@@ -54,7 +54,7 @@ class HTML_vtigerregistration {
 				<table border=0 width="100%" align="center">
 					<tr>
 						<td > 
-							Old Password:
+							<?php echo _OLD_PWD;?>:
 						</td>
 						<td>
 							<input type='password' name='oldpass' style='border:solid 1px gray' size='20'>
@@ -62,7 +62,7 @@ class HTML_vtigerregistration {
 					</tr>
 					<tr>
 						<td > 
-							New Password:
+							<?php echo _NEW_PWD;?>:
 						</td>
 						<td>
 							<input type='password' name='newpass' id="np" style='border:solid 1px gray' size='20'>
@@ -70,7 +70,7 @@ class HTML_vtigerregistration {
 					</tr>
 					<tr>
 						<td > 
-							Confirm New Password:
+							<?php echo _NEW_PWD_CONF;?>:
 						</td>
 						<td>
 							<input type='password' name='newpass2' id="np2" style='border:solid 1px gray' size='20'>
@@ -79,7 +79,7 @@ class HTML_vtigerregistration {
 					<tr>
 						<td></td>
 						<td>
-							<input type='submit' class='button' name='send_pass' value=' Send Password ' onclick='return validate_pass();'>
+							<input type='submit' class='button' name='send_pass' value=' <?php echo _SEND_PASSWORD;?> ' onclick='return validate_pass();'>
 						</td>
 					</tr>
 					<input type="hidden" name="task" value="savePassword" />
@@ -122,26 +122,26 @@ class HTML_vtigerregistration {
 		</script>
                 <br>
                 <fieldset>
-                <legend><span class="sectiontableheader">User Registration</span></legend>
+                <legend><span class="sectiontableheader"><?php echo _USER_REG;?></span></legend>
                 <br>
 
 		<form action="index.php" method="post" name="mosForm" id="reg_user">
 		<table class="contentpane" border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tbody><tr>
-			<td colspan="2">Fields marked with an asterisk (<font color="red">*</font>) are required.</td>
+			<td colspan="2"><?php echo _REQUIRED_FIELDS;?></td>
 		</tr>
     		<tr>
                         <td width="30%">
-				Username <font color='red'>*</font>
-                        </td>
-                        <td>
-		  		<input name="username" size="20" value="" class="inputbox" maxlength="50" type="text">
-                        </td>
-                </tr>
+			<?php echo _USERNAME;?> <font color='red'>*</font>
+		</td>
+		<td>
+			<input name="username" size="20" value="" class="inputbox" maxlength="50" type="text">
+		</td>
+	</tr>
 
-    		<tr>
-                        <td width="30%">
-				Password <font color='red'>*</font>
+	<tr>
+		<td width="30%">
+			<?php echo _PASSWORD;?> <font color='red'>*</font>
                         </td>
                         <td>
 		  		<input name="password" size="20" value="" class="inputbox" maxlength="50" type="password">
@@ -150,7 +150,7 @@ class HTML_vtigerregistration {
 
     		<tr>
                         <td width="30%">
-				Confirm Password <font color='red'>*</font>
+				<?php echo _PWD_CONF;?> <font color='red'>*</font>
                         </td>
                         <td>
 		  		<input name="password2" size="20" value="" class="inputbox" maxlength="50" type="password">
@@ -205,7 +205,7 @@ class HTML_vtigerregistration {
 		<input name="task" value="saveVtigerRegistration" type="hidden">
 		<input name="soid" value="<?php echo $soid;?>" type="hidden">
 		<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
-		<input value="Send Registration" class="button" onclick="submitbutton()" type="button">
+		<input value="<?php echo _SEND_REG;?>" class="button" onclick="submitbutton()" type="button">
 		</form>
                 </fieldset>
 	<?
@@ -218,9 +218,9 @@ class HTML_vtigerregistration {
 		}
 	?>
                 <fieldset>
-                	<legend><span class="sectiontableheader">Please Log In</span></legend>
+                	<legend><span class="sectiontableheader"><?php echo _PLS_LOG_IN;?></span></legend>
                 	<br>
-        		<form action="<?php echo sefRelToAbs( 'index.php' ); ?>" method="post" name="login" >
+        		<form action="index.php" method="post" name="login" >
         		<?php
         			echo $pretext;
         		?>
