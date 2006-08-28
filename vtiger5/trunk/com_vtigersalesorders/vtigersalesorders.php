@@ -8,6 +8,13 @@ if(!file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 	flush();exit();
 }
 
+// Get the right language if it exists
+if (file_exists($mosConfig_absolute_path.'/components/com_vtigersalesorders/languages/vtigersalesorders_'.$mosConfig_lang.'.php')) {
+    include($mosConfig_absolute_path.'/components/com_vtigersalesorders/languages/vtigersalesorders_'.$mosConfig_lang.'.php');
+} else {
+    include($mosConfig_absolute_path.'/components/com_vtigersalesorders/languages/vtigersalesorders_english.php');
+}
+
 global $my,$database;
 require_once( $mainframe->getPath( 'front_html' ) );
 require_once('components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php');
