@@ -86,8 +86,8 @@ if($commentcount >= 1 && is_array($commentresult))
         for($j=0;$j<$commentcount;$j++)
         {
 		$list .= '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">'._TICKET_COMMENT_FROM.' : '.$commentresult[$j]['owner'];
-		$list .= '<br>On : '.$commentresult[$j]['createdtime'];
-                $list .= "<br>Comment : ".$commentresult[$j]['comments'].'</div><br>';
+		$list .= '<br>'._TICKET_COMMENT_ON.' : '.$commentresult[$j]['createdtime'];
+                $list .= "<br>"._TICKET_COMMENT_COMMENT." : ".$commentresult[$j]['comments'].'</div><br>';
         }
 	echo $list;
 
