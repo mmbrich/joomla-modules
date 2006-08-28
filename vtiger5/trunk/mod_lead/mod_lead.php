@@ -30,24 +30,54 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
      else
      {    
         ?>
-        <form name="vtigerlead" method="POST" action="<?$PHP_SELF;?>">
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
-        <tbody>
+        <form name="vtigerlead" method="post" action="<?$PHP_SELF;?>">
         <tr>
-        <?php echo _LAST_NAME; ?>: <br/><input type="text" name="lastname" class="inputbox" size="15">
-        <br />
-        <?php echo _CONTACT_HEADER_EMAIL; ?>: <br /><input type="text" name="email" class="inputbox" size="15">
-        <br />
-        <?php echo _PHONE; ?>: <br /><input type="text" name="phone" class="inputbox" size="15">
-        <br />
-        <?php echo _COMPANY_NAME; ?>: <br /><input type="text" name="company" class="inputbox" size="15">
-        <br />
-        <?php echo _COUNTRY; ?>: <br /> <input type="text" name="country" class="inputbox" size="10">
-        <br />
-        <?php echo _DESCRIPTION; ?>: <br /><textarea rows="5" cols="18" name="description" class="inputbox"></textarea>
-        <br />
-        <input name="Lead" class="button" value="<?php echo _BUTTON_SUBMIT_MAIL;?>" type="submit">
-        </tbody>
+        <td>
+			<label for="mod_lead_lastname">
+				<?php echo _LAST_NAME; ?>:
+			</label>
+			<br />
+			<input name="lastname" id="mod_lead_lastname" type="text" class="inputbox" alt="lastname"  />
+			<br />
+			<label for="mod_lead_email">
+				<?php echo _CONTACT_HEADER_EMAIL; ?>:
+			</label>
+			<br />
+			<input name="email" id="mod_lead_email" type="text" class="inputbox" alt="email" />
+			<br />
+			<label for="mod_lead_phone">
+				<?php echo _PHONE; ?>:
+			</label>
+			<br />
+			<input name="phone" id="mod_lead_phone" type="text" class="inputbox" alt="phone" />
+			<br />
+			<label for="mod_lead_company">
+				<?php echo _COMPANY_NAME; ?>:
+			</label>
+			<br />
+			<input name="company" id="mod_lead_company" type="text" class="inputbox" alt="company" />
+			<br />
+			<label for="mod_lead_country">
+				<?php echo _COUNTRY; ?>:
+			</label>
+			<br />
+			<input name="country" id="mod_lead_country" type="text" class="inputbox" alt="country" />
+			<br />
+			<label for="mod_lead_description">
+				<?php echo _DESCRIPTION; ?>:
+			</label>
+			<br />
+			<textarea rows="7" cols="19" name="description" id="mod_lead_description" class="inputbox" ></textarea>
+			<br />
+			<label for="mod_lead_submit">
+				<?php echo _BUTTON_SUBMIT_MAIL;?>:
+			</label>
+			<br />
+			<input name="Lead" id="mod_lead_submit" type="submit" class="button" alt="submit" value="<?php echo _BUTTON_SUBMIT_MAIL;?>" />
+			<br />
+        </td>
+        </tr>
         </table>
         </form>
         <?
