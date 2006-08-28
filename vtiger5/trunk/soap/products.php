@@ -8,8 +8,6 @@
  * All Rights Reserved.
 *
  ********************************************************************************/
-require_once("soap/jinc.php");
-
 
 /************************ GET_PRODUCT_LIST START ****************************/
 $server->register(
@@ -71,8 +69,4 @@ function get_product_list($category='') {
         return $product;
 }
 /************************ GET_PRODUCT_LIST END ****************************/
-
-/* Begin the HTTP listener service and exit. */ 
-$server->service($HTTP_RAW_POST_DATA); 
-exit(); 
 ?>

@@ -9,8 +9,6 @@
 *
  ********************************************************************************/
 
-require_once("soap/jinc.php");
-
 /************************ CHECK_SO_OWNER  START ****************************/
 $server->register(
         'check_so_owner',
@@ -649,9 +647,4 @@ function get_taxinfo($productid) {
 
 	return array("list_price"=>$list_price,"taxid"=>$taxid,"percent"=>$percent);
 }
-
-/* Begin the HTTP listener service and exit. */
-$server->service($HTTP_RAW_POST_DATA);
-exit();
 ?>
-
