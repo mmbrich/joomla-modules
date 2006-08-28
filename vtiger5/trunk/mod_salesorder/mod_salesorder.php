@@ -73,7 +73,7 @@ if(!$my->id) {
 			<tr>
 				<td colspan='3'>
 					<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$order["salesorderid"]);?>'>
-						<?php echo _CART_YOUHAVE." ".$order["num_products"]." "._IN_CART;?>
+						<?php echo _CART_YOUHAVE." ".$order["num_products"]." "._CART_IN_CART;?>
 					</a>
 				</td>
 			</tr>
