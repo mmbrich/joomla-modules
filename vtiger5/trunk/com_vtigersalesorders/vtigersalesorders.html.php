@@ -20,13 +20,13 @@ class HTML_vtigersalesorders {
 	<table border="0" cellpadding="4" cellspacing="2" width="100%">
    	    <tbody>
 		<tr class="sectiontableheader" align="left">
-			<th>Name</th>
-			<th>Price</th>
-			<th>Quantity</th>
-			<th>Adj</th>
-			<th>Tax</th>
-			<th>Subtotal</th>
-			<th colspan="2" align="center">Update</th>
+			<th><?php echo _NAME;?></th>
+			<th><?php echo _PRICE;?></th>
+			<th><?php echo _QTY;?></th>
+			<th><?php echo _ADJ;?></th>
+			<th><?php echo _TAX;?></th>
+			<th><?php echo _SUBTOTAL;?></th>
+			<th colspan="2" align="center"><?php echo _UPDATE;?></th>
   		</tr>
 		<? 
 		foreach($order["products"] as $product) { 
@@ -41,7 +41,7 @@ class HTML_vtigersalesorders {
 			</td>
     			<td>$<?php echo number_format($product["total"],'2','.',',');?></td>
 
-    			<td><input title="Update Quantity In Cart" class="inputbox" size="4" maxlength="4" name="quantity" value="<?php echo $product["quantity"];?>" type="text" id="quantity_<?php echo $product["productid"];?>"></td>
+    			<td><input title="<?php echo _CART_QTY_UPDATE;?>" class="inputbox" size="4" maxlength="4" name="quantity" value="<?php echo $product["quantity"];?>" type="text" id="quantity_<?php echo $product["productid"];?>"></td>
 
 			<!-- Discounts -->
 			<? if ($product["discount_amount"] != "") { 
@@ -95,7 +95,7 @@ class HTML_vtigersalesorders {
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="product_id" value="<?php echo $product["productid"];?>" type="hidden">
         				<input name="quantity" type="hidden" id="quan_<? echo $product["productid"];?>">
-        				<input name="update" title="Update Quantity In Cart" src="components/com_vtigersalesorders/images/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
+        				<input name="update" title="<?php echo _CART_QTY_UPDATE;?>" src="components/com_vtigersalesorders/images/edit_f2.gif" alt="Update" border="0" type="image" onclick="document.getElementById('quan_<?php echo $product["productid"];?>').value = document.getElementById('quantity_<?php echo $product["productid"];?>').value;" />
       				</form>
       			</td>
     			<td>
@@ -105,7 +105,7 @@ class HTML_vtigersalesorders {
         				<input name="task" value="removeProduct" type="hidden">
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="productid" value="<?php echo $product["productid"];?>" type="hidden">
-      					<input name="delete" title="Delete Product From Cart" src="components/com_vtigersalesorders/images/delete_f2.gif" alt="Delete Product From Cart" border="0" type="image">
+      					<input name="delete" title="<?php echo _CART_DELETE;?>" src="components/com_vtigersalesorders/images/delete_f2.gif" alt="<?php echo _CART_DELETE;?>" border="0" type="image">
       				</form>
 			</td>
   		</tr>
@@ -116,14 +116,14 @@ class HTML_vtigersalesorders {
 		<!--Begin of SubTotal, Tax, Shipping, Coupon Discount and Total listing -->
 
   		<tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Subtotal:</td> 
+    			<td colspan="5" align="right"><?php echo _SUBTOTAL;?>:</td> 
     			<td colspan="3">$<?php echo number_format($order["subtotal"],'2','.',',');?></td>
   		</tr>
 
 		<!-- Adjustments -->
 		<? if ($order["txtAdjustment"] != "") { ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Adjustment: </td>
+    			<td colspan="5" align="right"><?php echo _ADJUSTMENT;?>: </td>
     			<td colspan="3">
 				<? if(preg_match("/\-/",$order["txtAdjustment"])) {
 					echo "$<font color='red'>".number_format( substr( $order["txtAdjustment"], (strpos($order["txtAdjustment"],"-")+1), strlen($order["txtAdjustment"]) ),'2','.',',')."</font>";
@@ -138,7 +138,7 @@ class HTML_vtigersalesorders {
 		<!-- Discounts -->
 		<? if ($order["discount_percent"] != "") { ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Discount Percent: </td>
+    			<td colspan="5" align="right"><?php echo _DISCOUNT_PERCENT;?>: </td>
     			<td colspan="3">
 				<font color='red'><?php echo number_format($order["discount_percent"],'2','.',',');?></font>%
     			</td>
@@ -146,7 +146,7 @@ class HTML_vtigersalesorders {
   		    </tr>
 		<? } else if ($order["discount_amount"] != "") {?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Discount Amount: </td>
+    			<td colspan="5" align="right"><?php echo _DISCOUNT_AMOUNT;?>: </td>
     			<td colspan="3">
 				$<font color='red'><?php echo number_format($order["discountamount"],'2','.',',');?></font>
     			</td>
@@ -157,7 +157,7 @@ class HTML_vtigersalesorders {
 		<!-- Shipping and Handling -->
 		<? if ($order["s_h_amount"] != "" && $order["s_h_amount"] != "0.000") { ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Shipping &amp; Handling: </td>
+    			<td colspan="5" align="right"><?php echo _SHIP_HANDLE;?>: </td>
     			<td colspan="3">
 				$<?php echo number_format($order["s_h_amount"],'2','.',',');?>
     			</td>
@@ -168,21 +168,21 @@ class HTML_vtigersalesorders {
 		<!-- S&H Taxes -->
 		<? if ($order["sh_tax1"] != "" && ($order["s_h_amount"] != "" && $order["s_h_amount"] != "0")) {  // VAT ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">S&amp;H Taxes: </td>
+    			<td colspan="5" align="right"><?php echo _SHIP_HANDLE_TAX;?>: </td>
     			<td colspan="3">
 				$<?php echo number_format((($order["s_h_amount"] * $order["sh_tax1"])/100),'2','.',',');?>
     			</td>
   		    </tr>
 		<? } else if ($order["sh_tax2"] != "" && ($order["s_h_amount"] != "" && $order["s_h_amount"] != "0")) { //SALES ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">S&amp;H Taxes: </td>
+    			<td colspan="5" align="right"><?php echo _SHIP_HANDLE_TAX;?>: </td>
     			<td colspan="3">
 				$<?php echo number_format((($order["s_h_amount"] * $order["sh_tax2"])/100),'2','.',',');?>
     			</td>
   		    </tr>
 		<? } else if ($order["sh_tax3"] != "" && ($order["s_h_amount"] != "" && $order["s_h_amount"] != "0")) { //SERVICE ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">S&amp;H Taxes: </td>
+    			<td colspan="5" align="right"><?php echo _SHIP_HANDLE_TAX;?>: </td>
 				$<?php echo number_format((($order["s_h_amount"] * $order["sh_tax3"])/100),'2','.',',');?>
     			<td colspan="3">
     			</td>
@@ -192,14 +192,14 @@ class HTML_vtigersalesorders {
 		<!-- Group Taxes -->
 		<? if ($order["taxtype"] == "group" && $order["txtTax"] != "") { ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Taxes: </td>
+    			<td colspan="5" align="right"><?php echo _TAXES;?>: </td>
     			<td colspan="3">
 				$<?php echo number_format($order["txtTax"],'2','.',',');?>
     			</td>
   		    </tr>
 		<? } else if ($order["taxtype"] == "group") { ?>
   		    <tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Taxes: </td>
+    			<td colspan="5" align="right"><?php echo _TAXES;?>: </td>
     			<td colspan="3">
 				$0.00
     			</td>
@@ -212,7 +212,7 @@ class HTML_vtigersalesorders {
   		</tr>
 
   		<tr class="sectiontableentry2">
-    			<td colspan="5" align="right">Total: </td>
+    			<td colspan="5" align="right"><?php echo _TOTAL;?>: </td>
     			<td colspan="3">
 				<strong>$<?php echo number_format($order["grandtotal"],'2','.',',');?></strong>
     			</td>
@@ -251,7 +251,7 @@ class HTML_vtigersalesorders {
      		<h3>
 			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigerproducts&Itemid='.$Itemid);?>">
      				<img src="components/com_vtigersalesorders/images/back.png" alt="Back" align="middle" border="0" height="32" width="32">
-      				Continue Shopping
+      				<?php echo _CONTINUE_SHOPPING;?>
 			</a>
 		</h3>
  	</div>
@@ -259,7 +259,7 @@ class HTML_vtigersalesorders {
      		<h3>
 			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid='.$Itemid);?>">
      				<img src="components/com_vtigersalesorders/images/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
-      				Checkout
+      				<?php echo _CHECKOUT;?>
 			</a>
 		</h3>
  	</div>
@@ -315,19 +315,19 @@ class HTML_vtigersalesorders {
 		?>
 		<!-- RETURNING CUSTOMERS -->
 		<fieldset>
-                	<legend><span class="sectiontableheader">Returning Customers: Please Log In</span></legend>
+                	<legend><span class="sectiontableheader"><?php echo _RETURN_CUSTOMER;?></span></legend>
                 	<br>
 			<form action="index.php" method="post" name="login" >
   			  <div style="width: 98%; text-align: center;">
 				<div style="float: left; width: 30%; text-align: right;">
-	  				<label for="username_login">Username:</label>
+	  				<label for="username_login"><?php echo _USERNAME;?>:</label>
 				</div>
     				<div style="float: left; margin-left: 2px; width: 60%; text-align: left;">
 	  				<input id="username_login" name="username" class="inputbox" size="20" type="text">
 				</div>
 				<br><br>
     				<div style="float: left; width: 30%; text-align: right;">
-	  				<label for="passwd_login">Password:</label> 
+	  				<label for="passwd_login"><?php echo _PASSWORD;?>:</label> 
 				</div>
 				<div style="float: left; margin-left: 2px; width: 30%; text-align: left;">
 	  				<input id="passwd_login" name="passwd" class="inputbox" size="20" type="password">
@@ -352,13 +352,13 @@ class HTML_vtigersalesorders {
 		<!-- NEW CUSTOMERS -->
         	</fieldset>
         	<br><br>
-        		<div class="sectiontableheader">New? Please Provide Your Billing Information</div>
+        		<div class="sectiontableheader"><?php echo _NEW_CUSTOMER;?></div>
         		<br>
 			<form action="index.php" method="post" name="adminForm">
 				<div style="width: 100%;">
-					<div style="padding: 5px; text-align: center;"><strong>(* = Required)</strong></div>
+					<div style="padding: 5px; text-align: center;"><strong><?php echo _REQUIRED;?></strong></div>
    					<fieldset>
-			     			<legend class="sectiontableheader">Bill To Information</legend>
+			     			<legend class="sectiontableheader"><?php echo _BILL_TO_INFO;?></legend>
 						<?
 						foreach($fields as $field) {
 							if(!$field["show"] == 1)
@@ -386,7 +386,7 @@ class HTML_vtigersalesorders {
     				<input name="task" value="getPaymentInfo" type="hidden">
     				<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
     				<input name="soid" value="<?php echo $soid;?>" type="hidden">
-    				<h4>Please select a Shipping Address!</h4>
+    				<h4><?php echo _SELECT_SHIPPING;?></h4>
     				<table border="0" cellpadding="2" cellspacing="0" width="100%">
         			    <tbody>
 					<?php
@@ -426,7 +426,7 @@ class HTML_vtigersalesorders {
        		 			<tr>
 						<td colspan="2" align="center">
 							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid='.$Itemid.'&task=updateAddress&type=mailing&soid='.$soid);?>">
-            						(Update Address)</a>
+            						(<?php echo _UPDATE_ADDY;?>)</a>
             					</td>
         				</tr>
     				    </tbody>
@@ -456,7 +456,7 @@ class HTML_vtigersalesorders {
        		 			<tr>
 						<td colspan="2" align="center">
 							<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid='.$Itemid.'&task=updateAddress&type=other&soid='.$soid);?>">
-            						(Update Address)</a>
+            						(<?php echo _UPDATE_ADDY;?>)</a>
             					</td>
         				</tr>
         			    </tbody>
@@ -471,7 +471,7 @@ class HTML_vtigersalesorders {
 					<tr>
             					<td>
 							<div align="center">
-                						<input class="button" name="submit" value="Next &gt;&gt;" type="submit">
+                						<input class="button" name="submit" value="<?php echo _NEXT;?> &gt;&gt;" type="submit">
                 					</div>
                         			</td>
         				</tr>
@@ -547,15 +547,15 @@ class HTML_vtigersalesorders {
     		<input name="soid" value="<? echo  mosGetParam( $_REQUEST, 'soid', '0' );?>" type="hidden">
     		<h4>Please select a Payment Method!</h4>
 
-		<fieldset><legend><strong>Payment Details</strong></legend>
+		<fieldset><legend><strong><?php echo _PAYMENT_DETAILS;?></strong></legend>
 
 		<table border="0" cellpadding="2" cellspacing="0" width="100%">
 		    <tbody><tr>
 		        <td colspan="2">
 		        	<input name="payment_method_id" id="Credit Card" value="1" onchange="javascript: changePaymentInfo(this);" checked="checked" type="radio">
-				<label for="Credit Card">Credit Card</label>		        
+				<label for="Credit Card"><?php echo _CREDIT_CARD;?></label>		        
 		        	<input name="payment_method_id" id="ECheck" value="2" onchange="javascript: changePaymentInfo(this);" type="radio">
-				<label for="ECheck">E-Check</label><br>		        
+				<label for="ECheck"><?php echo _E_CHECK;?></label><br>		        
 			</td>
 		    </tr>
                     <?php
@@ -586,7 +586,7 @@ class HTML_vtigersalesorders {
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tbody><tr>
             <td>                <div align="center">
-                <input class="button" name="submit" value="Next &gt;&gt;" type="submit">
+                <input class="button" name="submit" value="<?php echo _NEXT;?> &gt;&gt;" type="submit">
                 </div>
                         </td>
         </tr>
