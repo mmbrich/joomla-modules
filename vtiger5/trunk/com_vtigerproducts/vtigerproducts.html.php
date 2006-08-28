@@ -23,7 +23,7 @@ class HTML_product {
 				<?php if($config["product_images"] == "on") { ?>
 				    <td width="133px" height="78px" valign="top" align="center">
 					<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">
-						<img src="<?php echo $product["image"];?>" alt="<?php echo $product["productname"];?>" width="129px" height="78px" border='0' />
+						<img alt="<?php echo $product["productname"];?>" src="<?php echo $product["image"];?>" width="129px" height="78px" border='0' />
 					</a>
 				    </td>
 				<? } ?>
@@ -37,7 +37,7 @@ class HTML_product {
 					?>
 					</div>
 					<div style="margin-left:5px;margin-bottom:5px">
-						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">Product Details...</a>
+						<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>"><?php echo _PROD_DETAILS;?></a>
 					</div>
 				</td>
 			</tr>
@@ -48,11 +48,11 @@ class HTML_product {
 						<form name='vt_form' action='index.php' method='POST'>
 						<input type='hidden' name='vt_module' value='Products' />
 						<input type='hidden' name='vt_entityid' value='<?php echo $product["productid"];?>' />
-						<label for="quantity_<?php echo $product["productid"];?>">Quantity:</label>
+						<label for="quantity_<?php echo $product["productid"];?>"><?php echo _PROD_QUANTITY;?>:</label>
                 				<input id="quantity_<?php echo $product["productid"];?>" class="inputbox" size="3" name="prd_qty" value="<?php echo $product["qtyindemand"];?>" type="text"><br>
 						<input type='hidden' name='vt_action' value='BuyProduct' />
 
-						<input type='submit' value='Add to Cart' class='button'></form>
+						<input type='submit' value='<?php echo _ADD_TO_CART;?>' class='button'></form>
 					</div>
 				    </td>
 				<? } ?>
@@ -65,7 +65,7 @@ class HTML_product {
 			echo "<div align='center'>".$pageNav->writePagesLinks($link)."</div>";
 		    }
 		} else {
-			echo "<b>No Products Defined</b>";
+			echo "<b>"._NO_PRODUCTS."</b>";
 		}
 	}
 }
