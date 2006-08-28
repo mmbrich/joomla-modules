@@ -14,7 +14,7 @@
     <filename module="com_vtigersalesorders">images/forward.png</filename>
     <filename module="com_vtigersalesorders">images/back.png</filename>
     <filename module="com_vtigersalesorders">images/delete_f2.gif</filename>
-    <filename module="com_vtigersalesorders">images/edit.gif</filename>
+    <filename module="com_vtigersalesorders">images/edit_f2.gif</filename>
 
     <filename module="com_vtigersalesorders">languages/vtigersalesorders_english.php</filename>
   </files>
