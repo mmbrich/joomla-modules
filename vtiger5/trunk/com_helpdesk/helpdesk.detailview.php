@@ -31,11 +31,9 @@ if($ticket['status'] != _TICKET_CLOSED_STATUS) {
 }
 ?>
 </div>
-
 <br /><br />
 
 <table border=0 width='95%' cellpadding=0 cellspacing=8>
-
 <tr>
 	<td><?php echo _TICKET_ID;?>:</td>
 	<td><?php echo $ticket["ticketid"];?></td>
@@ -44,7 +42,6 @@ if($ticket['status'] != _TICKET_CLOSED_STATUS) {
 	<td><?php echo _TICKET_CREATED_TIME;?>:</td>
 	<td><?php echo $ticket["createdtime"];?></td>
 </tr>
-
 <tr>
 	<td><?php echo _TICKET_CATEGORY;?>:</td>
 	<td><?php echo $ticket["category"];?></td>
@@ -85,34 +82,36 @@ if($commentcount >= 1 && is_array($commentresult))
         $list = '';
         for($j=0;$j<$commentcount;$j++)
         {
-		$list .= '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">'._TICKET_COMMENT_FROM.' : '.$commentresult[$j]['owner'];
-		$list .= '<br>'._TICKET_COMMENT_ON.' : '.$commentresult[$j]['createdtime'];
-                $list .= "<br>"._TICKET_COMMENT_COMMENT." : ".$commentresult[$j]['comments'].'</div><br>';
+		echo '<br><div style="border-top:1px solid gray;border-bottom:1px solid gray">'._TICKET_COMMENT_FROM.' : '.$commentresult[$j]['owner'];
+		echo '<br>'._TICKET_COMMENT_ON.' : '.$commentresult[$j]['createdtime'];
+                echo '<br>'._TICKET_COMMENT_COMMENT.' : '.$commentresult[$j]['comments'].'</div><br>';
         }
-	echo $list;
-
 }
 
 ?>
-	</div></td>
+	</div>
+    </td>
 </tr>
 <?
 
-$list='';
 if($ticket['status'] != _TICKET_CLOSED_STATUS)
 {
-	$list .= '<tr><td>'._TICKET_ADD_COMMENT.' :</td>';
-        $list .= '<td align="right" valign="top" colspan="5">';
-        $list .= '<form name="updateComments" method="post" action="index.php">';
-
-        $list .= '<input type="hidden" name="option" value="com_helpdesk" >';
-        $list .= '<input type="hidden" name="task" value="UpdateComment" >';
-        $list .= '<input type="hidden" name="ticketid" value="'.$ticketid.'">';
-
-        $list .= '<textarea name="comments" cols="55" rows="7" style="border:1px solid gray"></textarea>';
-        $list .= "<br><input class='button' type='submit' name='submit' value='"._TICKET_UPDATE_BUTTON."'></form></td></tr>";
-}
-echo $list;
 ?>
+	<tr>
+		<td><?php echo _TICKET_ADD_COMMENT;?> :</td>
+        	<td align="right" valign="top" colspan="5">
+        		<form name="updateComments" method="post" action="index.php">
+        		<input type="hidden" name="option" value="com_helpdesk" >
+        		<input type="hidden" name="task" value="UpdateComment" >
+        		<input type="hidden" name="ticketid" value="<?php echo $ticketid;?>">
 
+        		<textarea name="comments" cols="55" rows="7" style="border:1px solid gray"></textarea>
+        		<br>
+			<input class='button' type='submit' name='submit' value='<?php echo _TICKET_UPDATE_BUTTON;?>'>
+			</form>
+		</td>
+	</tr>
+<?
+}
+?>
 </table>
