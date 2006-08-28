@@ -21,6 +21,9 @@ class VTigerConnection
 	var $server;
 	var $username;
 	var $password;
+	var $key = "1234567";
+	var $hostname = "myjoomla";
+	var $sessionid;
 
 	function VTigerConnection($file='joomla')
 	{
@@ -32,14 +35,23 @@ class VTigerConnection
   		$mambot = new mosMambot( $database );
   		$mambot->load( $id );
   		$mambotParams =& new mosParameters( $mambot->params );
-  		$vtiger_lead_soapserver = $mambotParams->get( 'vtiger_lead_soapserver', 'basic' );
+  		$vtiger_soapserver = $mambotParams->get( 'vtiger_soapserver', 'basic' );
 		$file="joomla";
   
-		$this->client = new soapclient2($vtiger_lead_soapserver."/vtigerservice.php?service=".$file);
+		$this->client = new soapclient2($vtiger_soapserver."/vtigerservice.php?service=".$file);
 	}
 	function setData($data)
 	{
 		$this->data = $data;
+	}
+	function CheckConnection()
+	{
+		$this->data = array('alive'=>'checking');
+		$ret = $this->execCommand('check_connection');
+		if($ret == "hello")
+			return true;
+		else
+			return false;
 	}
 	function execCommand($command)
 	{
@@ -48,7 +60,6 @@ class VTigerConnection
 
 		$this->result = $this->client->call($command, $this->data);
 		if(($this->client->getError()) || ($this->result == "failed"))
-			//return "failed";
 			return $this->client->getError();
 		else
 			return $this->result;
@@ -56,6 +67,7 @@ class VTigerConnection
 	function GetCRMServer()
 	{
 		global $database;
+
 		// load bot_vconnection mambot parameters
   		$query = "SELECT id FROM #__mambots WHERE element = 'bot_vconnection' AND folder = 'system'";
   		$database->setQuery( $query );
@@ -63,8 +75,8 @@ class VTigerConnection
   		$mambot = new mosMambot( $database );
   		$mambot->load( $id );
   		$mambotParams =& new mosParameters( $mambot->params );
-  		$vtiger_lead_soapserver = $mambotParams->get( 'vtiger_lead_soapserver', 'basic' );
-		return $vtiger_lead_soapserver;
+  		$vtiger_soapserver = $mambotParams->get( 'vtiger_soapserver', 'basic' );
+		return $vtiger_soapserver;
 	}
 }
 ?>

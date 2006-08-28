@@ -17,6 +17,13 @@ $_MAMBOTS->registerFunction( 'onStart', 'VConnectionInit' );
 		
 	
 function VConnectionInit() {
-
+	$conn = new VTigerConnection();
+	$ret = $conn->CheckConnection();
+	if($conn->CheckConnection())
+		return;
+	else {
+		echo "Connection to vtiger failed";
+		exit();
+	}
 }
 ?>

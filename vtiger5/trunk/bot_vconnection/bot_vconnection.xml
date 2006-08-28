@@ -15,6 +15,9 @@
     <filename mambot="bot_vconnection">vt_classes/nusoap/lib/nusoap.php</filename>
   </files>
 <params>
-	<param name="vtiger_lead_soapserver" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
+	<param name="vtiger_soapserver" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
+	<param name="vtiger_proxyhost" type="text" default="http://localhost:8080" label="Proxy Server" description="The path to your LAN Proxy Server" />
+	<param name="vtiger_proxyuser" type="text" default="proxyuser" label="Proxy User Name" description="The username to connect to your proxy server" />
+	<param name="vtiger_proxypass" type="text" default="proxypass" label="Proxy Password" description="The password to connect to your proxy server" />
   </params>
 </mosinstall>
