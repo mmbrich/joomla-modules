@@ -43,4 +43,13 @@ DEFINE(_CREDIT_CARD ,'Credit Card');
 DEFINE(_E_CHECK ,'E-Check');
 
 DEFINE(_NEXT ,'Next');
+
+/* mod_salesorders */
+DEFINE(_CART_NOITEMS ,'You have no items in your cart.');
+DEFINE(_CART_EMPTY ,'You cart is empty.');
+DEFINE(_CART_LOGIN ,'Please log-in.');
+DEFINE(_CART_YOUHAVE ,'You have');
+DEFINE(_CART_IN_CART ,'products in your cart.');
+DEFINE(_CART_FOR ,'Cart for');
+
 ?>
