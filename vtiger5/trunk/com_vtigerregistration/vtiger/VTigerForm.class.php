@@ -19,7 +19,6 @@ class VTigerForm extends VtigerField {
 
         function VtigerForm()
         {
-                $this->conn = $this->VtigerConnection($this->file);
         }
         function SaveFormFields($entityid,$module,$fields)
         {

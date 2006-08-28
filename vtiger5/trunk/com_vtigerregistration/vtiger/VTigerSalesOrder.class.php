@@ -22,8 +22,8 @@ class VTigerSalesOrder extends VTigerConnection {
 
         function VtigerSalesOrder()
         {
+		$this->conn = new VtigerConnection();
 		global $mainframe;
-                $this->conn = $this->VtigerConnection($this->file);
 		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
 		$this->contact = new VtigerContact();
         }

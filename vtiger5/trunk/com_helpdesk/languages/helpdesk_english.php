@@ -9,6 +9,9 @@
 /* Knowledge Base */
 DEFINE(_RECENT_ARTICLES, 'Recently Created Articles');
 DEFINE(_NO_FAQS, 'No FAQs');
+DEFINE(_FAQ_CATEGORY, 'Category');
+DEFINE(_FAQ_CREATED_ON, 'Created On');
+DEFINE(_FAQ_LAST_MODIFIED, 'Last Modified');
 
 /* Ticket Detail View */
 DEFINE(_TICKET_ID, 'Ticket Id');
