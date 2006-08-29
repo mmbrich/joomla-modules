@@ -10,7 +10,7 @@
 DEFINE(_RECENT_ARTICLES, 'Recently Created Articles');
 DEFINE(_NO_FAQS, 'No FAQs');
 DEFINE(_FAQ_CATEGORY, 'Category');
-DEFINE(_FAQ_CREATED_ON, 'Created On');
+DEFINE(_FAQ_CREATED_ON, 'Created time');
 DEFINE(_FAQ_LAST_MODIFIED, 'Last Modified');
 
 /* Ticket Detail View */
@@ -48,4 +48,12 @@ DEFINE(_TICKET_CLOSE_TICKET, 'Close This Ticket');
 DEFINE(_TICKET_COMMENT_ON, 'On');
 DEFINE(_TICKET_COMMENT_COMMENT, 'Comment');
 
+DEFINE(_KBASE_POST_COMMENT, 'Post Comment');
+DEFINE(_KBASE_SUBMIT_COMMENT, 'Submit Comment');
+DEFINE(_KBASE_NUM_ARTICLES, 'Number of articles per page');
+
+DEFINE(_KBASE_MENU_CLOSE, 'Close menu');
+DEFINE(_KBASE_MENU_OPEN, 'Open menu');
+DEFINE(_KBASE_MENU_ALL, 'All');
+DEFINE(_KBASE_MENU_PRODUCTS, 'Products');
 ?>

@@ -60,6 +60,12 @@ switch($task) {
 		$articleid = mosGetParam( $_REQUEST, 'articleid', '' );
                 HTML_helpdesk::knowledgeBase($user,$articleid);
         break;
+	case 'SaveFaqComment':
+		$articleid = mosGetParam( $_REQUEST, 'articleid', '' );
+		$comment = mosGetParam( $_REQUEST, 'faq_comment', '' );
+		$user->SaveFaqComment($articleid,$comment);
+		mosRedirect( sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$articleid));
+	break;
 	case 'ShowTicket':
 		$tickets = $user->ListTickets();
 		$ticketid = mosGetParam( $_REQUEST, 'ticketid', '' );
