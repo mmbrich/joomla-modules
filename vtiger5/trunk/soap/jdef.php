@@ -230,4 +230,15 @@ $server->wsdl->addComplexType(
         )
 );
 /************************ END SALESORDERS **********************/
+
+$server->wsdl->addComplexType(
+        'challenge_response',
+        'complexType',
+        'array',
+        '',
+        array(
+                'sessionid' => array('name'=>'sessionid','type'=>'xsd:string'),
+                'challenge' => array('name'=>'challenge','type'=>'xsd:string')
+        )
+);
 ?>

@@ -19,16 +19,26 @@ $NAMESPACE = 'http://www.vtiger.com/vtigercrm/';
 $server = new soap_server;
 $server->configureWSDL('vtigersoap');
 
-// Import array definitions
-require_once('jdef.php');
+// array definitions
+require_once("soap/jdef.php");
+// functions
+require_once("soap/jinc.php");
 
-require_once("jinc.php");
+/* Quick availability check function */
+$server->register(
+        'check_connection',
+        array('alive'=>'xsd:string'),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+function check_connection($alive) {
+	return 'hello';
+}
 
-include_once("contact.php");
-include_once("fields.php");
-include_once("products.php");
-include_once("salesorder.php");
-include_once("jportal.php"); // Copy of customer portal file
+include_once("soap/contact.php");
+include_once("soap/fields.php");
+include_once("soap/products.php");
+include_once("soap/salesorder.php");
+include_once("soap/jportal.php"); // Copy of customer portal file with server calls stripped
 
 $server->service($HTTP_RAW_POST_DATA);
 exit();
