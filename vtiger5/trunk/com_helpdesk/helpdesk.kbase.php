@@ -17,7 +17,7 @@ $Itemid = mosGetParam($_REQUEST, 'Itemid', '');
 $task = mosGetParam($_REQUEST, 'task', '');
 // Get pagination info
 $limit = mosGetParam($_REQUEST, 'limit', '10');
-$limit_start = mosGetParam($_REQUEST, 'start', '0');
+$limit_start = mosGetParam($_REQUEST, 'limitstart', '0');
 $num_articles = count($faq_array);
 
 if($limit >= $num_articles)
@@ -212,7 +212,8 @@ echo "<br clear='both'><br>";
 
 global $cur_template;
 for( $i=0 ; $i<$limit ; $i++ ) {
-	if($search_category != "" && $search_category != $faq_array[$i]['category'])
+	$cfaq = $faq_array[($i+$limit_start)];
+	if($search_category != "" && $search_category != $cfaq['category'])
 		continue;
 
 	$record_exist = true;
@@ -222,10 +223,10 @@ for( $i=0 ; $i<$limit ; $i++ ) {
 	</td>
 	<td>
         <div style="border-bottom:1px dotted gray">
-	<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']);?>"><?php echo $faq_array[$i]['question'];?></a> 
-	<?php echo "<br />"._FAQ_CATEGORY.": ".$faq_array[$i]['category'];?>
-	<?php echo "<br />"._FAQ_CREATED_ON.": ".$faq_array[$i]['faqcreatedtime'];?>
-	<?php echo "<br />"._FAQ_LAST_MODIFIED.": ".$faq_array[$i]['faqmodifiedtime'];?>
+	<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$cfaq['id']);?>"><?php echo $cfaq['question'];?></a> 
+	<?php echo "<br />"._FAQ_CATEGORY.": ".$cfaq['category'];?>
+	<?php echo "<br />"._FAQ_CREATED_ON.": ".$cfaq['faqcreatedtime'];?>
+	<?php echo "<br />"._FAQ_LAST_MODIFIED.": ".$cfaq['faqmodifiedtime'];?>
 	</div>
         </td>
 	</tr>
@@ -233,14 +234,14 @@ for( $i=0 ; $i<$limit ; $i++ ) {
 	<td>&nbsp;</td>
 	<td class="kbAnswer">
 	<?
-        $body=$faq_array[$i]['answer'];
+        $body=$cfaq['answer'];
         $delimiter = strpos($body, "<!--break-->");
         if ($delimiter) {
         	echo substr($body, 0, $delimiter);
 		?>
 		<br />
                 <br />
-		<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$faq_array[$i]['id']);?>">More...</a>
+		<a href="<?php echo sefRelToAbs('index.php?option=com_helpdesk&task=KbaseArticle&articleid='.$cfaq['id']);?>">More...</a>
 		<br />
 		</td>
 		<tr>
@@ -248,7 +249,7 @@ for( $i=0 ; $i<$limit ; $i++ ) {
 		</tr>
 	<?
         } else {
-        	echo $faq_array[$i]['answer'];
+        	echo $cfaq['answer'];
 		?>
                 </td>
 		</tr>
