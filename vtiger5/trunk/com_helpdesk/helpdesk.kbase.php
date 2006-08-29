@@ -13,6 +13,8 @@ elseif(@array_key_exists('id',$result[1][0]) && @array_key_exists('question',$re
         $faq_array = $result[1];
 
 
+$Itemid = mosGetParam($_REQUEST, 'Itemid', '');
+$task = mosGetParam($_REQUEST, 'task', '');
 // Get pagination info
 $limit = mosGetParam($_REQUEST, 'limit', '10');
 $limit_start = mosGetParam($_REQUEST, 'start', '0');
@@ -30,6 +32,7 @@ if($search_category != "")
 	$num_articles = getNoofFaqsPerCategory($search_category,$faq_array);
 
 $pageNav = new mosPageNav( $num_articles, $limit_start, $limit );
+$link = "index.php?option=com_helpdesk&task=".$task."&Itemid=".$Itemid;
 
 if($articleid != "" && isset($articleid)) {
 	?>
