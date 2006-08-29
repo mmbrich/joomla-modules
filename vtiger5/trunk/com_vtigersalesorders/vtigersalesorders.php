@@ -111,8 +111,8 @@ switch($task) {
 			$SalesOrder->AddToSalesOrder($productid,$qty);
 			$msg = "Added Product";
 			if(!isset($_COOKIE["current_salesorder"]) || $_COOKIE["current_salesorder"] == 0 || $_COOKIE["current_salesorder"] != $soid) {
-				setcookie("current_salesorder", "", time()-3600);
-				setcookie("current_salesorder", $soid, time()+3600);
+				setcookie("current_salesorder", "", time()-3600, '/');
+				setcookie("current_salesorder", $soid, time()+3600, '/');
 			}
 			mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$soid.'&msg='.$msg));
 		}

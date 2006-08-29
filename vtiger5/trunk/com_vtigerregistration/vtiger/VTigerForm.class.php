@@ -97,7 +97,7 @@ class VTigerForm extends VtigerField {
 		$SO = new VtigerSalesOrder();
 		if(!$SO->Checkid($my->id) && !isset($_COOKIE["current_salesorder"])) {
 			$soid = $SO->CreateNewSalesOrder('');
-			setcookie("current_salesorder", $soid, time()+3600);
+			setcookie("current_salesorder", $soid, time()+3600, '/');
 		} else if (isset($_COOKIE["current_salesorder"]))
 			$soid = $_COOKIE["current_salesorder"];
 
