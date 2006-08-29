@@ -80,7 +80,7 @@ if($ticket['status'] != _TICKET_CLOSED_STATUS) {
 <?
 if($commentcount >= 1) {
 	echo "<td align='right' valign='top' nowrap>"._TICKET_COMMENTS.": </td>";
-        echo "<td colspan='5' align='left'> <div class='commentArea' style='border:solid 1px gray;overflow:auto'>";
+        echo "<td colspan='5' align='left'> <div class='inputbox' style='overflow:auto'>";
 }
 //This is to display the existing comments if any
 if($commentcount >= 1 && is_array($commentresult))
