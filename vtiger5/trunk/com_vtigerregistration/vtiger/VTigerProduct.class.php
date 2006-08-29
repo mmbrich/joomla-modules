@@ -19,7 +19,7 @@ class VTigerProduct extends VtigerForm {
 
         function VtigerProduct()
         {
-	        $this->conn = new VtigerConnection();
+		VTigerConnection::VTigerConnection();
         }
 	function ListProducts($category='')
 	{

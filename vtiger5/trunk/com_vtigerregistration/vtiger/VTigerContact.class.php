@@ -24,6 +24,7 @@ class VTigerContact extends VTigerForm {
 
 	function VtigerContact($jid='')
 	{
+		VTigerConnection::VtigerConnection();
 		if($jid != '') {
 			$this->jid=$jid;
 			$this->LoadUser();

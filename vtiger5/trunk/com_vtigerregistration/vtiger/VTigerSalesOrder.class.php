@@ -12,8 +12,8 @@
  *
  */
 global $mainframe;
-require_once($mainframe->getCfg('absolute_path').'/mambots/system/vt_classes/VTigerConnection.class.php');
-class VTigerSalesOrder extends VTigerConnection {
+require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerForm.class.php');
+class VTigerSalesOrder extends VTigerForm {
         var $data;
 	var $soid;
 	var $id;
@@ -22,7 +22,7 @@ class VTigerSalesOrder extends VTigerConnection {
 
         function VtigerSalesOrder()
         {
-		$this->conn = new VtigerConnection();
+		VTigerConnection::VtigerConnection();
 		global $mainframe;
 		require_once($mainframe->getCfg('absolute_path').'/components/com_vtigerregistration/vtiger/VTigerContact.class.php');
 		$this->contact = new VtigerContact();

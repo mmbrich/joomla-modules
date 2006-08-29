@@ -20,6 +20,7 @@ class VTigerField extends VtigerConnection {
 	
 	function VtigerField()
 	{
+		VTigerConnection::VTigerConnection();
 	}
 	function listAllowedFields($module_name) 
 	{
