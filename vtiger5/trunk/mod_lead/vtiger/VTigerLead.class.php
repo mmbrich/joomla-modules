@@ -12,26 +12,28 @@
  * (c) 2005 Foss Labs <mmbrich@fosslabs.com>
  *
  */
+global $mosConfig_absolute_path;
+require_once($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConnection.class.php');
 
-class VTigerLead {
-	var $conn;
+class VTigerLead extends VTigerConnection {
 	var $data;
 
 	function VtigerLead()
 	{
-		$this->conn = new VtigerConnection("webforms");
+		VTigerConnection::VTigerConnection();
 	}
 	function addLead($lastname,$email,$phone,$company,$country,$description='')
 	{
-		$this->data = array('lastname' 	=> $lastname,
-				    'email' 	=> $email,
-				    'phone'	=> $phone,
-				    'company'	=> $company,
-				    'country'	=> $country,
-				    'description' => $description,
-				    'assigned_user_id' => '');
-		$this->conn->setData($this->data);
-		return $this->conn->execCommand('create_lead_from_webform');
+		$this->data = array(
+			'lastname' 	=> $lastname,
+			'email' 	=> $email,
+			'phone'	=> $phone,
+			'company'	=> $company,
+			'country'	=> $country,
+			'description' => $description,
+			'assigned_user_id' => '');
+		$this->setData($this->data);
+		return $this->execCommand('create_lead_from_webform');
 	}
 }
 ?>
