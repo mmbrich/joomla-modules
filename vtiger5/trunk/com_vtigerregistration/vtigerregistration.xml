@@ -74,4 +74,18 @@
     	</query>
       </queries>
     </install>
+    <uninstall>
+	<queries>
+		<query>DROP TABLE `#__vtiger_portal_configuration`;</query>
+	</queries>
+	<queries>
+		<query>DROP TABLE `#__vtiger_portal_contacts`;</query>
+	</queries>
+	<queries>
+		<query>DROP TABLE `#__vtiger_registration_fields`;</query>
+	</queries>
+	<queries>
+		<query>DELETE FROM `#__vtiger_portal_configuration` WHERE name LIKE 'registration_%';</query>
+	</queries>
+    </uninstall>
 </mosinstall>
