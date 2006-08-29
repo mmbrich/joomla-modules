@@ -823,6 +823,52 @@ function add_ticket_attachment($ticketid, $filename, $filetype, $filesize, $file
 
 }
 
+$server->register(
+        'create_lead_from_webform',
+        array(
+                'lastname'=>'xsd:string',
+                'email'=>'xsd:string',
+                'phone'=>'xsd:string',
+                'company'=>'xsd:string',
+                'country'=>'xsd:string',
+                'description'=>'xsd:string',
+                'assigned_user_id'=>'xsd:string'
+             ),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function create_lead_from_webform($lastname, $email, $phone, $company, $country, $description, $assigned_user_id) {
+        global $adb;
+        $adb->println("Create New Lead from Web Form - Starts");
+
+        if($assigned_user_id == '')
+        {
+                //if the user id is empty then assign it to the admin user
+                $assigned_user_id = $adb->query_result($adb->query("select id from vtiger_users where user_name='admin'"),0,'id');
+        }
+
+        require_once("modules/Leads/Lead.php");
+        $focus = new Lead();
+        $focus->column_fields['lastname'] = $lastname;
+        $focus->column_fields['email'] = $email;
+        $focus->column_fields['phone'] = $phone;
+        $focus->column_fields['company'] = $company;
+        $focus->column_fields['country'] = $country;
+        $focus->column_fields['description'] = $description;
+        $focus->column_fields['assigned_user_id'] = $assigned_user_id;
+
+        $focus->save("Leads");
+
+        $adb->println("Create New Lead from Web Form - Ends");
+
+        if($focus->id != '')
+                $msg = 'Thank you for your interest. Information has been successfully added as Lead in vtigerCRM.';
+        else
+                $msg = "Lead creation failed. Please try again";
+
+        return $msg;
+}
+
 /* Begin the HTTP listener service and exit. */ 
 $server->service($HTTP_RAW_POST_DATA); 
 
