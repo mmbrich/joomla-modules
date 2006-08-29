@@ -25,6 +25,7 @@ if (file_exists($mosConfig_absolute_path.'/components/com_vtigersalesorders/lang
 global $my;
 require_once($mosConfig_absolute_path.'/components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php');
 $SalesOrder = new VtigerSalesOrder();
+$Itemid = mosGetParam($_REQUEST, "Itemid", $SalesOrder->defaultItemid);
 
 if(!$my->id) {
 	if(!isset($_COOKIE["current_salesorder"]))
@@ -38,7 +39,7 @@ if(!$my->id) {
 			<table border='0' cellspacing='0' cellpadding='0' style='text-align:center' align='center'>
 				<tr>
 					<td colspan='3'>
-						<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$tmp[0]["salesorderid"]);?>'>
+						<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$tmp[0]["salesorderid"]);?>'>
 							<?php echo _CART_YOUHAVE ." ".$tmp[0]["num_products"] ." ". _CART_IN_CART;?>
 						</a>
 					</td>
@@ -72,7 +73,7 @@ if(!$my->id) {
 		?>
 			<tr>
 				<td colspan='3'>
-					<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&soid='.$order["salesorderid"]);?>'>
+					<a href='<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=view&Itemid='.$Itemid.'&soid='.$order["salesorderid"]);?>'>
 						<?php echo _CART_YOUHAVE." ".$order["num_products"]." "._CART_IN_CART;?>
 					</a>
 				</td>

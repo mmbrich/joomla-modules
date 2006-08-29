@@ -33,7 +33,7 @@ foreach($configs as $config) {
 
 // Check for correct ownership
 $soid = mosGetParam( $_REQUEST, 'soid', '0' );
-$Itemid = mosGetParam( $_REQUEST, 'Itemid', '0' );
+$Itemid = mosGetParam( $_REQUEST, 'Itemid', $vtigerForm->defaultItemid );
 
 $SalesOrder->id=$soid;
 if($soid == 0) {
@@ -75,7 +75,7 @@ switch($task) {
 			echo "You must log-in or create an account to view sales orders";
 		else {
 			$SalesOrder->soid=$soid;
-			HTML_vtigersalesorders::view($order[0]);
+			HTML_vtigersalesorders::view($order[0],$Itemid);
 			HTML_vtigersalesorders::shopping_footer($soid,$Itemid);
 		}
 	break;
@@ -138,7 +138,7 @@ switch($task) {
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
 		$cc_fields = create_fields(array('credit_card_name','credit_card_type','credit_card_num','cc_exp_date','cc_code'));
 		$ec_fields = create_fields(array('bank_account_holder','bank_account_num','bank_sorting_number','bank_name','bank_account_type','bank_iban'));
-		HTML_vtigersalesorders::view($order[0]);
+		HTML_vtigersalesorders::view($order[0],$Itemid);
 		HTML_vtigersalesorders::get_paymentinfo($cc_fields,$ec_fields,$Itemid);
 	break;
 	case 'makePayment':
@@ -212,7 +212,7 @@ switch($task) {
 			$soid = mosGetParam( $_REQUEST, 'soid', '0' );
 			$order = $SalesOrder->GetSalesOrderDetails($soid);
 			$SalesOrder->soid=$soid;
-			HTML_vtigersalesorders::view($order[0]);
+			HTML_vtigersalesorders::view($order[0],$Itemid);
 			HTML_vtigersalesorders::shipping_info($user_fields,$mailing_fields,$shipping_fields,$soid,$Itemid);
 		}
 	break;
@@ -227,7 +227,7 @@ switch($task) {
 
 		$SalesOrder->soid=$soid;
 		$order = $SalesOrder->GetSalesOrderDetails($soid);
-		HTML_vtigersalesorders::view($order[0]);
+		HTML_vtigersalesorders::view($order[0],$Itemid);
 		HTML_vtigersalesorders::update_addy($fields,$type,$Itemid);
 	break;
 	default:
