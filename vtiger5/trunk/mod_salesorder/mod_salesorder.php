@@ -52,7 +52,7 @@ if(!$my->id) {
 			<?
 		} else {
 			echo "<p style='text-align:center;font-weight:bold'>"._CART_EMPTY."</p>";
-			setcookie("current_salesorder", "", time()-3600);
+			setcookie("current_salesorder", "", time()-3600, '/');
 		}
 	}
 } else {

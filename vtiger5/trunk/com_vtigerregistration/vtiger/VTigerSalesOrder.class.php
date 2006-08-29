@@ -125,7 +125,7 @@ class VTigerSalesOrder extends VTigerConnection {
                 $this->setData($this->data);
                 $result = $this->execCommand('associate_to_user',$this->GetSecureMode());
 		if($result != "failed") {
-			setcookie("current_salesorder", "", time()-3600);
+			setcookie("current_salesorder", "", time()-3600, '/');
 			mosRedirect('index.php');
 		}
                 return $result;
@@ -139,7 +139,7 @@ class VTigerSalesOrder extends VTigerConnection {
                 $this->setData($this->data);
                 $result = $this->execCommand('remove_product',$this->GetSecureMode());
 		if($result == "deleted") {
-			setcookie("current_salesorder", "", time()-3600);
+			setcookie("current_salesorder", "", time()-3600, '/');
                 	return 1;
 		} else 
                 	return $result;
