@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>Vtiger Products</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2005 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Component to display Vtiger products in Joomla!</description>
+  <menu>Products</menu>
+  <files>
+    <filename>vtigerproducts.php</filename>
+    <filename>vtigerproducts.html.php</filename>
+
+    <filename>languages/vtigerproducts_english.php</filename>
+ </files>
+ <administration>
+    <menu>Vtiger Products</menu>
+    <submenu>
+        <menu act="settings">Settings</menu>
+        <menu act="about">About</menu>
+    </submenu>
+    <files>
+        <filename>admin.vtigerproducts.php</filename>
+        <filename>admin.vtigerproducts.html.php</filename>
+        <filename>toolbar.vtigerproducts.php</filename>
+        <filename>toolbar.vtigerproducts.html.php</filename>
+    </files>
+  </administration>
+<install>
+ <queries>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_addcart', 'on', 'checkbox','Allow "Add To Cart" button for each product in the list.');
+    </query>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_images', 'on', 'checkbox','Allow product images in list.');
+    </query>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_desc_len', '150', 'text','Length of product description in list.');
+    </query>
+    <query>
+	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'product_show_pagination', 'on', 'checkbox','Show pagination in product view.');
+    </query>
+ </queries>
+</install>
+    <uninstall>
+        <queries>
+                <query>DELETE FROM `#__vtiger_portal_configuration` WHERE name LIKE 'product_%';</query>
+        </queries>
+    </uninstall>
+</mosinstall>

@@ -1,0 +1,13 @@
+--- vtigerservice.php.orig	2006-08-28 03:33:53.000000000 -0600
++++ vtigerservice.php	2006-08-28 03:33:48.000000000 -0600
+@@ -35,6 +35,10 @@
+ 	{
+ 		include("soap/thunderbirdplugin.php");
+ 	}
++	elseif($_REQUEST['service'] == "joomla")
++	{
++		include_once("soap/joomla.php");
++	}
+ 	else
+ 	{
+ 		echo "No Service Configured for $_REQUEST[service]";

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>helpdesk</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2005 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Comonent to use the vtiger Helpdesk module in Joomla1</description>
+  <menu>DS-Syndicate</menu>
+  <files>
+    <filename module="com_helpdesk">helpdesk.php</filename>
+    <filename module="com_helpdesk">helpdesk.html.php</filename>
+    <filename module="com_helpdesk">helpdesk.detailview.php</filename>
+    <filename module="com_helpdesk">helpdesk.kbase.php</filename>
+    <filename module="com_helpdesk">helpdesk.newticket.php</filename>
+
+    <filename module="com_helpdesk">images/faq.gif</filename>
+    <filename module="com_helpdesk">languages/helpdesk_english.php</filename>
+  </files>
+  <administration>
+    <menu>Vtiger Help Desk</menu>
+    <submenu>
+	<menu act="settings">Settings</menu>
+	<menu act="about">About</menu>
+    </submenu>
+    <files>
+	<filename>admin.helpdesk.php</filename>
+	<filename>admin.helpdesk.html.php</filename>
+	<filename>toolbar.helpdesk.php</filename>
+	<filename>toolbar.helpdesk.html.php</filename>
+    </files>
+  </administration>
+<install>
+ <queries>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_kbase_noauth', 'on', 'checkbox','Allow visitors to view the Knowledge Base without authentication.');
+    </query>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_noauth', 'on', 'checkbox','Allow visitors to view the Help Desk without authentication.');
+    </query>
+    <query>
+        INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'helpdesk_livechat', 'on', 'checkbox','Allow visitors to chat live with CRM Help Desk Users.');
+    </query>
+ </queries>
+</install>
+    <uninstall>
+        <queries>
+                <query>DELETE FROM `#__vtiger_portal_configuration` WHERE name LIKE 'helpdesk_%';</query>
+        </queries>
+    </uninstall>
+</mosinstall>

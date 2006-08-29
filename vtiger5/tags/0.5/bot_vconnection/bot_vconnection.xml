@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall version="1.0.0" type="mambot" group="system">
+  <name>Base Vtiger Connection Module</name>
+  <author>Vullioud Pierre-Andre</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2006 paimages</copyright>
+  <license>http://www.vtiger.com VPL</license>
+  <authorEmail>vtiger@paimages.ch</authorEmail>
+  <authorUrl>www.paimages.ch</authorUrl>
+  <version>1.1</version>
+  <description>A basic set of classes to create connections to vtiger</description>
+  <files>
+    <filename mambot="bot_vconnection">bot_vconnection.php</filename>
+    <filename mambot="bot_vconnection">vt_classes/VTigerConnection.class.php</filename>
+    <filename mambot="bot_vconnection">vt_classes/nusoap/lib/nusoap.php</filename>
+  </files>
+<params>
+	<param name="vtiger_soapserver" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
+	<param name="vtiger_proxyhost" type="text" default="http://localhost:8080" label="Proxy Server" description="The path to your LAN Proxy Server" />
+	<param name="vtiger_proxyuser" type="text" default="proxyuser" label="Proxy User Name" description="The username to connect to your proxy server" />
+	<param name="vtiger_proxypass" type="text" default="proxypass" label="Proxy Password" description="The password to connect to your proxy server" />
+  </params>
+</mosinstall>

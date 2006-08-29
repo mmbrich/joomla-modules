@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall version="1.0.0" type="mambot" group="content">
+	<name>Vtiger Fields</name>
+	<author>FOSS Labs</author>
+	<creationDate>August 2006</creationDate>
+	<copyright>(C) 2006 FOSS Labs. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>mmbrich@fosslabs.com</authorEmail>
+	<authorUrl>www.fosslabs.com</authorUrl>
+	<version>1.0.0</version>
+	<description>Replaces {vfield} tag in content with specified vtiger fields</description>
+	<files>
+		<filename mambot="vfield">vfield.php</filename>
+	</files>
+</mosinstall>
