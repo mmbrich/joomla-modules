@@ -97,5 +97,17 @@ class VTigerHDeskUser extends VtigerContact {
 		$this->setData(array(''=>''));
         	return $this->execCommand('get_KBase_details');
 	}
+	function SaveFaqComment($articleid,$comment)
+	{
+		global $my;
+		if($my->id)
+			$tcomment = "<div style=\"border-bottom:1px solid #c0c0c0\"><strong>Comment From:</strong> ".$my->name."</div>".$comment;
+		else
+			$tcomment = "<div style=\"border-bottom:1px solid #c0c0c0\"><strong>Comment From:</strong> ANONYMOUS</div>".$comment;
+
+		$this->setData(array('articleid'=>$articleid, 'comment'=>$tcomment));
+        	$ret = $this->execCommand('save_faq_comment');
+		return;
+	}
 }
 ?>

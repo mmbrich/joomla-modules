@@ -44,7 +44,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'type' => $type
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('update_addresses');
+                $result = $this->execCommand('update_addresses',$this->GetSecureMode());
                 return $result;
 	}
 	function GetCurrentSalesOrders($id='')
@@ -64,15 +64,25 @@ class VTigerSalesOrder extends VTigerConnection {
 			);
 		}
                 $this->setData($this->data);
-                $result = $this->execCommand('get_current_salesorders');
+                $result = $this->execCommand('get_current_salesorders',$this->GetSecureMode());
                 return $result;
+	}
+	function SetSecureMode($mode='0')
+	{
+		session_start();
+		$_SESSION["j_secure_mode"] = $mode;
+	}
+	function GetSecureMode()
+	{
+		session_start();
+		return $_SESSION["j_secure_mode"];
 	}
 	function GetSalesOrderDetails($soid)
 	{
 		$this->soid=$soid;
 	       	$this->data = array('soid' => $this->soid);
                 $this->setData($this->data);
-                $result = $this->execCommand('get_salesorder');
+                $result = $this->execCommand('get_salesorder',$this->GetSecureMode());
                 return $result;
 	}
 	function CreateNewSalesOrder($contactid)
@@ -80,7 +90,7 @@ class VTigerSalesOrder extends VTigerConnection {
 		$this->contact->id = $contactid;
 	       	$this->data = array('contactid' => $this->contact->id);
                 $this->setData($this->data);
-                $result = $this->execCommand('new_salesorder');
+                $result = $this->execCommand('new_salesorder',$this->GetSecureMode());
 		$this->soid = $result;
                 return $result;
 	}
@@ -97,7 +107,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'qty' => $qty
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('add_product');
+                $result = $this->execCommand('add_product',$this->GetSecureMode());
                 return $result;
 	}
 	function AssociateToUser()
@@ -113,7 +123,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'soid' => $this->soid
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('associate_to_user');
+                $result = $this->execCommand('associate_to_user',$this->GetSecureMode());
 		if($result != "failed") {
 			setcookie("current_salesorder", "", time()-3600);
 			mosRedirect('index.php');
@@ -127,7 +137,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'productid' => $productid
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('remove_product');
+                $result = $this->execCommand('remove_product',$this->GetSecureMode());
 		if($result == "deleted") {
 			setcookie("current_salesorder", "", time()-3600);
                 	return 1;
@@ -142,18 +152,19 @@ class VTigerSalesOrder extends VTigerConnection {
 			'quantity' => $quantity
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('update_product_quantity');
+                $result = $this->execCommand('update_product_quantity',$this->GetSecureMode());
                 return $result;
 	}
 	function ConvertToInvoice()
 	{
 	       	$this->data = array('soid' => $this->soid);
                 $this->setData($this->data);
-                $result = $this->execCommand('convert_to_invoice');
+                $result = $this->execCommand('convert_to_invoice',$this->GetSecureMode());
                 return $result;
 	}
 	function MakePayment($invoiceid,$payment_type)
 	{
+		$this->GoSecure();
 	       	$this->data = array(
 			'soid' => $this->soid,
 			'invoiceid' => $invoiceid,
@@ -161,7 +172,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'paytype' => $payment_type
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('make_payment');
+                $result = $this->execCommand('make_payment',$this->GetSecureMode());
                 return $result;
 	}
 	function IsOwner()
@@ -174,7 +185,7 @@ class VTigerSalesOrder extends VTigerConnection {
 			'contactid' => $this->contact->id
 		);
                 $this->setData($this->data);
-                $result = $this->execCommand('check_so_owner');
+                $result = $this->execCommand('check_so_owner',$this->GetSecureMode());
 		if($result == true)
 			return true;
 		else
