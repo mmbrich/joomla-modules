@@ -55,25 +55,25 @@ defined('_VALID_MOS') or die('Restricted access');
 	<input type=hidden name="option" value="com_helpdesk">
 	<input type=hidden name=username value="'.$_REQUEST['username'].'">
 	<input type=hidden name=fun value="save">
-	<table border="0" cellspacing="2" cellpadding="2">
+	<table border="0" cellspacing="2" cellpadding="2" width="100%">
 
 	<td align="right"><?php echo _TICKET_TITLE;?>: </td>
-	<td><input name="title" maxlength="255" type="text" value="" style="border:1px solid gray"></td>
+	<td width="100%"><input name="title" maxlength="255" type="text" value="" style="width:100%" class="inputbox" ></td>
 </tr>
 <tr>
 	<td align="right"><?php echo _TICKET_PRIORITY;?>: </td>
-        <td><select name="priority">
+        <td><select name="priority" class="inputbox">
 <?
         for($i=0;$i<count($ticketpriorities);$i++)
         {
-                echo '<OPTION value="'.$ticketpriorities[$i].'">'.$ticketpriorities[$i].'</OPTION>';
+                echo '<OPTION value="'.$ticketpriorities[$i].'" >'.$ticketpriorities[$i].'</OPTION>';
         }
 ?>
         </select></td>
 </tr>
 <tr>
 	<td align="right"><?php echo _TICKET_SEVERITY;?>: </td>
-        <td><select name="severity">
+        <td><select name="severity" class="inputbox">
 <?
         for($i=0;$i<count($ticketseverities);$i++)
         {
@@ -84,11 +84,11 @@ defined('_VALID_MOS') or die('Restricted access');
 </tr>
 
         <tr><td align="right"><?php echo _TICKET_CATEGORY;?>: </td>
-        <td><select name="category">
+        <td><select name="category" class="inputbox">
 <?
         for($i=0;$i<count($ticketcategories);$i++)
         {
-                echo '<OPTION value="'.$ticketcategories[$i].'">'.$ticketcategories[$i].'</OPTION>';
+                echo '<OPTION value="'.$ticketcategories[$i].'" >'.$ticketcategories[$i].'</OPTION>';
         }
 ?>
         </select></td>
@@ -96,7 +96,7 @@ defined('_VALID_MOS') or die('Restricted access');
 
 <tr>
 	<td align="right" valign="top"><?php echo _TICKET_DESCRIPTION;?>: </td>
-	<td><textarea name="description" rows="10" cols="60" style="border:1px solid gray"></textarea></td>
+	<td><textarea name="description" style="width:100%;height:120px" class="inputbox"></textarea></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
