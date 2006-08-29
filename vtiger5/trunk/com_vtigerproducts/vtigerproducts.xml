@@ -43,4 +43,9 @@
     </query>
  </queries>
 </install>
+    <uninstall>
+        <queries>
+                <query>DELETE FROM `#__vtiger_portal_configuration` WHERE name LIKE 'product_%';</query>
+        </queries>
+    </uninstall>
 </mosinstall>
