@@ -128,16 +128,19 @@ if($articleid != "" && isset($articleid)) {
         }
         ?> 
 		</td></tr></table> 
+	</td></tr></table> 
 	<?
 return;
 }
 
-echo "<div style='float:left'>".$pageNav->writePagesCounter()."</div>";
-echo "<div style='float:right'>"._KBASE_NUM_ARTICLES.": ".$pageNav->getLimitBox($link)."</div>";
+echo "<div style='width:100%'>";
+  echo "<div style='float:left'>".$pageNav->writePagesCounter()."</div>";
+  echo "<div style='float:right'>"._KBASE_NUM_ARTICLES.": ".$pageNav->getLimitBox($link)."</div>";
+echo "</div>";
 echo "<br clear='both'><br>";
 ?>
 
-<table width="100%" height="100%" border=0 cellspacing=0 cellpadding=0>
+<table width="100%" border=0 cellspacing=0 cellpadding=0>
 <tr>
 
 <?php if($_COOKIE["kbase_menu"] == "open" || !isset($_COOKIE["kbase_menu"])) {?>
@@ -264,6 +267,8 @@ if(!$record_exist)
 ?>
 </table>
 </td>
+</tr>
+</table>
 </tr>
 </table>
 <?
