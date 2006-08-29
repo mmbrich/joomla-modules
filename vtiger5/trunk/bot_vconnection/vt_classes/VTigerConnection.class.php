@@ -53,8 +53,15 @@ class VTigerConnection
 		else
 			return false;
 	}
-	function execCommand($command)
+	function execCommand($command,$secure='0')
 	{
+		session_start();
+		if($secure != '0')
+			$this->GoSecure();
+
+		if(($_SESSION["j_secure_mode"] != '0' && isset($_SESSION["j_secure_mode"])))
+			$this->GoSecure();
+
 		if(!$this->client)
 			$this->VtigerConnection();
 
@@ -63,6 +70,21 @@ class VTigerConnection
 			return $this->client->getError();
 		else
 			return $this->result;
+	}
+	function GoSecure()
+	{
+		global $database;
+
+		// load bot_vconnection mambot parameters
+  		$query = "SELECT id FROM #__mambots WHERE element = 'bot_vconnection' AND folder = 'system'";
+  		$database->setQuery( $query );
+  		$id = $database->loadResult();
+  		$mambot = new mosMambot( $database );
+  		$mambot->load( $id );
+  		$mambotParams =& new mosParameters( $mambot->params );
+  		$vtiger_soapserver = $mambotParams->get( 'vtiger_soapserver', 'basic' );
+
+		$this->client = new soapclient2(preg_replace('/http/i','https',$vtiger_soapserver)."/vtigerservice.php?service=joomla");
 	}
 	function GetCRMServer()
 	{
