@@ -15,9 +15,17 @@
     <filename mambot="bot_vconnection">vt_classes/nusoap/lib/nusoap.php</filename>
   </files>
 <params>
-	<param name="vtiger_soapserver" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
-	<param name="vtiger_proxyhost" type="text" default="http://localhost:8080" label="Proxy Server" description="The path to your LAN Proxy Server" />
-	<param name="vtiger_proxyuser" type="text" default="proxyuser" label="Proxy User Name" description="The username to connect to your proxy server" />
-	<param name="vtiger_proxypass" type="text" default="proxypass" label="Proxy Password" description="The password to connect to your proxy server" />
+	<param name="vtiger_server" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
+	<param name="vtiger_secure_server" type="text" default="https://localhost" label="Secure SOAP Server" description="The path to your Vtiger SOAP Server with SSL.  This will be used for transaction processing." />
+
+	<param name="@spacer" type="spacer" default="" label="" description="" />
+	<param name="vtiger_proxyhost" type="text" default="" label="Proxy Server" description="The path to your LAN Proxy Server" />
+	<param name="vtiger_proxyport" type="text" default="" label="Proxy Port" description="The port for your LAN Proxy Server" />
+	<param name="vtiger_proxyuser" type="text" default="" label="Proxy User Name" description="The proxy server User Name" />
+	<param name="vtiger_proxypass" type="text" default="" label="Proxy Password" description="The proxy server Password" />
+	<param name="@spacer" type="spacer" default="" label="" description="" />
+
+	<param name="vtiger_default_itemid" type="text" default="1" label="Default Itemid" description="Since the vtiger integration will frequently lead to pages without links or components without links, this Itemid will be used when one cannot be found.  Recommended setting: Itemid of Home page." />
+
   </params>
 </mosinstall>

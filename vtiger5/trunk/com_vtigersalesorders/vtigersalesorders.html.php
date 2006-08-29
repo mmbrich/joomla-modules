@@ -3,10 +3,9 @@
 defined('_VALID_MOS') or die('Restricted access');
 
 class HTML_vtigersalesorders {
-	function view($order)
+	function view($order,$Itemid)
 	{
 		global $my;
-		$Itemid = mosGetParam($_REQUEST, 'Itemid', '');
 		if(!is_array($order["products"])) {
 			echo "<h3>Cart is empty</h3>";
 			return;
@@ -223,7 +222,7 @@ class HTML_vtigersalesorders {
 		<td width="100%" colspan="7">If you have a coupon code, please enter it below:<br>
     		<form action="index.php" method="POST">
 			<input name="coupon_code" maxlength="30" class="inputbox" type="text" width="10">
-			<input name="Itemid" value="36" type="hidden">
+			<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
 			<input name="do_coupon" value="yes" type="hidden">
 			<input name="option" value="com_virtuemart" type="hidden">
 			<input name="page" value="shop.cart" type="hidden">
@@ -266,7 +265,7 @@ class HTML_vtigersalesorders {
  	<br style="clear: both;"><br>
  	<?
 	}
-	function list_all($orders)
+	function list_all($orders,$Itemid)
 	{
 		echo "Hello";
 	}
