@@ -3,7 +3,7 @@
 defined('_VALID_MOS') or die('Restricted access');
 
 class HTML_product {
-	function listProducts( $option, $details, $category, $config, $limit, $limit_start, $pageNav ) {
+	function listProducts( $option, $details, $category, $config, $limit, $limit_start, $pageNav, $vProduct ) {
 		$Itemid = mosGetParam( $_REQUEST, 'Itemid' , '');
 
 		$link = "index.php?option=com_vtigerproducts&category=".$category;
@@ -23,7 +23,7 @@ class HTML_product {
 				<?php if($config["product_images"] == "on") { ?>
 				    <td width="133px" height="78px" valign="top" align="center">
 					<a href="<?php echo sefRelToAbs($product["website"]."&Itemid=".$Itemid."&productid=".$product["productid"]);?>">
-						<img alt="<?php echo $product["productname"];?>" src="<?php echo $product["image"];?>" width="129px" height="78px" border='0' />
+						<img alt="<?php echo $product["productname"];?>" src="<?php echo $vProduct->GetImagePath($product["image"]);?>" width="129px" height="78px" border='0' />
 					</a>
 				    </td>
 				<? } ?>

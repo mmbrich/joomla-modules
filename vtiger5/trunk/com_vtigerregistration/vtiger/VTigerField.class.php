@@ -234,8 +234,9 @@ class VTigerField extends VtigerConnection {
 		$pics = explode("|",$field["value"]);
 		foreach($pics as $path) {
 			//echo $path."<br>";
-			if($path != "")
-				$pic[] = $this->GetCRMServer()."/".$path;
+			if($path != "") {
+				$pic[] = $this->GetImagePath($path);
+			}
 		}
 		return $pic;
 	}
