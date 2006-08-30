@@ -30,8 +30,8 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
      else
      {    
         ?>
-        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
         <form name="vtigerlead" method="post" action="<?$PHP_SELF;?>">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
         <td>
 			<label for="mod_lead_lastname">
@@ -78,8 +78,8 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 			<br />
         </td>
         </tr>
-        </form>
         </table>
+        </form>
         <?
     }
     }
