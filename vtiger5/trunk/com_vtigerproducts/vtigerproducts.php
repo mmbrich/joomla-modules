@@ -17,7 +17,9 @@ if (file_exists($mosConfig_absolute_path.'/components/com_vtigerproducts/languag
 } else {
     include($mosConfig_absolute_path.'/components/com_vtigerproducts/languages/vtigerproducts_english.php');
 }
+
 require_once( $mainframe->getPath( 'front_html' ) );
+$Itemid = mosGetParam($_REQUEST, "Itemid", $vProduct->defaultItemid);
 
 switch($task) {
 	case 'List':
@@ -44,7 +46,7 @@ switch($task) {
 		$limit_start = mosGetParam( $_REQUEST, 'limitstart' , '0');
         	require_once( $mosConfig_absolute_path.'/includes/pageNavigation.php' );
         	$pageNav = new mosPageNav( count($list), $limit_start, $limit );
-		HTML_product::listProducts( $option, $list, $category, $conf, $limit, $limit_start, $pageNav, $vProduct );
+		HTML_product::listProducts( $option, $list, $category, $conf, $limit, $limit_start, $pageNav, $vProduct, $Itemid );
 	break;
 }
 ?>
