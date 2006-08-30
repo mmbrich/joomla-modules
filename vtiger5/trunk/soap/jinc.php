@@ -149,7 +149,6 @@ function get_field_values($focus,$columnname,$field='') {
 			." ON vtiger_seattachmentsrel.attachmentsid=vtiger_attachments.attachmentsid "
 			." WHERE vtiger_seattachmentsrel.crmid='".$focus->id."' AND type LIKE '%image%'";
 
-
                 $rs = $adb->query($q);
                 $adb->println($q);
                 $ret = '';
