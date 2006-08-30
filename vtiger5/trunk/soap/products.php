@@ -61,7 +61,7 @@ function get_product_list($category='') {
 			$path = $adb->query_result($rs2,'0','path');
 			$name = $adb->query_result($rs2,'0','name');
 			$id = $adb->query_result($rs2,'0','attachmentsid');
-			$product[$i]["image"] = $site_URL."/".$path.$id."_".$name;
+			$product[$i]["image"] = $path.$id."_".$name;
         		$adb->println("GOT IMAGE: ".$product[$i]["image"]);
 		} else 
 			$product[$i]["image"] = "";

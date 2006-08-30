@@ -34,6 +34,31 @@ function check_connection($alive) {
 	return 'hello';
 }
 
+$server->register(
+	'download_image',
+	array('image'=>'xsd:string'),
+	array('return'=>'xsd:string'),
+	$NAMESPACE);
+function download_image($image) {
+	global $adb,$root_directory;
+
+	$filename = $root_directory.$image;
+
+        // Try to open our storage path
+        if (!$handle = fopen($filename, 'r')) {
+        	$adb->println("Cannot open file");
+		return 'failed';
+        } else {
+       	// send the file
+		$content='';
+		while(!feof($handle)) {
+			$content .= fgets($handle);
+		}
+		fclose($handle);
+		return base64_encode($content);
+	}
+}
+
 include_once("soap/contact.php");
 include_once("soap/fields.php");
 include_once("soap/products.php");
