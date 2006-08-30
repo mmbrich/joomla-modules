@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>Vtiger Registration</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>July 2006</creationDate>
+  <copyright>(C) 2006 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Component to register as a contact w/ portal privs</description>
+  <menu>Registration</menu>
+  <files>
+    <filename>vtigerregistration.php</filename>
+    <filename>vtigerregistration.html.php</filename>
+    <filename>vtiger/VTigerField.class.php</filename>
+    <filename>vtiger/VTigerForm.class.php</filename>
+    <filename>vtiger/VTigerContact.class.php</filename>
+    <filename>vtiger/VTigerSalesOrder.class.php</filename>
+    <filename>vtiger/VTigerInvoice.class.php</filename>
+    <filename>vtiger/VTigerPotential.class.php</filename>
+    <filename>vtiger/VTigerProduct.class.php</filename>
+    <filename>vtiger/VTigerHDeskUser.class.php</filename>
+    <filename>vtiger/prototype.js</filename>
+    <filename>languages/vtigerregistration_english.php</filename>
+  </files>
+  <administration>
+    <menu>Vtiger Registration</menu>
+    <submenu>
+	<menu act="settings">Settings</menu>
+	<menu act="about">About</menu>
+    </submenu>
+    <files>
+	<filename>admin.vtigerregistration.php</filename>
+	<filename>admin.vtigerregistration.html.php</filename>
+	<filename>toolbar.vtigerregistration.php</filename>
+	<filename>toolbar.vtigerregistration.html.php</filename>
+    </files>
+</administration>
+    <install>
+      <queries>
+	<query>
+		CREATE TABLE IF NOT EXISTS `#__vtiger_portal_configuration` (
+                                `id` int(11) NOT NULL auto_increment,
+                                `name` varchar(50) NOT NULL default '',
+                                `value` text,
+                                `type` varchar(50) NOT NULL default 'text',
+                                `descr` text,
+                                PRIMARY KEY  (`id`),
+                                UNIQUE KEY `name` (`name`)
+                                ) TYPE=MyISAM;
+	</query>
+	<query>
+		CREATE TABLE IF NOT EXISTS `#__vtiger_portal_contacts` (
+                                `id` int(11) NOT NULL auto_increment,
+                                `contactid` int(11) default NULL,
+                                `entityid` int(11) default NULL,
+                                PRIMARY KEY  (`id`)
+                                ) TYPE=MyISAM AUTO_INCREMENT=3 ;
+	</query>
+	<query>
+		CREATE TABLE IF NOT EXISTS `#__vtiger_registration_fields` (
+                                    `id` int(11) NOT NULL auto_increment,
+                                    `field` varchar(255) NOT NULL default '',
+                                    `name` varchar(255) default NULL,
+                                    `type` varchar(255) NOT NULL default 'text',
+                                    `show` tinyint(1) NOT NULL default '0',
+                                    `size` varchar(10) default '10',
+                                    `required` int(1) NOT NULL default '0',
+                                    `order` int(3) NOT NULL default '0',
+                                    PRIMARY KEY  (`id`)
+                                    ) TYPE=MyISAM AUTO_INCREMENT=44 ;
+	</query>
+    	<query>
+        	INSERT INTO `#__vtiger_portal_configuration` VALUES ('', 'registration_create_account', 'on', 'checkbox','When visitors register an account will automatically be created from their account (DO NOT USE WITH ACCOUNT NAME FIELD)');
+    	</query>
+      </queries>
+    </install>
+    <uninstall>
+	<queries>
+		<query>DROP TABLE `#__vtiger_portal_configuration`;</query>
+	</queries>
+	<queries>
+		<query>DROP TABLE `#__vtiger_registration_fields`;</query>
+	</queries>
+	<queries>
+		<query>DELETE FROM `#__vtiger_portal_configuration` WHERE name LIKE 'registration_%';</query>
+	</queries>
+    </uninstall>
+</mosinstall>

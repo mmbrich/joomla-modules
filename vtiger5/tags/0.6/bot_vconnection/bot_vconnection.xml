@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall version="1.0.0" type="mambot" group="system">
+  <name>Base Vtiger Connection Module</name>
+  <author>Vullioud Pierre-Andre</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2006 paimages</copyright>
+  <license>http://www.vtiger.com VPL</license>
+  <authorEmail>vtiger@paimages.ch</authorEmail>
+  <authorUrl>www.paimages.ch</authorUrl>
+  <version>1.1</version>
+  <description>A basic set of classes to create connections to vtiger</description>
+  <files>
+    <filename mambot="bot_vconnection">bot_vconnection.php</filename>
+    <filename mambot="bot_vconnection">vt_classes/VTigerConnection.class.php</filename>
+    <filename mambot="bot_vconnection">vt_classes/nusoap/lib/nusoap.php</filename>
+  </files>
+<params>
+	<param name="vtiger_server" type="text" default="http://localhost" label="SOAP Server" description="The path to your Vtiger SOAP Server" />
+	<param name="vtiger_secure_server" type="text" default="https://localhost" label="Secure SOAP Server" description="The path to your Vtiger SOAP Server with SSL.  This will be used for transaction processing." />
+
+	<param name="@spacer" type="spacer" default="" label="" description="" />
+	<param name="vtiger_proxyhost" type="text" default="" label="Proxy Server" description="The path to your LAN Proxy Server" />
+	<param name="vtiger_proxyport" type="text" default="" label="Proxy Port" description="The port for your LAN Proxy Server" />
+	<param name="vtiger_proxyuser" type="text" default="" label="Proxy User Name" description="The proxy server User Name" />
+	<param name="vtiger_proxypass" type="text" default="" label="Proxy Password" description="The proxy server Password" />
+	<param name="@spacer" type="spacer" default="" label="" description="" />
+
+	<param name="vtiger_default_itemid" type="text" default="1" label="Default Itemid" description="Since the vtiger integration will frequently lead to pages without links or components without links, this Itemid will be used when one cannot be found.  Recommended setting: Itemid of Home page." />
+
+  </params>
+</mosinstall>
