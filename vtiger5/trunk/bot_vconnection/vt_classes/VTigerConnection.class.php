@@ -80,11 +80,11 @@ class VTigerConnection
 		// file is already wrote
 		if(is_file($mosConfig_absolute_path."/".$this->imagestore."/".$image)) {
 			// we should do an md5 check to see if we need to re-write
-			return $mosConfig_live_site."/".$this->imagestore."/".$image;
+			return $mosConfig_live_site.'/'.$this->imagestore.$image;
 		} else {
 			// We need to write the file.
 			$this->data = array('imagepath'=>$image);
-			$directory = dirname($mosConfig_absolute_path.'/'.$this->imagestore.'/'.$image);
+			$directory = dirname($mosConfig_absolute_path.'/'.$this->imagestore.$image);
 			$filename = basename($image);
 
 			if(!is_dir($directory))
