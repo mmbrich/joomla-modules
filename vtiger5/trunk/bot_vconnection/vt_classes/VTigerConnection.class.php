@@ -29,6 +29,8 @@ class VTigerConnection
 
 	var $sessionid;
 
+	var $imagestore;
+
 	function VTigerConnection()
 	{
 		global $database;
@@ -61,6 +63,32 @@ class VTigerConnection
 	}
 	function GetCRMServer()
 	{
+		return $this->server;
+	}
+	function GetImagePath($image)
+	{
+		global $database,$mosConfig_live_server,$mosConfig_absolute_path;
+
+		// load vfield mambot info
+		if(!isset($this->imagestore) || $this->imagestore == "") {
+  			$query = "SELECT id FROM #__mambots WHERE element = 'vfield' AND folder = 'content'";
+  			$database->setQuery( $query );
+  			$id = $database->loadResult();
+  			$mambot = new mosMambot( $database );
+  			$mambot->load( $id );
+  			$mambotParams =& new mosParameters( $mambot->params );
+
+  			$this->imagestore = $mambotParams->get( 'vtiger_picture_store', 'basic' );
+		}
+
+		// file is already wrote
+		if(is_file($mosConfig_absolute_path."/".$this->imagestore."/".$image)) {
+			// we should do an md5 check to see if we need to re-write
+			return $mosConfig_live_server."/".$this->imagestore."/".$image;
+		} else {
+		// We need to write the file.
+		}
+
 		return $this->server;
 	}
 	function CheckConnection()
