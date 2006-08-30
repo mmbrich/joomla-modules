@@ -61,13 +61,9 @@ class VTigerConnection
 	{
 		$this->client = new soapclient2($this->secure_server."/vtigerservice.php?service=joomla");
 	}
-	function GetCRMServer()
-	{
-		return $this->server;
-	}
 	function GetImagePath($image)
 	{
-		global $database,$mosConfig_live_server,$mosConfig_absolute_path;
+		global $database,$mosConfig_live_site,$mosConfig_absolute_path;
 
 		// load vfield mambot info
 		if(!isset($this->imagestore) || $this->imagestore == "") {
@@ -84,12 +80,30 @@ class VTigerConnection
 		// file is already wrote
 		if(is_file($mosConfig_absolute_path."/".$this->imagestore."/".$image)) {
 			// we should do an md5 check to see if we need to re-write
-			return $mosConfig_live_server."/".$this->imagestore."/".$image;
+			return $mosConfig_live_site."/".$this->imagestore."/".$image;
 		} else {
-		// We need to write the file.
-		}
+			// We need to write the file.
+			$this->data = array('imagepath'=>$image);
+			$directory = dirname($mosConfig_absolute_path.'/'.$this->imagestore.'/'.$image);
+			$filename = basename($image);
 
-		return $this->server;
+			if(!is_dir($directory))
+				mkdir($directory, 0700, true);
+
+			if (!$handle = fopen($directory.'/'.$filename, 'a')) {
+         			return "Cannot open file ($filename)";
+   			} else {
+				$this->data = array('image'=>$image);
+				$file_data = $this->execCommand('download_image');
+				if (fwrite($handle, base64_decode($file_data)) === FALSE) {
+					fclose($handle);
+					return "Cannot write to file";
+				} else {
+					fclose($handle);
+					return $mosConfig_live_site.'/'.$this->imagestore.$image;
+				}
+			}
+		}
 	}
 	function CheckConnection()
 	{

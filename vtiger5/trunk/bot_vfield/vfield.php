@@ -306,7 +306,7 @@ function vfield_replacer( &$matches ) {
 			else if($field["viewtype"] == "data") {
 				if($field["columnname"] == "imagename" && $field["picnum"] != "all") {
 					$values = explode("|",$field["value"]);
-					return $vForm->GetCRMServer()."/".$values[($field["picnum"]-1)];
+					return $vForm->GetImagePath($values[($field["picnum"]-1)]);
 				}
                        		return $field["value"];
 			} else 

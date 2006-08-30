@@ -22,6 +22,7 @@ require_once( $mainframe->getPath( 'front_html' ) );
 switch($task) {
 	case 'List':
 	default:
+		global $mosConfig_absolute_path;
 		$q = "SELECT name,value FROM #__vtiger_portal_configuration "
 			." WHERE name LIKE 'product_%'";
 		$database->setQuery($q);
@@ -41,9 +42,9 @@ switch($task) {
 			
 
 		$limit_start = mosGetParam( $_REQUEST, 'limitstart' , '0');
-        	require_once( $GLOBALS['mosConfig_absolute_path'] . '/includes/pageNavigation.php' );
+        	require_once( $mosConfig_absolute_path.'/includes/pageNavigation.php' );
         	$pageNav = new mosPageNav( count($list), $limit_start, $limit );
-		HTML_product::listProducts( $option, $list, $category, $conf, $limit, $limit_start, $pageNav );
+		HTML_product::listProducts( $option, $list, $category, $conf, $limit, $limit_start, $pageNav, $vProduct );
 	break;
 }
 ?>
