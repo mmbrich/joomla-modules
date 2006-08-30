@@ -78,8 +78,8 @@ if (file_exists($mosConfig_absolute_path.'/mambots/system/vt_classes/VTigerConne
 			<br />
         </td>
         </tr>
-        </table>
         </form>
+        </table>
         <?
     }
     }
