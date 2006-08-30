@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<mosinstall version="1.0.0" type="mambot" group="content">
+	<name>Vtiger Fields</name>
+	<author>FOSS Labs</author>
+	<creationDate>August 2006</creationDate>
+	<copyright>(C) 2006 FOSS Labs. All rights reserved.</copyright>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<authorEmail>mmbrich@fosslabs.com</authorEmail>
+	<authorUrl>www.fosslabs.com</authorUrl>
+	<version>1.0.0</version>
+	<description>Replaces {vfield} tag in content with specified vtiger fields</description>
+	<files>
+		<filename mambot="vfield">vfield.php</filename>
+	</files>
+	<params>
+        	<param name="vtiger_picture_store" type="text" default="images/products/" label="Local image storage" description="Local path (relative to CMS /) that vtiger will store contact and product images in.  You MUST create this directory and give it the correct permissions." />
+        	<param name="@spacer" type="spacer" default="" label="" description="" />
+	</params>
+</mosinstall>

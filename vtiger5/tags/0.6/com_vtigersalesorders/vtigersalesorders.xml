@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="4.5.2">
+  <name>vtigersalesorders</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>June 2006</creationDate>
+  <copyright>(C) 2006 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.1</version>
+  <description>Vtiger Sales Order Component</description>
+  <files>
+    <filename module="com_vtigersalesorders">vtigersalesorders.php</filename>
+    <filename module="com_vtigersalesorders">vtigersalesorders.html.php</filename>
+
+    <filename module="com_vtigersalesorders">images/forward.png</filename>
+    <filename module="com_vtigersalesorders">images/back.png</filename>
+    <filename module="com_vtigersalesorders">images/delete_f2.gif</filename>
+    <filename module="com_vtigersalesorders">images/edit_f2.gif</filename>
+
+    <filename module="com_vtigersalesorders">languages/vtigersalesorders_english.php</filename>
+  </files>
+  <params>
+    <param name="count" type="text" size="20" default="" label="Number of items" description="The number of items to display" />
+  </params>
+  <administration>
+    <menu>Vtiger Sales Orders</menu>
+    <submenu>
+	<menu act="settings">Settings</menu>
+	<menu act="about">About</menu>
+    </submenu>
+    <files>
+	<filename>admin.vtigersalesorders.php</filename>
+	<filename>admin.vtigersalesorders.html.php</filename>
+	<filename>toolbar.vtigersalesorders.php</filename>
+	<filename>toolbar.vtigersalesorders.html.php</filename>
+    </files>
+  </administration>
+</mosinstall>
