@@ -98,12 +98,14 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 	?>
                 <script type='text/javascript'>
                 function toggle_cb(field) {
-			var Tel = document.getElementsByName(field);
-			var el = Tel[0];
-                	if(el.value === 'off')
-				el.value = 'on';
-			else
-				el.value = 'off';
+			try {
+				var Tel = document.getElementsByName(field);
+				var el = Tel[0];
+                		if(el.value === 'off')
+					el.value = 'on';
+				else
+					el.value = 'off';
+			} catch(e) {}
                 }
         	</script>
 	<?
