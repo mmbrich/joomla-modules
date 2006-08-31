@@ -12,79 +12,22 @@ defined( '_VALID_MOS' ) or die( 'Direct Access to this location is not allowed.'
 
 $_MAMBOTS->registerFunction( 'onPrepareContent', 'botvfield' );
 
-
 /**
 * Display vtiger fields within your content or popup
 *
 */
 function botvfield( $published, &$row, &$params, $page=0 ) {
-
 	$msg = mosGetParam( $_REQUEST, 'msg', '');
 	if($msg != "")
 		echo "<center><font color='red' style='font-weight:bold'>".$msg."</font></center>";
 
-	global $mosConfig_absolute_path,$fields,$tfields,$vForm,$Itemid;
+	global $mosConfig_absolute_path,$fields,$tfields,$vForm,$Itemid,$task,$pageid;
+	$task="SaveForm";
 	$msg = '';
 	require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerForm.class.php");
 	$vForm = new VtigerForm();
 	$Itemid = mosGetParam( $_REQUEST, 'Itemid', $vForm->defaultItemid);
-
-	if(mosGetParam( $_POST, 'vt_module', '') != "" && mosGetParam( $_REQUEST, 'option', '') != "com_vtigerregistration") {
-		$module = mosGetParam($_POST, 'vt_module', '');
-		$action = mosGetParam($_POST, 'vt_action', '');
-		$entityid = mosGetParam($_POST, 'vt_entityid', '');
-
-		//print_r($_POST);
-		//exit();
-		switch($action) {
-			case 'BuyProduct':
-				if($Itemid == "" || $Itemid == $vForm->defaultItemid)
-					$Itemid = mosGetParam($_REQUEST, 'iid', $vForm->defaultItemid);
-
-				$qty = mosGetParam( $_POST, 'prd_qty', '1');
-				$res = $vForm->BuyProduct($entityid);
-				if($res == "failed") {
-					echo "FAILED TO SAVE FORM";
-					exit();
-				}
-				mosRedirect(sefRelToAbs('index.php?option=com_vtigersalesorders&Itemid='.$Itemid.'&task=addProduct&productid='.$entityid.'&soid='.$res.'&prd_qty='.$qty));
-			break;
-			case 'RelateContact':
-				$vt_relation_entityid = mosGetParam( $_POST, 'vt_relation_entityid', '');
-				$vt_relation_module = mosGetParam( $_POST, 'vt_relation_module', '');
-				$vt_entityid = mosGetParam( $_POST, 'vt_entityid', '');
-
-				if($vt_relation_entityid == $vt_entityid)
-					mosRedirect(sefRelToAbs("index.php?option=com_vtigerregistration&task=login"));
-				else {
-					$vForm->RelateContact($vt_entityid,$vt_relation_entityid,$vt_relation_module);
-					$msg = "Successfully Added";
-				}
-				$res = $vt_relation_entityid;
-			break; 
-			default:
-				$res = $vForm->SaveVtigerForm($module,$entityid);
-				if($res == "failed") {
-					echo "FAILED TO SAVE FORM";
-					exit();
-				}
-				$msg = "Saved Form";
-			break;
-		}
-
-		// Send an email with all the field details
-		$mailto = mosGetParam( $_POST, 'vt_mailto', '');
-		$mail_subject = mosGetParam( $_POST, 'vt_mail_subject', '');
-		if($mailto != "" && $mail_subject != "") {
-			$vForm->SendFormEmail($mailto,$mail_subject);
-		}
-
-		$redirect_site = mosGetParam( $_POST, 'vt_redirect_site', '');
-		if($redirect_site != "")
-			mosRedirect( $redirect_site );
-		else
-			mosRedirect(sefRelToAbs('index.php?option=com_content&task=view&id='.mosGetParam( $_REQUEST, 'id', '').'&entityid='.$res.'&Itemid='.$Itemid.'&msg='.$msg));
-	}
+	$pageid = mosGetParam( $_REQUEST, 'id', '');
 
 	// Special Commands
 	$regex = "#{vfield}(Action|VFormStart|VFormEnd)(.*?){/vfield}#s";
@@ -130,7 +73,7 @@ function botvfield( $published, &$row, &$params, $page=0 ) {
 
 // Handle special commands and actions
 function botvfield_replacer ( &$matches ) {
-	global $mosConfig_absolute_path, $my, $mosConfig_live_site,$vForm,$Itemid;
+	global $mosConfig_absolute_path, $my, $mosConfig_live_site,$vForm,$Itemid,$task,$pageid;
 	$thisParams = explode("|",$matches[2]);
 
 	switch($matches[1]) {
@@ -160,12 +103,14 @@ function botvfield_replacer ( &$matches ) {
 				$entityid = mosGetParam( $_REQUEST, 'entityid', '' );
 
 			$out = form_validate();
-			$out .=  "<form enctype='multipart/form-data' name='vt_form' method='POST'>";
+			$out .=  "<form enctype='multipart/form-data' name='vt_form' method='POST' action='index.php'>";
 			$out .= "<input type='hidden' name='MAX_FILE_SIZE' value='1000000' />";
+			$out .= "<input type='hidden' name='option' value='com_vfield' />";
+			$out .= "<input type='hidden' name='Itemid' value='".$Itemid."' />";
+			$out .= "<input type='hidden' name='id' value='".$pageid."' />";
+
 			$out .= "<input type='hidden' id='vt_module' name='vt_module' value='".$thisParams[1]."' />";
 			$out .= "<input type='hidden' id='vt_entityid' name='vt_entityid' value='".$entityid."' />";
-			$out .= "<input type='hidden' name='Itemid' value='".$Itemid."' />";
-			$out .= "<input type='hidden' name='iid' value='".$Itemid."' />";
 			return $out;
 		break;
 
@@ -176,10 +121,15 @@ function botvfield_replacer ( &$matches ) {
 						." \"|\" : e.g. {vfield}VFormEnd|Send Button Value{/vfield}";
 				return $ret;
 			}
-			if($thisParams[1])
-				return "<input type='submit' value='".$thisParams[1]."' class='button' onclick='return validate_vtiger_form(this);' /></form>";
-			else
-				return "<input type='submit' value='Submit' class='button' onclick='return validate_vtiger_form(this);' /></form>";
+			if($thisParams[1]) {
+				$out = "<input type='hidden' name='task' value='".$task."' />";
+				$out .=  "<input type='submit' value='".$thisParams[1]."' class='button' onclick='return validate_vtiger_form(this);' /></form>";
+				return $out;
+			} else {
+				$out = "<input type='hidden' name='task' value='".$task."' />";
+				$out .= "<input type='submit' value='Submit' class='button' onclick='return validate_vtiger_form(this);' /></form>";
+				return $out;
+			}
 		break;
 
 		// Special actions to take with the form
@@ -192,24 +142,28 @@ function botvfield_replacer ( &$matches ) {
 			// If the amount is blank then we need to get it from the qtyindemand
 			switch($thisParams[1]) {
 				case 'BuyProduct':
+					$task='BuyProduct';
 					if($thisParams[2] == "" || !isset($thisParams[2])) {
 						$tval = $vForm->GetSingleFieldDetails(
 							"Products",
 							"qtyindemand",
 							mosGetParam( $_REQUEST, 'productid', '' )
 						);
-						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$tval[0]["value"]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$tval[0]["value"]."' size='3' class='inputbox' /><input type='hidden' name='task' value='BuyProduct' />";
 					} else {
-						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$thisParams[2]."' size='3' class='inputbox' /><input type='hidden' name='vt_action' value='BuyProduct' />";
+						return "<input type='text' id='vt_prd_qty' name='prd_qty' value='".$thisParams[2]."' size='3' class='inputbox' /><input type='hidden' name='task' value='BuyProduct' />";
 					}
 				break;
 				case 'RedirectSite':
+					$task='SaveForm';
 					return "<input type='hidden' name='vt_redirect_site' value='".$thisParams[2]."' />";
 				break;
 				case 'SetColumn':
+					$task='SaveForm';
 					return "<input type='hidden' name='vtiger_".$thisParams[2]."' value='".$thisParams[3]."' />";
 				break;
 				case 'RelateContact':
+					$task='RelateContact';
 					$mod = $thisParams[2];
 					$entityid = mosGetParam( $_REQUEST, 'entityid', '');
 					if($mod == "Events") {
@@ -225,11 +179,12 @@ function botvfield_replacer ( &$matches ) {
 						if($entityid == '')
 							$entityid = mosGetParam( $_REQUEST, 'accountid', '');
 					}
-					$ret .= "<input type='hidden' name='vt_action' value='RelateContact' />";
+					$ret .= "<input type='hidden' name='task' value='RelateContact' />";
 					$ret .= "<input type='hidden' name='vt_relation_entityid' value='".$entityid."' />";
 					return $ret."<input type='hidden' name='vt_relation_module' value='".$thisParams[2]."' />";
 				break;
 				case 'SendEmail':
+					$task='SendEmail';
 					$ret .=  "<input type='hidden' name='vt_mailto' value='".$thisParams[2]."' />";
 					return $ret."<input type='hidden' name='vt_mail_subject' value='".$thisParams[3]."' />";
 				break;
@@ -240,7 +195,7 @@ function botvfield_replacer ( &$matches ) {
 
 // Create needed array to populate all records at once
 function field_counter( &$matches ) {
-	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site,$Itemid;
+	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site,$Itemid,$task;
 	$thisParams = explode("|",$matches[1]);
 
 	if (sizeof($thisParams) < 3) {
@@ -290,7 +245,7 @@ function field_counter( &$matches ) {
 
 // Replace fields with populated field array
 function vfield_replacer( &$matches ) {
-	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site,$tfields,$vForm,$Itemid;
+	global $mosConfig_absolute_path, $my,$fields, $mosConfig_live_site,$tfields,$vForm,$Itemid,$task;
 
 	$thisParams = explode("|",$matches[1]);
 
