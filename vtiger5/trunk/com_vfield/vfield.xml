@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mosinstall type="component" version="1.0.0">
+  <name>vfield</name>
+  <author>Matthew Brichacek</author>
+  <creationDate>August 2006</creationDate>
+  <copyright>(C) 2006 Foss Labs</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <version>1.0</version>
+  <description>Comonent to control vfield forms</description>
+  <files>
+    <filename module="com_helpdesk">vfield.php</filename>
+  </files>
+</mosinstall>
