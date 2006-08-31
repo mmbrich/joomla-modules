@@ -58,18 +58,20 @@ function save_form_fields($entityid,$module,$fields) {
 
 			$tmp = explode("|",$fields[$j]["columnname"]);
 			$new_name = $tmp[1];
+			$filetype = $tmp[3];
 			$filepath = decideFilePath();
 			$current_id = $adb->getUniqueID("vtiger_crmentity");
 			$filename = $filepath.$current_id."_".$new_name;
 
 			$adb->println("UPLOAD FILE PATH ".$filename);
 			$adb->println("UPLOAD FILE NAME ".$new_name);
+			$adb->println("UPLOAD FILE TYPE ".$filetype);
 			$adb->println("FILE CURRENT ID ".$current_id);
 			$adb->println("FILE ENTITY ID ".$entityid);
 
 			// Try to open our storage path
 			if (!$handle = fopen($filename, 'w')) {
-				$adb->println("Cannot open file");
+				$adb->println("Cannot open file for writing");
    			} else {
 				// Attempt to write the file
    				if (fwrite($handle, base64_decode($fields[$j]["value"])) === FALSE) {
@@ -90,7 +92,6 @@ function save_form_fields($entityid,$module,$fields) {
                                 	$adb->query($delquery);
 				}
 
-				$filetype = "image/jpeg";
 				$date_var = date('YmdHis');
 
 				$sql1 = "insert into vtiger_crmentity (crmid,smcreatorid,smownerid,setype,description,createdtime,modifiedtime) values(".$current_id.",'1','1','".$module." Attachment','Image attachment from Joomla',".$adb->formatString("vtiger_crmentity","createdtime",$date_var).",".$adb->formatString("vtiger_crmentity","modifiedtime",$date_var).")";
