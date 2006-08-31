@@ -91,6 +91,7 @@ class HTML_vtigersalesorders {
 				<form action="index.php" method="post" name="update">
         				<input name="option" value="com_vtigersalesorders" type="hidden">
         				<input name="task" value="updateQuantity" type="hidden">
+        				<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="product_id" value="<?php echo $product["productid"];?>" type="hidden">
         				<input name="quantity" type="hidden" id="quan_<? echo $product["productid"];?>">
@@ -102,6 +103,7 @@ class HTML_vtigersalesorders {
 				<form action="index.php" method="post" name="delete">
         				<input name="option" value="com_vtigersalesorders" type="hidden">
         				<input name="task" value="removeProduct" type="hidden">
+        				<input name="Itemid" value="<?php echo $Itemid;?>" type="hidden">
         				<input name="soid" value="<?php echo $order["salesorderid"];?>" type="hidden">
         				<input name="productid" value="<?php echo $product["productid"];?>" type="hidden">
       					<input name="delete" title="<?php echo _CART_DELETE;?>" src="components/com_vtigersalesorders/images/delete_f2.gif" alt="<?php echo _CART_DELETE;?>" border="0" type="image">
@@ -256,7 +258,7 @@ class HTML_vtigersalesorders {
  	</div>
   	<div style="text-align: center; width: 40%; float: left;">
      		<h3>
-			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&soid='.$soid.'&Itemid='.$Itemid);?>">
+			<a href="<?php echo sefRelToAbs('index.php?option=com_vtigersalesorders&task=checkout&Itemid='.$Itemid.'&soid='.$soid);?>">
      				<img src="components/com_vtigersalesorders/images/forward.png" alt="Forward" align="middle" border="0" height="32" width="32">
       				<?php echo _CHECKOUT;?>
 			</a>
