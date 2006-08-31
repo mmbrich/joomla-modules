@@ -69,12 +69,24 @@ class VTigerForm extends VtigerField {
         	}
 		// upload the file
 		if(file_exists($_FILES['vtiger_imagename']['tmp_name'])) {
-			$filename = $_FILES['vtiger_imagename']['tmp_name'];
-			$handle = fopen($filename, "r");
-			$fcontents = fread($handle, filesize($filename));
-			fclose($handle);
-			$fields[$j]["columnname"] = "imagename|".$_FILES["vtiger_imagename"]["name"];
-			$fields[$j]["value"] = base64_encode($fcontents);
+			if (($_FILES["vtiger_imagename"]["type"] == "image/gif") || ($_FILES["vtiger_imagename"]["type"] == "image/jpeg") || ($_FILES["vtiger_imagename"]["type"] == "image/pjpeg")) {
+				$filename = $_FILES['vtiger_imagename']['tmp_name'];
+				if($handle = fopen($filename, "r")) {
+					$fcontents = fread($handle, filesize($filename));
+					fclose($handle);
+					$fields[$j]["columnname"] = "imagename|".$_FILES["vtiger_imagename"]["name"]."|imagetype|".$_FILES["vtiger_imagename"]["type"];
+					$fields[$j]["value"] = base64_encode($fcontents);
+				} else {
+					echo "<script type='text/javascript'>alert('File upload error, cannot write to file.');</script>";
+					flush();
+				}
+			} else {
+					echo "<script type='text/javascript'>alert('File upload error, wrong file type.');</script>";
+					flush();
+			}
+		} else {
+			echo "<script type='text/javascript'>alert('File upload error, file not registered. (too big?)');</script>";
+			flush();
 		}
 		//exit();
         	return $this->SaveFormFields($entityid,$module,$fields);
