@@ -89,7 +89,7 @@ if ( $my->id ) {
 		echo $name;
 	}
 	?>
-	<div>
+	</div>
 	<div align="center">
 		<a href='<?php echo sefRelToAbs("index.php?option=com_vtigerregistration&task=changePass");?>'><?php echo _CHANGE_PASSWORD;?></a>
 	</div>
