@@ -29,8 +29,8 @@ function inherit_user($entityid='') {
 	} else
 		$adb->println("The current owner of this entity is : $current_owner");
 
-        require_once('modules/Users/User.php');
-        $current_user = new User();
+        require_once('modules/Users/Users.php');
+        $current_user = new Users();
         $current_user->retrieve_entity_info($current_owner,"Users");
 	$adb->println("The current owner of this entity is : $current_user->id");
 	return $current_user;
@@ -41,23 +41,23 @@ function create_entity($module,$entityid='') {
         $adb->println("Enter into the function create_entity($module,$entityid)");
 
         if($module == "Products") {
-                require_once('modules/Products/Product.php');
-                $focus = new Product();
+                require_once('modules/Products/Products.php');
+                $focus = new Products();
         } else if($module == "Contacts") {
-                require_once('modules/Contacts/Contact.php');
-                $focus = new Contact();
+                require_once('modules/Contacts/Contacts.php');
+                $focus = new Contacts();
         } else if($module == "Accounts") {
-                require_once('modules/Accounts/Account.php');
-                $focus = new Account();
+                require_once('modules/Accounts/Accounts.php');
+                $focus = new Accounts();
         } else if($module == "Leads") {
-                require_once('modules/Leads/Lead.php');
-                $focus = new Lead();
+                require_once('modules/Leads/Leads.php');
+                $focus = new Leads();
         } else if($module == "Activities" || $module == "Events") {
                 require_once('modules/Calendar/Activity.php');
                 $focus = new Activity();
         } else if($module == "Campaigns") {
-                require_once('modules/Campaigns/Campaign.php');
-                $focus = new Campaign();
+                require_once('modules/Campaigns/Campaigns.php');
+                $focus = new Campaigns();
         } else if($module == "HelpDesk") {
                 require_once('modules/HelpDesk/HelpDesk.php');
                 $focus = new HelpDesk();
@@ -65,20 +65,20 @@ function create_entity($module,$entityid='') {
                 require_once('modules/Invoice/Invoice.php');
                 $focus = new Invoice();
         } else if($module == "Potentials") {
-                require_once('modules/Potentials/Opportunity.php');
-                $focus = new Potential();
+                require_once('modules/Potentials/Potentials.php');
+                $focus = new Potentials();
         } else if($module == "Quotes") {
-                require_once('modules/Quotes/Quote.php');
-                $focus = new Quote();
+                require_once('modules/Quotes/Quotes.php');
+                $focus = new Quotes();
         } else if($module == "SalesOrder") {
                 require_once('modules/SalesOrder/SalesOrder.php');
                 $focus = new SalesOrder();
         } else if($module == "Vendors") {
-                require_once('modules/Vendors/Vendor.php');
-                $focus = new Vendor();
+                require_once('modules/Vendors/Vendors.php');
+                $focus = new Vendors();
         } else if($module == "Users") {
-                require_once('modules/Users/User.php');
-                $focus = new User();
+                require_once('modules/Users/Users.php');
+                $focus = new Users();
         }
 
         if($entityid != "" && $entityid != 0) {
