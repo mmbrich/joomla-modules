@@ -143,14 +143,14 @@ function settings($option) {
 
 	if(is_array($new_fields)) {
 		foreach($new_fields as $field) {
-			$rows[$field["id"]]["id"] = $field["id"];
-			$rows[$field["id"]]["field"] = $field["field"];
-			$rows[$field["id"]]["name"] = $field["name"];
-			$rows[$field["id"]]["size"] = $field["maximumlength"];
-	    		$rows[$field["id"]]["type"] = $field["type"];
-			$rows[$field["id"]]["order"] = $field["ord"];
-			$rows[$field["id"]]["show"] = 0;
-			$rows[$field["id"]]["required"] = 0;
+			$rows[$field[0]]["id"] = $field[0];
+			$rows[$field[0]]["field"] = $field[2];
+			$rows[$field[0]]["name"] = $field[4];
+			$rows[$field[0]]["size"] = $field[10];
+	    		$rows[$field[0]]["type"] = $field[6];
+			$rows[$field[0]]["order"] = $field[9];
+			$rows[$field[0]]["show"] = 0;
+			$rows[$field[0]]["required"] = 0;
 		}
 	}
         $q = "SELECT * FROM #__vtiger_portal_configuration "
