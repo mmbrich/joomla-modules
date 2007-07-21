@@ -27,6 +27,7 @@ foreach($configs as $config) {
  	$conf[$config->name] = $config->value;
 }
 
+
 if($my->id && $user->IsAllowed($my->id)) {
 	if(!isset($task) || $task == '')
 		$task = 'ListTickets';
