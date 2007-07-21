@@ -46,6 +46,7 @@ $server->register(
 		'entityid'=>'xsd:string',
 		'soid'=>'xsd:string'
 	),
+        //array('return'=>'xsd:string'),
         array('return'=>'tns:so_return_multi'),
         $NAMESPACE);
 
@@ -79,7 +80,7 @@ function get_current_salesorders($entityid,$soid='') {
         $adb->println("Enter into the function get_current_salesorders(".$entityid.")");
 
 	if($entityid != "") {
-		$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
+		$q = "SELECT salesorderid,subject,carrier,pending,type,adjustment,total,subtotal, "
 			." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
 			." FROM vtiger_salesorder "
 			." INNER JOIN vtiger_crmentity "
@@ -89,7 +90,7 @@ function get_current_salesorders($entityid,$soid='') {
 			." AND (vtiger_salesorder.sostatus = 'Created' OR vtiger_salesorder.sostatus = 'Approved')";
 		$rs = $adb->query($q);
 	} else {
-		$q = "SELECT salesorderid,subject,carrier,pending,type,salestax,adjustment,total,subtotal, "
+		$q = "SELECT salesorderid,subject,carrier,pending,type,adjustment,total,subtotal, "
 			." taxtype,discount_percent,discount_amount,s_h_amount,terms_conditions,sostatus "
 			." FROM vtiger_salesorder "
 			." INNER JOIN vtiger_crmentity "
@@ -421,24 +422,34 @@ function new_salesorder($contactid) {
 	$date_var = date('YmdHis');
 	$current_user = inherit_user($contactid);
 
-	$SO = create_entity("SalesOrder");
-	$SO->column_fields["assigned_user_id"] = $current_user->id;
+	$focus = create_entity("SalesOrder");
+	$focus->column_fields["assigned_user_id"] = $current_user->id;
 
 	if($contactid != "") {
 		$Contact = create_entity("Contacts",$contactid);
-		$SO->column_fields["account_id"] = $Contact->column_fields["account_id"];
-		$SO->column_fields["contact_id"] = $contactid;
+		$focus->column_fields["account_id"] = $Contact->column_fields["account_id"];
+		$focus->column_fields["contact_id"] = $contactid;
 	}
 
-	$SO->column_fields["subject"] = $date_var;
-	$SO->column_fields["hdnTaxType"] = "individual";
-	$SO->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
-	$SO->column_fields["sostatus"] = "Created";
-	$ret = billing_addy_update($Contact,$SO);
-	$ret = shipping_addy_update($Contact,$SO);
-	$SO->save("SalesOrder");
+	$focus->column_fields["subject"] = $date_var;
+	$focus->column_fields["hdnTaxType"] = "individual";
+	$focus->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
+	$focus->column_fields["sostatus"] = "Created";
+	$ret = billing_addy_update($Contact,$focus);
+	$ret = shipping_addy_update($Contact,$focus);
+	$focus->save("SalesOrder");
 
-	return $SO->id;
+	$q = "SELECT salesorderid "
+		." FROM vtiger_salesorder "
+		." INNER JOIN vtiger_crmentity "
+		." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
+		." WHERE deleted='0' "
+		." AND contactid='".$contactid."' LIMIT 1";
+	$rs = $adb->query($q);
+	$ret = $adb->fetch_array($rs);
+	return $ret[0];
+
+	return $focus->id;
 }
 /************************ ADD_PRODUCT END ****************************/
 

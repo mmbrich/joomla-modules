@@ -41,13 +41,13 @@ $server->register(
 );
 function create_basic_contact($email,$firstname,$lastname,$password)
 {
-	require_once("modules/Contacts/Contact.php");
+	require_once("modules/Contacts/Contacts.php");
         global $adb;
         $adb->println("Enter into the function create_basic_contact($email,$firstname,$lastname,$password)");
 
 	$current_user = inherit_user();
 
-        $focus = new Contact();
+        $focus = new Contacts();
         $focus->column_fields["firstname"] = $firstname;
         $focus->column_fields["lastname"] = $lastname;
         $focus->column_fields["email"] = $email;
@@ -77,7 +77,7 @@ function set_field($entityid,$fieldid,$value) {
         $adb->println("\n\r\n\r\n\rEnter into the function set_field($entityid,$fieldid,$value)");
 	$current_user = inherit_user($entityid);
 
-	$focus = new Contact();
+	$focus = new Contacts();
 	$rs = $adb->query("SELECT fieldname,tablename,columnname FROM vtiger_field WHERE fieldid='".$fieldid."'");
 	$fieldname = $adb->query_result($rs,'0','fieldname');
 	$tablename = $adb->query_result($rs,'0','tablename');
@@ -290,8 +290,9 @@ function forgot_password ($email) {
         $email = $adb->query_result($rs,0,'email');
         $password = $adb->query_result($rs,0,'user_password');
 
+
         $fromquery = "select vtiger_users.first_name, vtiger_users.last_name, vtiger_users.email1 from vtiger_users inner join vtiger_crmentity on vtiger_users.id = vtiger_crmentity.smownerid inner join vtiger_contactdetails on vtiger_contactdetails.contactid=vtiger_crmentity.crmid where vtiger_contactdetails.email ='".$email."'";
-	$rs = $adb->query($rs);
+	$rs = $adb->query($fromquery);
 
         $initialfrom = $adb->query_result($rs,0,'first_name')." ".$adb->query_result($rs,0,'last_name');
         $from = $adb->query_result($rs,0,'email1');
@@ -304,7 +305,7 @@ function forgot_password ($email) {
 
 	require_once('modules/Emails/mail.php');
 	$mail = new PHPMailer();
-        $mail->Subject = "Your Joomla! Login Details";
+        $mail->Subject = "Your Login Details";
         $mail->Body    = $contents;
         $mail->IsSMTP();
 
