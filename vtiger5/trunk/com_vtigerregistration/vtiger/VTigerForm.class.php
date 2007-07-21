@@ -84,9 +84,9 @@ class VTigerForm extends VtigerField {
 					echo "<script type='text/javascript'>alert('File upload error, wrong file type.');</script>";
 					flush();
 			}
-		} else {
-			echo "<script type='text/javascript'>alert('File upload error, file not registered. (too big?)');</script>";
-			flush();
+		//} else {
+			//echo "<script type='text/javascript'>alert('File upload error, file not registered. (too big?)');</script>";
+			//flush();
 		}
 		//exit();
         	return $this->SaveFormFields($entityid,$module,$fields);
@@ -122,6 +122,7 @@ class VTigerForm extends VtigerField {
 
 		if($soid == 0 || $soid == "")
 			$soid = $SO->CreateNewSalesOrder($SO->contact->id);
+		print_r($soid);exit();
 
 		return $soid;
 	}
