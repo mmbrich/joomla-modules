@@ -109,20 +109,30 @@ class VTigerForm extends VtigerField {
 		require_once($mosConfig_absolute_path . "/components/com_vtigerregistration/vtiger/VTigerSalesOrder.class.php");
 		$SO = new VtigerSalesOrder();
 		if(!$SO->Checkid($my->id) && !isset($_COOKIE["current_salesorder"])) {
-			$soid = $SO->CreateNewSalesOrder('');
-			setcookie("current_salesorder", $soid, time()+3600, '/');
+			$soid = @$SO->CreateNewSalesOrder('');
+			if($soid != "Response not of type text/xml") 
+				setcookie("current_salesorder", $soid, time()+3600, '/');
 		} else if (isset($_COOKIE["current_salesorder"]))
 			$soid = $_COOKIE["current_salesorder"];
 
-		if(!$soid || $soid == 0)
+		if(!$soid || $soid == 0 || $soid == "Response not of type text/xml")
 			$tmp = $SO->GetCurrentSalesOrders($my->id);
 
-		if(is_array($tmp))
+		if(is_array($tmp)) {
 			$soid = $tmp[0]["salesorderid"];
+			setcookie("current_salesorder", $soid, time()+3600, '/');
+		}
 
-		if($soid == 0 || $soid == "")
+		if($soid == 0 || $soid == "" || $soid == "Response not of type text/xml") {
 			$soid = $SO->CreateNewSalesOrder($SO->contact->id);
-		print_r($soid);exit();
+			setcookie("current_salesorder", $soid, time()+3600, '/');
+		}
+		if($soid != "Response not of type text/xml") {
+			if(!$my->id)
+				$SO->PopulateSalesOrder($soid,'');
+			else 
+				$SO->PopulateSalesOrder($soid,$my->id);
+		}
 
 		return $soid;
 	}
