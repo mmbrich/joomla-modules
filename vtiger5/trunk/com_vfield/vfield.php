@@ -55,9 +55,12 @@ if($mailto != "" && $mail_subject != "") {
 }
 
 $redirect_site = mosGetParam( $_REQUEST, 'vt_redirect_site', '');
-if($redirect_site != "")
-       	mosRedirect( $redirect_site );
-else
+if($redirect_site != "") {
+	if(preg_match("/^http/",$redirect_site))
+       		mosRedirect( $redirect_site."&entityid=".$res );
+	else
+       		mosRedirect( sefRelToAbs($redirect_site."&entityid=".$res) );
+} else
        	mosRedirect(sefRelToAbs('index.php?option=com_content&task=view&id='.$pageid.'&entityid='.$res.'&Itemid='.$Itemid.'&msg='.$msg));
 
 ?>

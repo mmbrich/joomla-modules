@@ -116,6 +116,7 @@ function botvfield_replacer ( &$matches ) {
 
 		// End of a form
 		case 'VFormEnd':
+			$entityid = mosGetParam( $_REQUEST, 'vt_entityid', '' );
 			if(sizeof($thisParams) < 1) {
 				$ret = "Not enough parameters for VFormEnd! You must have at least 1 parameters separated by "
 						." \"|\" : e.g. {vfield}VFormEnd|Send Button Value{/vfield}";
@@ -124,6 +125,9 @@ function botvfield_replacer ( &$matches ) {
 			if($thisParams[1]) {
 				$out = "<input type='hidden' name='task' value='".$task."' />";
 				$out .=  "<input type='submit' value='".$thisParams[1]."' class='button' onclick='return validate_vtiger_form(this);' /></form>";
+				if($thisParams[2]) {
+					$out .= "<input type='hidden' name='vt_redirect_site' value='".$thisParams[2]."' />";
+				}
 				return $out;
 			} else {
 				$out = "<input type='hidden' name='task' value='".$task."' />";
