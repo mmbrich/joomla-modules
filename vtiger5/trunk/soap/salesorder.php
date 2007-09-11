@@ -409,7 +409,40 @@ function add_product($soid,$productid,$qty) {
 }
 /************************ ADD_PRODUCT END ****************************/
 
-/************************ ADD_PRODUCT START ****************************/
+/************************ POPULATE_SALESORDER START ****************************/
+$server->register(
+        'populate_salesorder',
+        array('soid'=>'xsd:string','contactid'=>'xsd:string'),
+        array('return'=>'xsd:string'),
+        $NAMESPACE);
+
+function populate_salesorder($soid,$contactid) {
+	global $adb;
+        $adb->println("Enter into the function populate_salesorder($contactid)");
+	$date_var = date('YmdHis');
+	$current_user = inherit_user($contactid);
+
+	$so = create_entity("SalesOrder",$soid);
+	$so->column_fields["assigned_user_id"] = $current_user->id;
+
+	if($contactid != "") {
+                $Contact = create_entity("Contacts",$contactid);
+                $so->column_fields["account_id"] = $Contact->column_fields["account_id"];
+                $so->column_fields["contact_id"] = $contactid;
+	}
+
+	$so->column_fields["subject"] = $date_var;
+	$so->column_fields["hdnTaxType"] = "individual";
+	$so->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
+	$so->column_fields["sostatus"] = "Created";
+	$ret = billing_addy_update($Contact,$so);
+	$ret = shipping_addy_update($Contact,$so);
+	$so->save("SalesOrder");
+	return;
+}
+/************************ POPULATE_SALESORDER END ****************************/
+
+/************************ NEW_SALESORDER START ****************************/
 $server->register(
         'new_salesorder',
         array('contactid'=>'xsd:string'),
@@ -417,39 +450,27 @@ $server->register(
         $NAMESPACE);
 
 function new_salesorder($contactid) {
-	global $adb;
+	global $adb,$default_ownerid;
         $adb->println("Enter into the function new_salesorder($contactid)");
 	$date_var = date('YmdHis');
 	$current_user = inherit_user($contactid);
 
-	$focus = create_entity("SalesOrder");
-	$focus->column_fields["assigned_user_id"] = $current_user->id;
-
-	if($contactid != "") {
-		$Contact = create_entity("Contacts",$contactid);
-		$focus->column_fields["account_id"] = $Contact->column_fields["account_id"];
-		$focus->column_fields["contact_id"] = $contactid;
-	}
-
-	$focus->column_fields["subject"] = $date_var;
-	$focus->column_fields["hdnTaxType"] = "individual";
-	$focus->column_fields["description"] = "Created via Joomla CMS on ".$date_var;
-	$focus->column_fields["sostatus"] = "Created";
-	$ret = billing_addy_update($Contact,$focus);
-	$ret = shipping_addy_update($Contact,$focus);
-	$focus->save("SalesOrder");
-
-	$q = "SELECT salesorderid "
-		." FROM vtiger_salesorder "
-		." INNER JOIN vtiger_crmentity "
-		." ON vtiger_crmentity.crmid=vtiger_salesorder.salesorderid "
-		." WHERE deleted='0' "
-		." AND contactid='".$contactid."' LIMIT 1";
+	$q = "SELECT id FROM vtiger_crmentity_seq";
 	$rs = $adb->query($q);
-	$ret = $adb->fetch_array($rs);
-	return $ret[0];
+	$res = $adb->fetch_array($rs);
+	$tid = $res[0];
+	$id = ($tid+1);
 
-	return $focus->id;
+	$q = "UPDATE vtiger_crmentity_seq SET id='".$id."'";
+	$rs = $adb->query($q);
+
+	$q = "INSERT INTO vtiger_crmentity (crmid,smownerid,setype,description,presence) VALUES ($id,$default_ownerid,'SalesOrder','Created by Joomla on ".$date_var."','1')";
+	$rs = $adb->query($q);
+
+	$q = "INSERT INTO vtiger_salesorder (salesorderid,subject,sostatus) VALUES ($id,$date_var,'Created')";
+	$rs = $adb->query($q);
+
+	return $id;
 }
 /************************ ADD_PRODUCT END ****************************/
 
@@ -595,7 +616,7 @@ function convert_to_invoice($soid) {
 	global $current_user;
 	$current_user = inherit_user($soid);
 
-        $focus = getConvertSoToInvoice($focus,$so_focus,$soid);
+        $so = getConvertSoToInvoice($focus,$so_focus,$soid);
 
         $focus->column_fields['vtiger_purchaseorder'] = $so_focus->column_fields['vtiger_purchaseorder'];
         $focus->column_fields['terms_conditions'] = $so_focus->column_fields['terms_conditions'];
@@ -608,7 +629,7 @@ function convert_to_invoice($soid) {
 		$focus->column_fields[$key] = $value;
 	}
 
-	$focus->save("Invoice");
+	$so->save("SalesOrder");
 
 	// Populate products
 	$q = "SELECT * FROM vtiger_inventoryproductrel "

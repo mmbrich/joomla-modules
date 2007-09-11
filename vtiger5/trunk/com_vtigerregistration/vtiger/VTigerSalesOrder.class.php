@@ -94,6 +94,15 @@ class VTigerSalesOrder extends VTigerForm {
 		$this->soid = $result;
                 return $result;
 	}
+	function PopulateSalesOrder($soid,$contactid)
+	{
+		$this->contact->id = $contactid;
+	       	$this->data = array('contactid' => $this->contact->id);
+                $this->setData($this->data);
+                $result = $this->execCommand('populate_salesorder',$this->GetSecureMode());
+                //return $result;
+		return;
+	}
 	function AddToSalesOrder($productid,$qty)
 	{
 		if(!$this->soid) {
