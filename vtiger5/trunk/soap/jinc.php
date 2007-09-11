@@ -94,12 +94,10 @@ function entityid_sort($a,$b) {
 }
 
 function get_field_values($focus,$columnname,$field='') {
-        if($focus->id == "" || !isset($focus->id))
+	global $adb;
+        if($focus->id == "" || !isset($focus->id)) {
                 return '';
-
-        global $adb;
-        $adb->println("Enter into the function get_field_values($focus,$columnname,".$field["viewtype"].")");
-
+	}
         $adb->println("Will bet getting field value for COLUMNNAME: $columnname IN MODULE: ".$focus->column_fields["record_module"]." THE CURRENT VALUE IS: ".$focus->column_fields[$columnname]." WITH VIEW TYPE: ".$field["viewtype"].")");
 
 	// format comments for trouble tickets
