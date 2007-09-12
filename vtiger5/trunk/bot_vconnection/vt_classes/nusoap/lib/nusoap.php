@@ -213,7 +213,7 @@ class nusoap_base {
     	if(is_object($val) && get_class($val) == 'soapval'){
         	return $val->serialize($use);
         }
-		$this->debug( "in serialize_val: $val, $name, $type, $name_ns, $type_ns, $attributes, $use");
+		//$this->debug( "in serialize_val: $val, $name, $type, $name_ns, $type_ns, $attributes, $use");
 		// if no name, use item
 		$name = (!$name|| is_numeric($name)) ? 'soapVal' : $name;
 		// if name has ns, add ns prefix to name
